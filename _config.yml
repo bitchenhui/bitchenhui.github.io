@@ -1,0 +1,44 @@
+title: "TODO: 替换为你的网站名称"
+description: "TODO: 替换为一句中文个人定位"
+url: "https://bitchenhui.github.io"
+baseurl: ""
+lang: "zh-CN"
+timezone: "Asia/Shanghai"
+permalink: /blog/:title/
+markdown: kramdown
+highlighter: rouge
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+collections: {}
+
+navigation:
+  - title: 首页
+    url: /
+  - title: 项目
+    url: /projects/
+  - title: 博客
+    url: /blog/
+  - title: 关于
+    url: /about/
+
+author:
+  name: "TODO: 替换为你的姓名"
+  role: "TODO: 替换为你的个人定位"
+  intro: "TODO: 用两三句话介绍你的技术方向、兴趣与正在做的事情。"
+  email: ""
+  github: ""
+  linkedin: ""
+  resume_url: ""
+
+skills:
+  - 性能优化
+  - 系统工程
+  - 技术写作
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - scripts
+  - docs

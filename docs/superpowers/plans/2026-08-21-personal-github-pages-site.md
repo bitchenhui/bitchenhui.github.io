@@ -44,9 +44,7 @@
 | `about.md` | Resume/biography content with clearly marked placeholders. |
 | `_posts/*.md` | Three sample Markdown articles and their metadata. |
 | `404.html` | Friendly not-found page. |
-| `feed.xml` | Jekyll Feed RSS endpoint. |
 | `robots.txt` | Search crawler policy and sitemap discovery. |
-| `sitemap.xml` | Jekyll sitemap endpoint. |
 | `scripts/verify_site.rb` | Dependency-free static checks over generated `_site` files. |
 | `README.md` | Setup, preview, authoring, deployment, and custom-domain operating guide. |
 
@@ -881,7 +879,7 @@ Run:
 bundle exec jekyll build && ruby scripts/verify_site.rb
 ```
 
-Expected: success except for `404.html`, `feed.xml`, `sitemap.xml`, and `robots.txt`, which Task 5 creates. Confirm that generated post URLs follow the configured `/blog/:title/` pattern.
+Expected: success except for `404.html`, `feed.xml`, `sitemap.xml`, and `robots.txt`. Task 5 creates `404.html` and `robots.txt`; the configured `jekyll-feed` and `jekyll-sitemap` plugins generate the feed and sitemap. Confirm that generated post URLs follow the configured `/blog/:title/` pattern.
 
 - [ ] **Step 6: Commit content pages and posts**
 
@@ -890,18 +888,16 @@ git add index.html projects/index.html blog/index.html about.md _posts scripts/v
 git commit -m "feat: add portfolio blog and about pages"
 ```
 
-## Task 5: Add discovery pages, error page, RSS, and crawler policy
+## Task 5: Add discovery pages, error page, and crawler policy
 
 **Files:**
 - Create: `404.html`
-- Create: `feed.xml`
 - Create: `robots.txt`
-- Create: `sitemap.xml`
 - Modify: `scripts/verify_site.rb`
 
 **Interfaces:**
 - Consumes: `site.url`, `site.baseurl`, and `site.posts`; the `jekyll-feed` and `jekyll-sitemap` plugins configured in Task 1.
-- Produces: valid `/404.html`, `/feed.xml`, `/robots.txt`, `/sitemap.xml` endpoints and a fully passing static verifier.
+- Produces: valid `/404.html`, `/feed.xml`, `/robots.txt`, `/sitemap.xml` endpoints and a fully passing static verifier. The configured plugins generate `/feed.xml` and `/sitemap.xml`; do not create source files at either path.
 
 - [ ] **Step 1: Add failing semantic endpoint tests**
 
@@ -929,9 +925,9 @@ Run:
 bundle exec jekyll build && ruby scripts/verify_site.rb
 ```
 
-Expected: fail because `404.html`, `feed.xml`, `robots.txt`, and `sitemap.xml` are not generated yet.
+Expected: fail because `404.html` and `robots.txt` are not generated yet. The `jekyll-feed` and `jekyll-sitemap` plugins should already generate `feed.xml` and `sitemap.xml`.
 
-- [ ] **Step 3: Create the discovery and fallback endpoints**
+- [ ] **Step 3: Create the discovery and fallback source endpoints**
 
 Create `404.html`:
 
@@ -945,34 +941,6 @@ permalink: /404.html
 <p><a class="button" href="{{ '/' | relative_url }}">返回首页</a></p>
 ```
 
-Create `feed.xml`:
-
-```xml
----
-layout: null
----
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title>{{ site.title | xml_escape }}</title>
-  <subtitle>{{ site.description | xml_escape }}</subtitle>
-  <link href="{{ '/feed.xml' | absolute_url }}" rel="self" type="application/atom+xml"/>
-  <link href="{{ '/' | absolute_url }}" rel="alternate" type="text/html"/>
-  <id>{{ '/' | absolute_url }}</id>
-  <updated>{{ site.time | date_to_xmlschema }}</updated>
-  {% for post in site.posts limit: 20 %}
-  <entry>
-    <title>{{ post.title | xml_escape }}</title>
-    <link href="{{ post.url | absolute_url }}" rel="alternate" type="text/html"/>
-    <id>{{ post.url | absolute_url }}</id>
-    <published>{{ post.date | date_to_xmlschema }}</published>
-    <updated>{{ post.date | date_to_xmlschema }}</updated>
-    <summary type="html">{{ post.description | default: post.excerpt | strip_html | xml_escape }}</summary>
-    <content type="html">{{ post.content | xml_escape }}</content>
-  </entry>
-  {% endfor %}
-</feed>
-```
-
 Create `robots.txt`:
 
 ```text
@@ -980,32 +948,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://bitchenhui.github.io/sitemap.xml
-```
-
-Create `sitemap.xml`:
-
-```xml
----
-layout: null
----
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  {% assign pages_to_list = site.pages | where_exp: "item", "item.sitemap != false" %}
-  {% for item in pages_to_list %}
-  {% unless item.name == "feed.xml" or item.name == "sitemap.xml" or item.name == "robots.txt" %}
-  <url>
-    <loc>{{ item.url | absolute_url }}</loc>
-    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
-  </url>
-  {% endunless %}
-  {% endfor %}
-  {% for post in site.posts %}
-  <url>
-    <loc>{{ post.url | absolute_url }}</loc>
-    <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
-  </url>
-  {% endfor %}
-</urlset>
 ```
 
 - [ ] **Step 4: Run the complete build verification**
@@ -1023,7 +965,7 @@ Expected: `PASS: verified 8 HTML file(s) and 11 required site file(s).` (The exa
 - [ ] **Step 5: Commit reliability and discoverability endpoints**
 
 ```bash
-git add 404.html feed.xml robots.txt sitemap.xml scripts/verify_site.rb
+git add 404.html robots.txt scripts/verify_site.rb
 git commit -m "feat: add feed sitemap and not-found page"
 ```
 
@@ -1212,7 +1154,7 @@ Expected: `git status --short` prints nothing; the log contains the six focused 
 
 - **Jekyll / GitHub Pages native deployment:** Tasks 1 and 6 configure `github-pages`, document branch publishing, and do not create Actions or `.nojekyll`.
 - **Homepage, projects, blog, résumé / about:** Task 4 creates all first-class routes and home sections.
-- **Markdown articles, tags, summaries, article pages, RSS:** Tasks 3–5 establish post cards, layouts, sample posts, fallback summary, and Atom RSS.
+- **Markdown articles, tags, summaries, article pages, RSS:** Tasks 3–5 establish post cards, layouts, sample posts, fallback summary, and plugin-generated Atom RSS.
 - **Centralized personal/project configuration:** Tasks 1 and 3 define `_config.yml` and `_data/projects.yml`.
 - **Light technology-minimal visual system plus dark toggle:** Task 2 defines CSS tokens, responsive components, OS fallback, explicit toggle, and `localStorage` persistence.
 - **Responsive navigation and mobile layout:** Task 2 builds the accessible menu; Task 6 verifies 375 px and 320 px behavior.

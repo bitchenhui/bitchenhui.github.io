@@ -1,0 +1,52 @@
+---
+layout: default
+title: 首页
+---
+<section class="section hero">
+  <div class="shell">
+    <p class="tag">PERSONAL SITE / 01</p>
+    <h1 class="section-heading">个人网站首版示例<br>TODO: 替换为你的个人定位</h1>
+    <p class="section-lead">{{ site.author.intro }}</p>
+    <div class="button-row">
+      <a class="button" href="{{ '/projects/' | relative_url }}">查看项目</a>
+      <a class="button button-secondary" href="{{ '/blog/' | relative_url }}">阅读博客</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <h2 class="section-heading">关注的方向</h2>
+    <ul class="tag-list" aria-label="技能与方向">
+      {% for skill in site.skills %}
+        <li class="tag">{{ skill | escape }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <h2 class="section-heading">精选项目</h2>
+    <p class="section-lead">这些内容均为待替换的结构示例，用于说明作品集的呈现方式。</p>
+    <div class="card-grid">
+      {% assign featured_projects = site.data.projects | where: "featured", true %}
+      {% for project in featured_projects limit: 3 %}
+        {% include project-card.html project=project %}
+      {% endfor %}
+    </div>
+    <p><a href="{{ '/projects/' | relative_url }}">查看全部项目 →</a></p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <h2 class="section-heading">最新文章</h2>
+    <div class="card-grid">
+      {% for post in site.posts limit: 3 %}
+        {% include post-card.html post=post %}
+      {% endfor %}
+    </div>
+    <p><a href="{{ '/blog/' | relative_url }}">查看全部文章 →</a></p>
+  </div>
+</section>
