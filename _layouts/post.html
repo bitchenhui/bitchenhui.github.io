@@ -3,7 +3,7 @@ layout: default
 ---
 <article class="section" aria-labelledby="post-title">
   <div class="shell prose">
-    <header class="post-header">
+    <header>
       <p><a href="{{ '/blog/' | relative_url }}">返回博客</a></p>
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y年%m月%d日" }}</time>
       <h1 id="post-title">{{ page.title | escape }}</h1>
@@ -15,7 +15,7 @@ layout: default
         </ul>
       {% endif %}
     </header>
-    <div class="post-content">
+    <div>
       {{ content }}
     </div>
   </div>

@@ -116,3 +116,28 @@ Ruby remains unavailable in this environment. The exact verifier command could n
 ### Follow-up concerns
 
 - Full Jekyll build and generated-site verification still require Ruby, Bundler, and the project dependencies in another environment.
+
+## Remaining template-class review follow-up — 2026-08-21
+
+### Fix applied
+
+- Removed only unsupported classes from reusable content templates/layouts: `project-card`, `project-card__stack`, `project-card__actions`, `post-card`, `post-header`, and `post-content`. Existing `card`, `tag-list`, `tag`, `section`, `shell`, and `prose` classes and the original semantic elements remain intact.
+
+### Verification results
+
+```text
+$ rg "(project-card|project-card__stack|project-card__actions|post-card|post-header|post-content)" _includes/project-card.html _includes/post-card.html _layouts/post.html
+No matches found
+
+$ rg "\\.(project-card|project-card__stack|project-card__actions|post-card|post-header|post-content)" assets/css/main.scss
+No matches found
+
+$ git diff --check
+Exit code 0
+```
+
+The focused checks prove each removed class is absent from the three target templates/layout and that `main.scss` defines none of their selectors.
+
+### Follow-up concerns
+
+- Full Jekyll build and generated-site verification remain blocked locally because Ruby, Bundler, and the project dependencies are unavailable.
