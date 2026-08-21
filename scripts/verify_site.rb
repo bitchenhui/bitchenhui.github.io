@@ -15,6 +15,13 @@ REQUIRED_FILES = %w[
   robots.txt
 ].freeze
 
+projects_data = Pathname.new("_data/projects.yml")
+abort "FAIL: _data/projects.yml does not exist." unless projects_data.file?
+
+projects_content = projects_data.read
+abort "FAIL: _data/projects.yml has no featured project." unless projects_content.include?("featured: true")
+abort "FAIL: _data/projects.yml is missing an explicit TODO placeholder." unless projects_content.include?("TODO: 替换为")
+
 abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
 
 missing = REQUIRED_FILES.reject { |path| (SITE / path).file? }
@@ -39,12 +46,5 @@ required_index_markers = %w[
 ]
 missing_markers = required_index_markers.reject { |marker| index.include?(marker) }
 abort "FAIL: index.html is missing shell markers: #{missing_markers.join(', ')}" unless missing_markers.empty?
-
-projects_data = Pathname.new("_data/projects.yml")
-abort "FAIL: _data/projects.yml does not exist." unless projects_data.file?
-
-projects_content = projects_data.read
-abort "FAIL: _data/projects.yml has no featured project." unless projects_content.include?("featured: true")
-abort "FAIL: _data/projects.yml is missing an explicit TODO placeholder." unless projects_content.include?("TODO: 替换为")
 
 puts "PASS: verified #{html_files.length} HTML file(s) and #{REQUIRED_FILES.length} required site file(s)."

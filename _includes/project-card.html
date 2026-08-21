@@ -1,4 +1,6 @@
-<article class="project-card">
+{% assign project_url = include.project.project_url | default: "" | strip %}
+{% assign repository_url = include.project.repository_url | default: "" | strip %}
+<article class="card project-card">
   <h2>{{ include.project.title | escape }}</h2>
   <p>{{ include.project.description | escape }}</p>
   {% if include.project.stack and include.project.stack != empty %}
@@ -8,13 +10,13 @@
       {% endfor %}
     </ul>
   {% endif %}
-  {% if include.project.project_url != empty or include.project.repository_url != empty %}
+  {% if project_url != "" or repository_url != "" %}
     <div class="project-card__actions">
-      {% if include.project.project_url != empty %}
-        <a href="{{ include.project.project_url | escape }}" target="_blank" rel="noopener">查看项目</a>
+      {% if project_url != "" %}
+        <a href="{{ project_url | escape }}" target="_blank" rel="noopener">查看项目</a>
       {% endif %}
-      {% if include.project.repository_url != empty %}
-        <a href="{{ include.project.repository_url | escape }}" target="_blank" rel="noopener">查看代码</a>
+      {% if repository_url != "" %}
+        <a href="{{ repository_url | escape }}" target="_blank" rel="noopener">查看代码</a>
       {% endif %}
     </div>
   {% endif %}

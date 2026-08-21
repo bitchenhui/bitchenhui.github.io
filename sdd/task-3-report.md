@@ -86,3 +86,33 @@ A focused review of the current Task 3 changes reported no actionable defects.
 
 - Ruby, Bundler, and Jekyll are not installed, so `bundle exec jekyll build` and `ruby scripts/verify_site.rb` still require execution in an environment with the project's Ruby dependencies.
 - The project cards deliberately render no external controls for the supplied placeholder records because both URLs are blank; this satisfies the no-empty-`href` constraint.
+
+## Review-finding follow-up — 2026-08-21
+
+### Fixes applied
+
+- `_includes/project-card.html` now normalizes `project_url` and `repository_url` through `default: "" | strip`, tests them against `""`, and renders every external link from its normalized assigned value. Omitted, nil, blank, and whitespace-only values therefore cannot produce an empty `href`.
+- Project and post cards now consume the existing `card` base CSS class, and each rendered tag consumes the existing `tag` CSS class.
+- Page and post layouts now use the existing `section`, `shell`, and `prose` CSS classes while retaining their existing semantic elements, escaped titles/tags, optional tags, return link, date output, and content output.
+- `scripts/verify_site.rb` now validates `_data/projects.yml` before it checks for `_site` and generated routes; every prior check remains in place.
+
+### Verification results
+
+```text
+$ python [focused static review regression check]
+PASS: Task 3 review regression contracts
+Exit code 0
+
+$ git diff --check
+Exit code 0
+
+$ ruby scripts/verify_site.rb
+/usr/bin/bash: line 1: ruby: command not found
+Exit code 127
+```
+
+Ruby remains unavailable in this environment. The exact verifier command could not execute; the focused static check verifies the requested Liquid assignments/guards, assigned URL use, CSS-class contracts, source escaping, and verifier ordering.
+
+### Follow-up concerns
+
+- Full Jekyll build and generated-site verification still require Ruby, Bundler, and the project dependencies in another environment.

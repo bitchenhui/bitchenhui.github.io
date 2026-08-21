@@ -1,7 +1,9 @@
 ---
 layout: default
 ---
-<section class="page-section" aria-labelledby="page-title">
-  <h1 id="page-title">{{ page.title | escape }}</h1>
-  {{ content }}
+<section class="section" aria-labelledby="page-title">
+  <div class="shell prose">
+    <h1 id="page-title">{{ page.title | escape }}</h1>
+    {{ content }}
+  </div>
 </section>
