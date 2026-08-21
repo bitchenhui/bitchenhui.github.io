@@ -9,6 +9,9 @@ REQUIRED_FILES = %w[
   projects/index.html
   blog/index.html
   about/index.html
+  blog/encoding-performance/index.html
+  blog/engineering-practice/index.html
+  blog/toolchain-notes/index.html
   404.html
   feed.xml
   sitemap.xml
@@ -46,5 +49,10 @@ required_index_markers = %w[
 ]
 missing_markers = required_index_markers.reject { |marker| index.include?(marker) }
 abort "FAIL: index.html is missing shell markers: #{missing_markers.join(', ')}" unless missing_markers.empty?
+
+home = (SITE / "index.html").read
+abort "FAIL: home page lacks the hero heading." unless home.include?("个人网站首版示例")
+blog_index = (SITE / "blog/index.html").read
+abort "FAIL: blog index lacks its empty-state fallback." unless blog_index.include?("暂时还没有文章")
 
 puts "PASS: verified #{html_files.length} HTML file(s) and #{REQUIRED_FILES.length} required site file(s)."

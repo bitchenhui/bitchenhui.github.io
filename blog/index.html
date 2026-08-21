@@ -1,0 +1,15 @@
+---
+layout: page
+title: 博客
+permalink: /blog/
+---
+<p class="section-lead">记录工程实践、性能思考与工具链探索。</p>
+{% if site.posts.size > 0 %}
+  <div class="card-grid">
+    {% for post in site.posts %}
+      {% include post-card.html post=post %}
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="empty-state">暂时还没有文章。请在 <code>_posts/</code> 中新增一篇 Markdown 文章。</p>
+{% endif %}

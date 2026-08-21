@@ -1,0 +1,11 @@
+---
+layout: page
+title: 项目
+permalink: /projects/
+---
+<p class="section-lead">以下为项目展示结构示例。发布前请将说明、链接和技术栈替换为真实内容。</p>
+<div class="card-grid">
+  {% for project in site.data.projects %}
+    {% include project-card.html project=project %}
+  {% endfor %}
+</div>
