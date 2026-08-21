@@ -203,3 +203,23 @@ The focused static check asserts each exact required root/date/return-label/CSS 
 ### Concerns
 
 - Ruby is not installed in this environment, so `ruby scripts/verify_site.rb` and the Jekyll build cannot run locally.
+
+## Article date metadata correction — 2026-08-21
+
+### Change
+
+- Wrapped the existing correctly formatted post date `<time>` element in `_layouts/post.html` with exactly one `<p>...</p>` element. No other content, style, or configuration changed.
+
+### Verification
+
+```text
+$ python [exact post date markup check]
+Focused date metadata check: PASS
+
+$ git diff --check
+Exit code 0
+```
+
+### Concerns
+
+- None for this focused markup correction.
