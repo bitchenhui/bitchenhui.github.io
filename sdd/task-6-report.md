@@ -23,3 +23,11 @@ Run `bundle exec jekyll build && ruby scripts/verify_site.rb` in a Ruby/Bundler-
 ## Report
 
 This file records the final Task 6 result.
+
+## Review Finding Follow-up
+
+- Updated the `README.md` 独立域名 sequence with a single explicit step to create the root-level `CNAME` file only after the DNS and actual domain are confirmed; its entire content must be the selected domain, such as `www.example.com`.
+- Kept the existing warning against committing `CNAME` before a real domain is configured and renumbered the subsequent Enforce HTTPS and retest steps.
+- Focused static text check: passed.
+- `git diff --check`: passed.
+- Ruby and Bundler remain unavailable in this environment, so the existing Jekyll build and Ruby verifier were not run.

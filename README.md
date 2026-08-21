@@ -90,7 +90,8 @@ GitHub Pages 会从该分支的根目录构建 Jekyll 网站，不需要 GitHub 
 1. 在 GitHub 仓库的 **Settings → Pages → Custom domain** 中填写实际域名，例如 `www.example.com`，并保存。
 2. 在域名 DNS 控制台添加推荐记录：为 `www` 添加指向 `bitchenhui.github.io` 的 `CNAME`；若使用根域名 `example.com`，按 GitHub Pages 文档添加指向 GitHub Pages IP 地址的 `A` 记录（可同时配置 `www` 的 `CNAME`）。
 3. 等待 DNS 生效，并确认 GitHub Pages 中的自定义域名状态没有错误。
-4. 在 Pages 设置中启用 **Enforce HTTPS**；证书签发前该选项可能暂不可用，应等待后再开启。
-5. 重新访问自定义域名及原始 GitHub Pages 地址，运行本地构建与 `ruby scripts/verify_site.rb`，并确认站内链接、重定向和 HTTPS 都正常。
+4. 仅在 DNS 和实际域名均已确认后，在根目录创建 `CNAME` 文件；文件内容只能是实际选择的域名，例如 `www.example.com`。
+5. 在 Pages 设置中启用 **Enforce HTTPS**；证书签发前该选项可能暂不可用，应等待后再开启。
+6. 重新访问自定义域名及原始 GitHub Pages 地址，运行本地构建与 `ruby scripts/verify_site.rb`，并确认站内链接、重定向和 HTTPS 都正常。
 
 > **不要在拥有并配置真实域名之前创建 `CNAME` 文件。** 目前仓库不应包含预设 `CNAME`，也不应添加 `.nojekyll`；后者会跳过 GitHub Pages 的 Jekyll 处理，破坏本站的原生构建流程。
