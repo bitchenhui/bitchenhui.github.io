@@ -1,0 +1,14 @@
+<div class="shell site-footer__inner">
+  <p>© {{ 'now' | date: '%Y' }} {{ site.author.name }}。保留所有权利。</p>
+  <div class="site-footer__links" aria-label="社交链接">
+    {% if site.author.email != empty %}
+      <a href="mailto:{{ site.author.email }}">邮箱</a>
+    {% endif %}
+    {% if site.author.github != empty %}
+      <a href="{{ site.author.github }}" target="_blank" rel="me noopener">GitHub</a>
+    {% endif %}
+    {% if site.author.linkedin != empty %}
+      <a href="{{ site.author.linkedin }}" target="_blank" rel="me noopener">LinkedIn</a>
+    {% endif %}
+  </div>
+</div>

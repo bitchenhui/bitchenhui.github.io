@@ -30,4 +30,14 @@ html_files.each do |file|
   abort "FAIL: #{file} contains an empty href attribute." if body.match?(/href=[\"']\s*[\"']/)
 end
 
+index = (SITE / "index.html").read
+required_index_markers = %w[
+  id=\"primary-navigation\"
+  id=\"theme-toggle\"
+  /assets/css/main.css
+  /assets/js/site.js
+]
+missing_markers = required_index_markers.reject { |marker| index.include?(marker) }
+abort "FAIL: index.html is missing shell markers: #{missing_markers.join(', ')}" unless missing_markers.empty?
+
 puts "PASS: verified #{html_files.length} HTML file(s) and #{REQUIRED_FILES.length} required site file(s)."

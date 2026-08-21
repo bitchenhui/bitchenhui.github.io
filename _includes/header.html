@@ -1,0 +1,12 @@
+<div class="shell site-header__inner">
+  <a class="site-brand" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+  <div class="site-header__controls">
+    <button id="theme-toggle" class="icon-button" type="button" aria-pressed="false" aria-label="切换深色模式">深色</button>
+    <button id="mobile-menu-button" class="icon-button mobile-menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation">菜单</button>
+  </div>
+  <nav id="primary-navigation" class="primary-navigation" aria-label="主导航">
+    {% for item in site.navigation %}
+      <a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>
+    {% endfor %}
+  </nav>
+</div>
