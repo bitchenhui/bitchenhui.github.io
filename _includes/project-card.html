@@ -1,0 +1,21 @@
+<article class="project-card">
+  <h2>{{ include.project.title | escape }}</h2>
+  <p>{{ include.project.description | escape }}</p>
+  {% if include.project.stack and include.project.stack != empty %}
+    <ul class="project-card__stack" aria-label="技术栈">
+      {% for item in include.project.stack %}
+        <li>{{ item | escape }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% if include.project.project_url != empty or include.project.repository_url != empty %}
+    <div class="project-card__actions">
+      {% if include.project.project_url != empty %}
+        <a href="{{ include.project.project_url | escape }}" target="_blank" rel="noopener">查看项目</a>
+      {% endif %}
+      {% if include.project.repository_url != empty %}
+        <a href="{{ include.project.repository_url | escape }}" target="_blank" rel="noopener">查看代码</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</article>

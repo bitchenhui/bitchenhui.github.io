@@ -1,0 +1,29 @@
+- title: "视频编码优化工具"
+  description: "TODO: 替换为真实项目。示例：用于定位编码热点、比较实验结果并辅助优化决策的本地工具。"
+  stack:
+    - C++
+    - Python
+    - 性能分析
+  featured: true
+  project_url: ""
+  repository_url: ""
+
+- title: "性能分析平台"
+  description: "TODO: 替换为真实项目。示例：将性能数据处理、可视化与自动化流程集中管理的平台。"
+  stack:
+    - 数据处理
+    - 可视化
+    - 自动化
+  featured: true
+  project_url: ""
+  repository_url: ""
+
+- title: "个人开源工具"
+  description: "TODO: 替换为真实项目。示例：面向日常开发的命令行工具集合，用于提升工程效率。"
+  stack:
+    - 开源
+    - CLI
+    - 工程效率
+  featured: true
+  project_url: ""
+  repository_url: ""
