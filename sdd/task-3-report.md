@@ -169,3 +169,37 @@ Exit code 127
 ### Concerns
 
 - Ruby remains unavailable in this environment, so the Ruby verifier and Jekyll build cannot run locally.
+
+## Final corrective fix — 2026-08-21
+
+### Prerequisites
+
+Cherry-picked the complete requested prerequisite range through `d5a148ddbf3db595ea2faf0e6cefa19a8b0c79d0` before this correction. The local cherry-pick commits are `fba5351`, `1a9dfd5`, `df1a751`, `ac84c92`, `ee80677`, and `0e7025f`.
+
+### Corrections applied
+
+- `_includes/project-card.html` now has the required `<article class="card project-card">` root while preserving normalized-and-stripped URL assignments, guarded actions, the `h3` title, `tag-list`/`tag` stack markup, and `button button-secondary` action anchors.
+- `_includes/post-card.html` now has the required `<article class="card post-card">` root and emits the exact required paragraph-wrapped date/time markup with `%Y 年 %m 月 %d 日`; its escaped summary, `h3` title, and tag list remain intact.
+- `_layouts/post.html` now renders `← 返回博客` and uses `%Y 年 %m 月 %d 日`, while retaining the existing semantic article/header structure, `section`, `shell`, `prose`, and `section-heading` classes.
+- `assets/css/main.scss` now defines only the missing planned action styles: `.button-row` and `.button-secondary` with the required declarations.
+
+### Verification results
+
+```text
+$ python [exact Task 3 corrective contract check]
+PASS: exact Task 3 correction contracts
+Exit code 0
+
+$ git diff --check
+Exit code 0
+
+$ ruby scripts/verify_site.rb
+/usr/bin/bash: line 1: ruby: command not found
+Exit code 127
+```
+
+The focused static check asserts each exact required root/date/return-label/CSS selector string, plus retained URL guards, title heading levels, semantic layout classes, escaped post summary, and tag list markup.
+
+### Concerns
+
+- Ruby is not installed in this environment, so `ruby scripts/verify_site.rb` and the Jekyll build cannot run locally.
