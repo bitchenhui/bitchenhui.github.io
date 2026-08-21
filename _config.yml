@@ -1,5 +1,5 @@
-title: "TODO: 替换为你的网站名称"
-description: "TODO: 替换为一句中文个人定位"
+title: "dch个人空间"
+description: "A video codecer who running to AGI"
 url: "https://bitchenhui.github.io"
 baseurl: ""
 lang: "zh-CN"
@@ -24,18 +24,18 @@ navigation:
     url: /about/
 
 author:
-  name: "TODO: 替换为你的姓名"
-  role: "TODO: 替换为你的个人定位"
-  intro: "TODO: 用两三句话介绍你的技术方向、兴趣与正在做的事情。"
-  email: ""
+  name: "dch"
+  role: "主动拥抱AGI的视频编解码算法工程师"
+  intro: "用AI重塑所有流程中；ACL努力康复中的篮球爱好者；北京探店"
+  email: "dch950301@163.com"
   github: ""
   linkedin: ""
   resume_url: ""
 
 skills:
-  - 性能优化
-  - 系统工程
-  - 技术写作
+  - llm的eoH算法自动迭代设计
+  - 视频编解码算法优化(H265/H266/AV1/NVC)
+  - vod/live/rtc场景qos/qoe优化
 
 exclude:
   - Gemfile
