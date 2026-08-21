@@ -55,4 +55,14 @@ abort "FAIL: home page lacks the hero heading." unless home.include?("个人网�
 blog_index = (SITE / "blog/index.html").read
 abort "FAIL: blog index lacks its empty-state fallback." unless blog_index.include?("暂时还没有文章")
 
+not_found = (SITE / "404.html").read
+abort "FAIL: 404 page lacks the home link." unless not_found.include?("返回首页")
+feed = (SITE / "feed.xml").read
+abort "FAIL: feed output has no feed element." unless feed.include?("<feed")
+abort "FAIL: feed output has no Atom media type." unless feed.include?("application/atom+xml")
+robots = (SITE / "robots.txt").read
+abort "FAIL: robots output has no sitemap directive." unless robots.include?("Sitemap:")
+sitemap = (SITE / "sitemap.xml").read
+abort "FAIL: sitemap output has no canonical site URL." unless sitemap.include?("https://bitchenhui.github.io/")
+
 puts "PASS: verified #{html_files.length} HTML file(s) and #{REQUIRED_FILES.length} required site file(s)."
