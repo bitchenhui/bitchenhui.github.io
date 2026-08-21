@@ -25,6 +25,16 @@ projects_content = projects_data.read
 abort "FAIL: project data has no featured item." unless projects_content.include?("featured: true")
 abort "FAIL: project data has no explicit placeholder marker." unless projects_content.include?("TODO: 替换为")
 
+readme = Pathname.new("README.md")
+abort "FAIL: README is missing." unless readme.file?
+
+readme_content = readme.read
+required_readme_sections = %w[本地预览 写文章 添加项目 独立域名]
+missing_readme_sections = required_readme_sections.reject { |section| readme_content.include?(section) }
+unless missing_readme_sections.empty?
+  abort "FAIL: README is missing required sections: #{missing_readme_sections.join(', ')}"
+end
+
 abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
 
 missing = REQUIRED_FILES.reject { |path| (SITE / path).file? }
