@@ -141,3 +141,31 @@ The focused checks prove each removed class is absent from the three target temp
 ### Follow-up concerns
 
 - Full Jekyll build and generated-site verification remain blocked locally because Ruby, Bundler, and the project dependencies are unavailable.
+
+## Final Task 3 contract corrections — 2026-08-21
+
+### Corrections applied
+
+- `scripts/verify_site.rb` retains its project-data assertions before `_site` validation and now emits the required exact error messages.
+- `_includes/project-card.html` retains `card`, uses an `h3` title, applies `tag-list`/`tag` to the stack, and applies `button-row` plus `button button-secondary` to guarded external actions.
+- `_includes/post-card.html` retains `card` and tag classes while using an `h3` title.
+- `_layouts/page.html` and `_layouts/post.html` retain existing semantics and content while adding `section-heading` to their `h1` elements.
+
+### Verification results
+
+```text
+$ python [exact Task 3 content-model contract check]
+PASS: exact Task 3 content-model contracts
+Exit code 0
+
+$ git diff --check
+Exit code 0
+
+$ ruby scripts/verify_site.rb
+/usr/bin/bash: line 1: ruby: command not found
+Exit code 127
+```
+
+### Concerns
+
+- Ruby remains unavailable in this environment, so the Ruby verifier and Jekyll build cannot run locally.

@@ -1,22 +1,22 @@
 {% assign project_url = include.project.project_url | default: "" | strip %}
 {% assign repository_url = include.project.repository_url | default: "" | strip %}
 <article class="card">
-  <h2>{{ include.project.title | escape }}</h2>
+  <h3>{{ include.project.title | escape }}</h3>
   <p>{{ include.project.description | escape }}</p>
   {% if include.project.stack and include.project.stack != empty %}
-    <ul aria-label="技术栈">
+    <ul class="tag-list" aria-label="技术栈">
       {% for item in include.project.stack %}
-        <li>{{ item | escape }}</li>
+        <li class="tag">{{ item | escape }}</li>
       {% endfor %}
     </ul>
   {% endif %}
   {% if project_url != "" or repository_url != "" %}
-    <div>
+    <div class="button-row">
       {% if project_url != "" %}
-        <a href="{{ project_url | escape }}" target="_blank" rel="noopener">查看项目</a>
+        <a class="button button-secondary" href="{{ project_url | escape }}" target="_blank" rel="noopener">查看项目</a>
       {% endif %}
       {% if repository_url != "" %}
-        <a href="{{ repository_url | escape }}" target="_blank" rel="noopener">查看代码</a>
+        <a class="button button-secondary" href="{{ repository_url | escape }}" target="_blank" rel="noopener">查看代码</a>
       {% endif %}
     </div>
   {% endif %}

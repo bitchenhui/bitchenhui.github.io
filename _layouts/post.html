@@ -6,7 +6,7 @@ layout: default
     <header>
       <p><a href="{{ '/blog/' | relative_url }}">返回博客</a></p>
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y年%m月%d日" }}</time>
-      <h1 id="post-title">{{ page.title | escape }}</h1>
+      <h1 id="post-title" class="section-heading">{{ page.title | escape }}</h1>
       {% if page.tags and page.tags != empty %}
         <ul class="tag-list" aria-label="文章标签">
           {% for tag in page.tags %}
