@@ -183,6 +183,11 @@ main { min-height: calc(100vh - 10rem); }
   .site-header__inner { grid-template-columns: 1fr auto auto; position: relative; }
   .mobile-menu-button { display: inline-flex; }
   .primary-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  html.js .primary-navigation {
     display: none;
     position: absolute;
     top: calc(100% - 0.25rem);
@@ -195,7 +200,7 @@ main { min-height: calc(100vh - 10rem); }
     background: var(--surface);
     box-shadow: var(--shadow);
   }
-  .primary-navigation.is-open { display: flex; }
+  html.js .primary-navigation.is-open { display: flex; }
   .primary-navigation a { padding: 0.7rem 0.8rem; }
 
   .card-grid { grid-template-columns: 1fr; }

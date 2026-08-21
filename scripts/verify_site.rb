@@ -62,8 +62,11 @@ abort "FAIL: index.html is missing shell markers: #{missing_markers.join(', ')}"
 
 home = (SITE / "index.html").read
 abort "FAIL: home page lacks the hero heading." unless home.include?("个人网站首版示例")
+blog_source = Pathname.new("blog/index.html")
+abort "FAIL: blog source page is missing." unless blog_source.file?
+abort "FAIL: blog source lacks its empty-state fallback." unless blog_source.read.include?("暂时还没有文章")
 blog_index = (SITE / "blog/index.html").read
-abort "FAIL: blog index lacks its empty-state fallback." unless blog_index.include?("暂时还没有文章")
+abort "FAIL: blog index lacks the rendered post title." unless blog_index.include?("编码性能分析：先建立可复现的基线")
 
 not_found = (SITE / "404.html").read
 abort "FAIL: 404 page lacks the home link." unless not_found.include?("返回首页")

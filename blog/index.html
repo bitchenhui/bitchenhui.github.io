@@ -4,6 +4,7 @@ title: 博客
 permalink: /blog/
 ---
 <p class="section-lead">记录工程实践、性能思考与工具链探索。</p>
+<h2>全部文章</h2>
 {% if site.posts.size > 0 %}
   <div class="card-grid">
     {% for post in site.posts %}
@@ -13,3 +14,16 @@ permalink: /blog/
 {% else %}
   <p class="empty-state">暂时还没有文章。请在 <code>_posts/</code> 中新增一篇 Markdown 文章。</p>
 {% endif %}
+
+<section aria-labelledby="archive-heading">
+  <h2 id="archive-heading">文章归档</h2>
+  {% if site.posts.size > 0 %}
+    <ul>
+      {% for post in site.posts %}
+        <li><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y年%m月%d日" }}</time>：<a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>暂时还没有可归档的文章。</p>
+  {% endif %}
+</section>

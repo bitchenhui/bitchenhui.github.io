@@ -2,6 +2,7 @@
   "use strict";
 
   var root = document.documentElement;
+  root.classList.add("js");
   var themeToggle = document.getElementById("theme-toggle");
   var menuButton = document.getElementById("mobile-menu-button");
   var navigation = document.getElementById("primary-navigation");
