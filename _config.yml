@@ -13,16 +13,6 @@ plugins:
 
 collections: {}
 
-navigation:
-  - title: 首页
-    url: /
-  - title: 项目
-    url: /projects/
-  - title: 博客
-    url: /blog/
-  - title: 关于
-    url: /about/
-
 author:
   name: "dch"
   role: "主动拥抱AGI的视频编解码算法工程师"
@@ -32,13 +22,24 @@ author:
   linkedin: ""
   resume_url: ""
 
+current_focus:
+  - 用 AI 重塑视频编码算法研发流程
+  - 视频编解码性能与质量优化
+  - VOD / Live / RTC 场景体验优化
+
 skills:
-  - llm的eoH算法自动迭代设计
-  - 视频编解码算法优化(H265/H266/AV1/NVC)
-  - vod/live/rtc场景qos/qoe优化
+  - name: llm 的 EoH 算法自动迭代设计
+    description: 探索 AI 驱动的算法生成、评估与持续迭代流程。
+  - name: 视频编解码算法优化
+    description: 聚焦 H.265、H.266、AV1 与 NVC 的编码效率和工程性能。
+  - name: QoS / QoE 优化
+    description: 面向 VOD、Live 与 RTC 场景分析并改善端到端体验。
 
 exclude:
   - Gemfile
   - Gemfile.lock
   - scripts
   - docs
+  - sdd
+  - .superpowers
+  - .claude

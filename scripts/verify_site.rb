@@ -35,6 +35,22 @@ unless missing_readme_sections.empty?
   abort "FAIL: README is missing required sections: #{missing_readme_sections.join(', ')}"
 end
 
+config = Pathname.new("_config.yml")
+abort "FAIL: _config.yml is missing." unless config.file?
+config_content = config.read
+
+abort "FAIL: obsolete navigation configuration remains." if config_content.match?(/^navigation:/)
+abort "FAIL: current focus is missing." unless config_content.match?(/^current_focus:/)
+abort "FAIL: capability descriptions are missing." unless config_content.include?("description:")
+
+experience_data = Pathname.new("_data/experience.yml")
+abort "FAIL: experience data file is missing." unless experience_data.file?
+experience_content = experience_data.read
+%w[period role summary highlights].each do |field|
+  abort "FAIL: experience data lacks #{field}." unless experience_content.match?(/^\s*#{field}:/)
+end
+abort "FAIL: experience placeholders are not explicit." unless experience_content.include?("TODO: 替换为")
+
 abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
 
 missing = REQUIRED_FILES.reject { |path| (SITE / path).file? }
