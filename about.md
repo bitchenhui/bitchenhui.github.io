@@ -5,4 +5,4 @@ permalink: /about/
 redirect_to: /#experience
 canonical_url: /#experience
 ---
-<p>关于内容已合并到个人说明书首页。<a href="{{ '/#experience' | relative_url }}">继续前往经历板块</a>。</p>
+<p>关于内容已合并到个人说明书首页。<a href="{{ page.redirect_to | relative_url }}">继续前往经历板块</a>。</p>

@@ -61,7 +61,8 @@ required_includes = {
 required_includes.each do |path, markers|
   file = Pathname.new(path)
   abort "FAIL: #{path} is missing." unless file.file?
-  missing_markers = markers.reject { |marker| file.read.include?(marker) }
+  body = file.read
+  missing_markers = markers.reject { |marker| body.include?(marker) }
   abort "FAIL: #{path} lacks #{missing_markers.join(', ')}." unless missing_markers.empty?
 end
 
@@ -141,14 +142,13 @@ redirect_sources.each do |path, target|
   abort "FAIL: #{path} lacks redirect target #{target}." unless body.include?("redirect_to: #{target}")
   abort "FAIL: #{path} lacks canonical target #{target}." unless body.include?("canonical_url: #{target}")
   abort "FAIL: #{path} lacks a fallback link." unless body.include?("继续前往")
+  fallback_href = 'href="{{ page.redirect_to | relative_url }}"'
+  abort "FAIL: #{path} fallback does not use page.redirect_to." unless body.include?(fallback_href)
 end
 
 post_source = Pathname.new("_layouts/post.html").read
 abort "FAIL: post layout does not return to /#articles." unless post_source.include?("/#articles")
 abort "FAIL: post layout still links to /blog/." if post_source.include?('href="{{ \'/blog/\'')
-
-blog_index = (SITE / "blog/index.html").read
-abort "FAIL: blog index lacks the rendered post title." unless blog_index.include?("编码性能分析：先建立可复现的基线")
 
 not_found = (SITE / "404.html").read
 abort "FAIL: 404 page lacks the home link." unless not_found.include?("返回首页")

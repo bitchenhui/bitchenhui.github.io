@@ -19,4 +19,11 @@ Implemented Task 5 compatibility routing on the isolated Task 5 branch.
 
 ## Blocker / Concerns
 
-Ruby is unavailable in this environment, so `ruby scripts/verify_site.rb` and a Jekyll runtime build were not run and are not claimed as passing. Static checks confirm that root-relative fragment targets are piped through Jekyll's `relative_url`, preserving configured `baseurl` before the fragment. Simplification review suggestions to derive fallback/canonical values from `redirect_to` or introduce a lighter redirect layout were intentionally not applied because the Task 5 brief explicitly requires separate `canonical_url` front matter and the exact compatibility-page shape.
+Ruby is unavailable in this environment, so `ruby scripts/verify_site.rb` and a Jekyll runtime build were not run and are not claimed as passing. Static checks confirm that root-relative fragment targets are piped through Jekyll's `relative_url`, preserving configured `baseurl` before the fragment. The fallback links now consume `page.redirect_to`, while canonical front matter remains explicit as required by the Task 5 interface.
+
+## Review Fix Verification
+
+- RED: the focused static assertion failed with `FAIL: compatibility fallback href does not consume page.redirect_to.` before the review fixes.
+- GREEN: the focused review check passed: `PASS: all four Task 5 review corrections verified.` It confirms all three fallbacks consume `page.redirect_to`, the verifier requires that exact href mechanism, the obsolete generated blog-title assertion is absent, and required includes are each read once.
+- Full Task 5 static contracts passed after the fixes.
+- `git diff --check` passed after the fixes.
