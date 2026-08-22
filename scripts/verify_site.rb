@@ -130,9 +130,23 @@ missing_home_markers = required_home_markers.reject { |marker| home_source.inclu
 abort "FAIL: homepage source lacks #{missing_home_markers.join(', ')}." unless missing_home_markers.empty?
 abort "FAIL: homepage still filters featured projects." if home_source.include?('where: "featured"')
 abort "FAIL: homepage still limits primary content." if home_source.match?(/for (project|post).+limit:/)
-blog_source = Pathname.new("blog/index.html")
-abort "FAIL: blog source page is missing." unless blog_source.file?
-abort "FAIL: blog source lacks its empty-state fallback." unless blog_source.read.include?("暂时还没有文章")
+
+redirect_sources = {
+  "projects/index.html" => "/#projects",
+  "blog/index.html" => "/#articles",
+  "about.md" => "/#experience"
+}.freeze
+redirect_sources.each do |path, target|
+  body = Pathname.new(path).read
+  abort "FAIL: #{path} lacks redirect target #{target}." unless body.include?("redirect_to: #{target}")
+  abort "FAIL: #{path} lacks canonical target #{target}." unless body.include?("canonical_url: #{target}")
+  abort "FAIL: #{path} lacks a fallback link." unless body.include?("继续前往")
+end
+
+post_source = Pathname.new("_layouts/post.html").read
+abort "FAIL: post layout does not return to /#articles." unless post_source.include?("/#articles")
+abort "FAIL: post layout still links to /blog/." if post_source.include?('href="{{ \'/blog/\'')
+
 blog_index = (SITE / "blog/index.html").read
 abort "FAIL: blog index lacks the rendered post title." unless blog_index.include?("编码性能分析：先建立可复现的基线")
 

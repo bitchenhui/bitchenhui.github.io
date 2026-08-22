@@ -1,24 +1,22 @@
-# Task 5 Report — feed, sitemap, robots, and not-found page
+# Task 5 Report
 
 ## Status
 
-Implemented amended Task 5 after cherry-picking all nine required prerequisite commits in the supplied order.
+Implemented Task 5 compatibility routing on the isolated Task 5 branch.
 
 ## Changes
 
-- Added `404.html` using `layout: page`, title `页面未找到`, permalink `/404.html`, a Chinese explanatory sentence, and a `.button` home link labeled `返回首页`.
-- Added `robots.txt` with the exact required crawler directives and canonical sitemap URL.
-- Kept `feed.xml` and `sitemap.xml` absent from the source tree. `_config.yml` already enables `jekyll-feed` and `jekyll-sitemap`, which generate those output routes during the Jekyll build.
-- Extended `scripts/verify_site.rb` after its existing checks to validate rendered 404, feed, robots, and sitemap content. The pre-existing required output route list and checks remain intact.
-- Did not add CNAME, `.nojekyll`, a framework, server, database, or GitHub Actions workflow.
+- Made `_includes/head.html` select `page.canonical_url` before `page.url`, emit exactly one canonical link, and conditionally emit a baseurl-aware meta refresh.
+- Replaced `/projects/`, `/blog/`, and `/about/` content with minimal static compatibility pages containing redirect and canonical front matter plus normal clickable fallbacks.
+- Changed article detail navigation to return directly to `/#articles` through `relative_url`.
+- Replaced obsolete blog-list source assertions with redirect-page and post-return source contracts in `scripts/verify_site.rb`.
 
-## Validation
+## TDD and Verification
 
-- Static focused contract check: passed. It checks the 404 front matter/content/button, exact robots content, absence of source `feed.xml`/`sitemap.xml`, configured plugins, new verifier markers, and prohibited deployment artifacts.
-- `git diff --check`: passed.
-- `ruby scripts/verify_site.rb`: could not run because Ruby is unavailable (`ruby: command not found`).
-- `bundle exec jekyll build`: could not run because Bundler is unavailable (`bundle: command not found`).
+- RED: Ruby was unavailable (`ruby: command not found`). A static equivalent reproduced the expected first failure: `FAIL: projects/index.html lacks redirect target /#projects.`
+- GREEN: Static source verification passed for all redirect/canonical targets, clickable fallback targets, post return link, one canonical declaration, conditional refresh metadata, and exactly-once preserved head elements.
+- `git diff --check` passed.
 
-## Concern
+## Blocker / Concerns
 
-Run `bundle exec jekyll build && ruby scripts/verify_site.rb` in a Ruby/Bundler-enabled environment to exercise Jekyll plugin-generated `feed.xml` and `sitemap.xml` output.
+Ruby is unavailable in this environment, so `ruby scripts/verify_site.rb` and a Jekyll runtime build were not run and are not claimed as passing. Static checks confirm that root-relative fragment targets are piped through Jekyll's `relative_url`, preserving configured `baseurl` before the fragment. Simplification review suggestions to derive fallback/canonical values from `redirect_to` or introduce a lighter redirect layout were intentionally not applied because the Task 5 brief explicitly requires separate `canonical_url` front matter and the exact compatibility-page shape.
