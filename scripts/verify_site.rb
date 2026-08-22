@@ -90,8 +90,22 @@ required_index_markers = %w[
 missing_markers = required_index_markers.reject { |marker| index.include?(marker) }
 abort "FAIL: index.html is missing shell markers: #{missing_markers.join(', ')}" unless missing_markers.empty?
 
-home = (SITE / "index.html").read
-abort "FAIL: home page lacks the hero heading." unless home.include?("个人网站首版示例")
+home_source = Pathname.new("index.html").read
+required_home_markers = %w[
+  id="capabilities"
+  id="experience"
+  id="projects"
+  id="articles"
+  id="contact"
+  include\ profile-card.html
+  include\ experience-item.html
+  site.data.projects
+  site.posts
+]
+missing_home_markers = required_home_markers.reject { |marker| home_source.include?(marker.tr("\\", "")) }
+abort "FAIL: homepage source lacks #{missing_home_markers.join(', ')}." unless missing_home_markers.empty?
+abort "FAIL: homepage still filters featured projects." if home_source.include?('where: "featured"')
+abort "FAIL: homepage still limits primary content." if home_source.match?(/for (project|post).+limit:/)
 blog_source = Pathname.new("blog/index.html")
 abort "FAIL: blog source page is missing." unless blog_source.file?
 abort "FAIL: blog source lacks its empty-state fallback." unless blog_source.read.include?("暂时还没有文章")
