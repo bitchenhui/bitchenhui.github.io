@@ -91,32 +91,8 @@ abort "FAIL: desktop content is not pinned to grid column 1." unless style_sourc
 abort "FAIL: desktop sidebar placement is incorrect." unless style_source.include?(".manual-sidebar { position: sticky; top: 6rem; grid-column: 2; grid-row: 1 / span 7; }")
 abort "FAIL: mobile sidebar placement is incorrect." unless style_source.include?(".manual-sidebar { position: static; grid-row: 2; margin-bottom: 3rem; }")
 
-abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
-
-missing = REQUIRED_FILES.reject { |path| (SITE / path).file? }
-abort "FAIL: missing generated files: #{missing.join(', ')}" unless missing.empty?
-
-html_files = SITE.glob("**/*.html")
-abort "FAIL: no generated HTML pages found." if html_files.empty?
-
-html_files.each do |file|
-  body = file.read
-  abort "FAIL: #{file} has no lang=\"zh-CN\" document language." unless body.include?("lang=\"zh-CN\"")
-  abort "FAIL: #{file} has no viewport metadata." unless body.include?("name=\"viewport\"")
-  abort "FAIL: #{file} contains an empty href attribute." if body.match?(/href=[\"']\s*[\"']/)
-end
-
-index = (SITE / "index.html").read
-required_index_markers = %w[
-  id=\"theme-toggle\"
-  /assets/css/main.css
-  /assets/js/site.js
-]
-missing_markers = required_index_markers.reject { |marker| index.include?(marker) }
-abort "FAIL: index.html is missing shell markers: #{missing_markers.join(', ')}" unless missing_markers.empty?
-
 home_source = Pathname.new("index.html").read
-required_home_markers = %w[
+required_home_source_markers = %w[
   id="capabilities"
   id="experience"
   id="projects"
@@ -127,8 +103,10 @@ required_home_markers = %w[
   site.data.projects
   site.posts
 ]
-missing_home_markers = required_home_markers.reject { |marker| home_source.include?(marker.tr("\\", "")) }
-abort "FAIL: homepage source lacks #{missing_home_markers.join(', ')}." unless missing_home_markers.empty?
+missing_home_source_markers = required_home_source_markers.reject { |marker| home_source.include?(marker.tr("\\", "")) }
+unless missing_home_source_markers.empty?
+  abort "FAIL: homepage source lacks #{missing_home_source_markers.join(', ')}."
+end
 abort "FAIL: homepage still filters featured projects." if home_source.include?('where: "featured"')
 abort "FAIL: homepage still limits primary content." if home_source.match?(/for (project|post).+limit:/)
 
@@ -149,6 +127,61 @@ end
 post_source = Pathname.new("_layouts/post.html").read
 abort "FAIL: post layout does not return to /#articles." unless post_source.include?("/#articles")
 abort "FAIL: post layout still links to /blog/." if post_source.include?('href="{{ \'/blog/\'')
+
+abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
+
+missing = REQUIRED_FILES.reject { |path| (SITE / path).file? }
+abort "FAIL: missing generated files: #{missing.join(', ')}" unless missing.empty?
+
+html_files = SITE.glob("**/*.html")
+abort "FAIL: no generated HTML pages found." if html_files.empty?
+
+html_files.each do |file|
+  body = file.read
+  abort "FAIL: #{file} has no lang=\"zh-CN\" document language." unless body.include?("lang=\"zh-CN\"")
+  abort "FAIL: #{file} has no viewport metadata." unless body.include?("name=\"viewport\"")
+  abort "FAIL: #{file} contains an empty href attribute." if body.match?(/href=[\"']\s*[\"']/)
+end
+
+home = (SITE / "index.html").read
+required_home_markers = %w[
+  id="theme-toggle"
+  id="capabilities"
+  id="experience"
+  id="projects"
+  id="articles"
+  id="contact"
+  class="profile-card"
+  /assets/css/main.css
+  /assets/js/site.js
+]
+missing_markers = required_home_markers.reject { |marker| home.include?(marker) }
+abort "FAIL: generated homepage lacks #{missing_markers.join(', ')}." unless missing_markers.empty?
+%w[primary-navigation mobile-menu-button].each do |obsolete|
+  abort "FAIL: generated homepage retains #{obsolete}." if home.include?(obsolete)
+end
+
+project_titles = projects_content.scan(/^\s*- title:\s*["']?([^"'\n]+)["']?/).flatten
+missing_projects = project_titles.reject { |title| home.include?(title.strip) }
+abort "FAIL: homepage omits projects: #{missing_projects.join(', ')}" unless missing_projects.empty?
+
+post_titles = Pathname.glob("_posts/*").map do |post|
+  post.read[/^title:\s*["']?([^"'\n]+)["']?/, 1]
+end.compact
+missing_posts = post_titles.reject { |title| home.include?(title.strip) }
+abort "FAIL: homepage omits posts: #{missing_posts.join(', ')}" unless missing_posts.empty?
+
+redirect_outputs = {
+  "projects/index.html" => "/#projects",
+  "blog/index.html" => "/#articles",
+  "about/index.html" => "/#experience"
+}.freeze
+redirect_outputs.each do |path, target|
+  body = (SITE / path).read
+  abort "FAIL: #{path} lacks refresh target." unless body.include?('http-equiv="refresh"') && body.include?(target)
+  abort "FAIL: #{path} lacks canonical target." unless body.include?('rel="canonical"') && body.include?(target)
+  abort "FAIL: #{path} lacks clickable fallback." unless body.include?("继续前往")
+end
 
 not_found = (SITE / "404.html").read
 abort "FAIL: 404 page lacks the home link." unless not_found.include?("返回首页")
