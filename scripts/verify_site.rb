@@ -18,6 +18,18 @@ REQUIRED_FILES = %w[
   robots.txt
 ].freeze
 
+def html_tags(body, name)
+  body.scan(/<#{Regexp.escape(name)}\b[^>]*>/im)
+end
+
+def attribute_value(tag, name)
+  return unless tag
+
+  opening_tag = tag[/\A<[^>]+>/m]
+  match = opening_tag&.match(/(?:\A|\s)#{Regexp.escape(name)}\s*=\s*(["'])(.*?)\1/im)
+  match && match[2]
+end
+
 projects_data = Pathname.new("_data/projects.yml")
 abort "FAIL: project data file is missing." unless projects_data.file?
 
@@ -38,6 +50,9 @@ end
 config = Pathname.new("_config.yml")
 abort "FAIL: _config.yml is missing." unless config.file?
 config_content = config.read
+site_url = config_content[/^url:\s*["']?([^"'\s]+)["']?/, 1]
+abort "FAIL: _config.yml has no site URL." unless site_url
+site_url = site_url.delete_suffix("/")
 
 abort "FAIL: obsolete navigation configuration remains." if config_content.match?(/^navigation:/)
 abort "FAIL: current focus is missing." unless config_content.match?(/^current_focus:/)
@@ -178,9 +193,26 @@ redirect_outputs = {
 }.freeze
 redirect_outputs.each do |path, target|
   body = (SITE / path).read
-  abort "FAIL: #{path} lacks refresh target." unless body.include?('http-equiv="refresh"') && body.include?(target)
-  abort "FAIL: #{path} lacks canonical target." unless body.include?('rel="canonical"') && body.include?(target)
-  abort "FAIL: #{path} lacks clickable fallback." unless body.include?("继续前往")
+  refresh = html_tags(body, "meta").find do |tag|
+    attribute_value(tag, "http-equiv")&.casecmp?("refresh")
+  end
+  refresh_content = attribute_value(refresh, "content")
+  unless refresh_content&.match?(/\A\s*\d+\s*;\s*url\s*=\s*#{Regexp.escape(target)}\s*\z/i)
+    abort "FAIL: #{path} lacks refresh target #{target}."
+  end
+
+  canonical = html_tags(body, "link").find do |tag|
+    attribute_value(tag, "rel")&.split&.any? { |rel| rel.casecmp?("canonical") }
+  end
+  canonical_target = "#{site_url}#{target}"
+  unless attribute_value(canonical, "href") == canonical_target
+    abort "FAIL: #{path} lacks canonical target #{canonical_target}."
+  end
+
+  fallback = body.scan(/<a\b[^>]*>.*?<\/a\s*>/im).find { |tag| tag.include?("继续前往") }
+  unless attribute_value(fallback, "href") == target
+    abort "FAIL: #{path} lacks clickable fallback to #{target}."
+  end
 end
 
 not_found = (SITE / "404.html").read
