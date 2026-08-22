@@ -51,6 +51,20 @@ experience_content = experience_data.read
 end
 abort "FAIL: experience placeholders are not explicit." unless experience_content.include?("TODO: 替换为")
 
+required_includes = {
+  "_includes/profile-card.html" => ["profile-card", "site.current_focus", "site.skills"],
+  "_includes/experience-item.html" => ["experience-item", "include.item.highlights"],
+  "_includes/post-card.html" => ["阅读全文", "include.post.url"],
+  "_includes/project-card.html" => ["project_url", "repository_url"]
+}.freeze
+
+required_includes.each do |path, markers|
+  file = Pathname.new(path)
+  abort "FAIL: #{path} is missing." unless file.file?
+  missing_markers = markers.reject { |marker| file.read.include?(marker) }
+  abort "FAIL: #{path} lacks #{missing_markers.join(', ')}." unless missing_markers.empty?
+end
+
 abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
 
 missing = REQUIRED_FILES.reject { |path| (SITE / path).file? }

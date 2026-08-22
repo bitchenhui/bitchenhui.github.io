@@ -1,0 +1,33 @@
+{% assign email = site.author.email | default: "" | strip %}
+{% assign github = site.author.github | default: "" | strip %}
+{% assign linkedin = site.author.linkedin | default: "" | strip %}
+{% assign resume_url = site.author.resume_url | default: "" | strip %}
+<aside class="profile-card" aria-labelledby="profile-card-title">
+  <p class="eyebrow">个人速览</p>
+  <h2 id="profile-card-title">{{ site.author.name | escape }}</h2>
+  <p class="profile-card__role">{{ site.author.role | escape }}</p>
+
+  {% if site.current_focus and site.current_focus != empty %}
+    <h3>当前关注</h3>
+    <ul class="profile-card__list">
+      {% for focus in site.current_focus %}<li>{{ focus | escape }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if site.skills and site.skills != empty %}
+    <h3>核心能力</h3>
+    <ul class="tag-list" aria-label="核心能力">
+      {% for skill in site.skills %}<li class="tag">{{ skill.name | escape }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
+    <h3>联系与资料</h3>
+    <ul class="profile-card__links">
+      {% if email != "" %}<li><a href="mailto:{{ email | escape }}">发送邮件</a></li>{% endif %}
+      {% if github != "" %}<li><a href="{{ github | escape }}" target="_blank" rel="noopener noreferrer">GitHub（新窗口）</a></li>{% endif %}
+      {% if linkedin != "" %}<li><a href="{{ linkedin | escape }}" target="_blank" rel="noopener noreferrer">LinkedIn（新窗口）</a></li>{% endif %}
+      {% if resume_url != "" %}<li><a href="{{ resume_url | escape }}" target="_blank" rel="noopener noreferrer">查看简历（新窗口）</a></li>{% endif %}
+    </ul>
+  {% endif %}
+</aside>

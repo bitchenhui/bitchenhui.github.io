@@ -1,85 +1,63 @@
-# Task 2 Report — reusable site shell and theme controls
+# Task 2 Report
 
-## Scope and changed files
+## Status
 
-Task 2 adds only the shared Jekyll presentation layer and updates the existing build verifier:
+Implemented the focused Liquid includes required by Task 2 and preserved the structured, personalized values introduced in Task 1. Component source contracts are now checked before generated-site checks.
 
-- `_includes/head.html` — encoding, viewport, SEO metadata, canonical and Atom links, CSS/JS assets, contextual title.
-- `_includes/header.html` — Chinese brand/navigation controls, accessible mobile menu trigger, theme toggle.
-- `_includes/footer.html` — year/author information and conditional email/GitHub/LinkedIn links.
-- `_layouts/default.html` — semantic document shell, skip link, and shared partials.
-- `assets/js/site.js` — local-storage/system-preference theme selection and safe menu/theme interactions.
-- `assets/css/main.scss` — warm light and dark semantic token palettes, responsive layout, keyboard focus, mobile navigation, and reusable component classes.
-- `scripts/verify_site.rb` — retains prior checks and now verifies the generated home page includes the navigation/theme IDs and stylesheet/script paths.
+## Files
 
-The prerequisite Task 1 configuration/assets were first cherry-picked as commit `5d36df1` (`chore: configure Jekyll site build`).
+- Created `_includes/profile-card.html`: consumes `site.author`, `site.current_focus`, and `site.skills`; normalizes optional contact URLs and renders only non-empty links.
+- Created `_includes/experience-item.html`: consumes the Task 1 experience shape through `include.item` and escapes all displayed values.
+- Modified `_includes/project-card.html`: preserves URL normalization and conditional actions while adding secure relationship attributes and explicit new-window labels.
+- Modified `_includes/post-card.html`: adds metadata/action classes and exactly one explicit `阅读全文` action.
+- Modified `scripts/verify_site.rb`: adds required component source-marker checks before the `_site` guard.
+- Updated `sdd/task-2-report.md`: records this task's implementation and evidence.
 
-## RED evidence
+## Commands and Results
 
-1. Existing verifier before implementation:
+### TDD red phase
 
-```text
-$ ruby scripts/verify_site.rb
-/usr/bin/bash: line 1: ruby: command not found
-Exit code 127
-```
+- `ruby scripts/verify_site.rb`
+  - Blocked before execution: exit 127, `ruby: command not found`.
+- Static equivalent confirming the intended missing-component failure before implementation:
+  - Result: exit 1, `FAIL: _includes/profile-card.html is missing.`
 
-Ruby is not installed in this environment, so the required generated-site verifier could not execute.
+### Green and verification phase
 
-2. Focused failing pre-implementation shell check:
+- `ruby scripts/verify_site.rb`
+  - Blocked: exit 127, `ruby: command not found`.
+- `bundle exec jekyll build`
+  - Blocked: exit 127, `bundle: command not found`.
+- Python static component checks covering required markers, data interfaces, valid-only external actions, explicit labels, `noopener noreferrer`, and the single `阅读全文` label
+  - Result: `PASS: Task 2 static component contracts and valid-only link guards verified.`
+- Fresh compact Python source-contract check
+  - Result: `PASS: Task 2 source contracts and guarded external actions verified.`
+- `git diff --check`
+  - Result: exit 0; no whitespace errors. Git emitted only an LF-to-CRLF working-copy warning for `_includes/post-card.html`.
+- `git status --short`
+  - Confirmed only the five Task 2 implementation files and this required report are changed.
 
-```text
-AssertionError: Missing Task 2 shell assets: ['_includes/head.html', '_includes/header.html', '_includes/footer.html', '_layouts/default.html', 'assets/js/site.js', 'assets/css/main.scss']
-Exit code 1
-```
+## Commit
 
-This failed for the intended reason: none of the Task 2 implementation files existed.
+- Commit identifier: this report is included in the Task 2 commit; the resulting hash is supplied in the final task response.
+- Message: `feat: add personal manual components`
+- Trailer: `Co-Authored-By: Claude <noreply@anthropic.com>`
 
-## GREEN evidence
+## Self-Review
 
-1. Focused static requirements check after implementation:
-
-```text
-PASS: verified 7 Task 2 files and required static markers.
-Exit code 0
-```
-
-It checks required Liquid markup, accessible-control attributes, theme/menu behavior markers, responsive component selectors, and the new verifier markers.
-
-2. Whitespace validation:
-
-```text
-$ git diff --check
-Exit code 0
-```
-
-3. JavaScript parser attempt:
-
-```text
-$ node --check assets/js/site.js
-/usr/bin/bash: line 1: node: command not found
-Exit code 127
-```
-
-Node.js is not installed, so an engine-level JavaScript syntax check could not run.
-
-4. Updated generated-site verifier attempt:
-
-```text
-$ ruby scripts/verify_site.rb
-/usr/bin/bash: line 1: ruby: command not found
-Exit code 127
-```
-
-## Self-review
-
-- All requested reusable shell files exist with UTF-8/document/mobile/SEO metadata and no public content pages were created.
-- Theme behavior uses the stored `site-theme` value when present; otherwise it derives only the initial theme from the system dark preference. Toggle text, pressed state, accessible label, dataset, and persistence update together.
-- Menu logic first checks both controls and only then binds behavior, so omitted controls do not cause an exception.
-- CSS specifies both a 320px minimum and a 760px breakpoint with one-column cards and an explicitly opened mobile navigation class.
-- Footer anchors are individually gated on nonempty author configuration. GitHub and LinkedIn have both `target="_blank"` and `rel="me noopener"`; no control uses an empty href.
-- `scripts/verify_site.rb` retains all pre-existing checks and adds its required `index.html` assertions before the PASS output.
+- Compared the implementation line by line with `task-2-brief.md`.
+- Confirmed source checks run before the `_site` guard.
+- Confirmed optional profile links are stripped before comparison and emitted only when non-empty.
+- Confirmed project actions remain conditional on normalized non-empty URLs.
+- Confirmed each external new-window link includes `noopener noreferrer` and a visible new-window label.
+- Confirmed displayed data is escaped as required.
+- Confirmed the post card emits exactly one visible `阅读全文` label while retaining the linked title specified by the brief.
+- Confirmed no personalized values were overwritten; includes consume existing configuration/data.
+- Independent code review reported no Critical, Important, or Minor findings.
+- Confirmed no unrelated implementation files were changed.
 
 ## Concerns
 
-The requested Ruby/Jekyll build and verifier could not run because Ruby/Bundler are unavailable. JavaScript engine syntax validation also could not run because Node.js is unavailable. Static requirement validation and `git diff --check` did run successfully; generated output still needs verification in an environment with Ruby, Bundler, and the GitHub Pages Jekyll dependencies installed.
+- Ruby and Bundler are unavailable, so neither the Ruby verifier nor a Jekyll build could run. Ruby/Jekyll success is not claimed.
+- Static checks validate source contracts and guarded link structure but cannot replace Liquid rendering through Jekyll.
+- Git reports that `_includes/post-card.html` may be converted from LF to CRLF the next time Git touches it; `git diff --check` remains clean.

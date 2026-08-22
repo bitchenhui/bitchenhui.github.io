@@ -1,0 +1,12 @@
+<article class="experience-item">
+  <p class="experience-item__period">{{ include.item.period | escape }}</p>
+  <div class="experience-item__body">
+    <h3>{{ include.item.role | escape }}</h3>
+    <p>{{ include.item.summary | escape }}</p>
+    {% if include.item.highlights and include.item.highlights != empty %}
+      <ul>
+        {% for highlight in include.item.highlights %}<li>{{ highlight | escape }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</article>
