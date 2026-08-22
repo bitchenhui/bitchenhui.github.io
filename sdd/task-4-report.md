@@ -1,35 +1,26 @@
-# Task 4 Report — portfolio, blog, about pages, and sample posts
+# Task 4 Report — visual system, sticky sidebar, and theme-only header
 
-## Scope
+## Status
 
-Implemented the public Jekyll content routes required for Task 4 after applying all eight required parent commits in order.
-
-## Prerequisites applied
-
-1. `128777e4d7d17b3098b3edce209af640c15fc483` → `306e21a`
-2. `354f950f9110ea77be2ccce41c07e169717cb899` → `80215f7`
-3. `044de8053b9f75b603500166ba89f14324bab8d3` → `d5da192`
-4. `595571a16d9b6ae70b5e30804572f2e199895d7d` → `649c6dd`
-5. `11852d872e315a05f6b13db60daa85dc7618851d` → `bac55b7`
-6. `d5a148ddbf3db595ea2faf0e6cefa19a8b0c79d0` → `280ee5f`
-7. `fe77397bd752626c4b55b33f6eb59301599b33bc` → `5dafc2e`
-8. `83bab8d9d89cc35f493dfd299a00c090ab7f5b81` → `1bdfbc8`
+Implemented Task 4 in the isolated `worktree-single-page-personal-manual` branch.
 
 ## Changes
 
-- Added `index.html` with the required Chinese hero heading and TODO positioning, author introduction, navigation buttons, skills, three-item featured project loop, latest three post loop, and all-content links.
-- Added `projects/index.html` and `blog/index.html` as Jekyll page-layout routes. The project page uses the reusable project card loop; the blog page retains the literal empty-state fallback `暂时还没有文章`.
-- Added `about.md` with the five required sections and explicit Chinese TODO placeholders. Email and résumé anchors are guarded by nonempty configuration values.
-- Added the three required post files with exact front matter values, required opening TODO notice, and approved Chinese narrative bodies.
-- Extended `scripts/verify_site.rb` without removing prior checks: its required generated routes now include all three post routes, and it asserts the rendered home hero plus blog fallback source/render marker.
+- Reduced the header to the site brand and accessible theme toggle; removed navigation and mobile-menu markup.
+- Retained theme initialization, toggle labels, `aria-pressed`, system preference fallback, and guarded `localStorage` reads/writes; removed all menu JavaScript.
+- Normalized `email`, `github`, `linkedin`, and `resume_url` with `default: "" | strip`; omitted empty links and applied `rel="noopener noreferrer"` to external new-window links.
+- Added the complete single-page visual system, including direct non-sidebar children in grid column 1, the single sticky sidebar in column 2 spanning rows, and the required mobile column-1/row-2/static reset at `54rem`.
+- Added source assertions for removed artifacts, footer normalization, and corrected desktop/mobile grid placement; removed the obsolete rendered navigation requirement.
 
-## Verification
+## TDD and verification
 
-- RED verifier attempt: `ruby scripts/verify_site.rb` exited 127 because Ruby is not installed (`ruby: command not found`).
-- Static Task 4 source-contract check: passed. It validates every requested source path, exact post metadata, required headings/markers, loop limits/includes, email/resume guards, required generated routes, no `.nojekyll` or `CNAME`, and all verifier additions.
-- `git diff --check`: passed with no whitespace errors.
-- Empty-href source scan: no matches.
+- RED: `ruby scripts/verify_site.rb` could not execute because Ruby is unavailable: `/usr/bin/bash: line 1: ruby: command not found` (exit 127). The new assertions were added before production changes, and the pre-change sources visibly contained the asserted obsolete markers.
+- GREEN substitute: Python static source-contract check passed.
+- Obsolete artifact scan across `_includes`, `assets`, and `index.html` returned no matches.
+- `git diff --check` passed (only Git's expected LF-to-CRLF notices were emitted).
+- Changed-file scope check showed exactly the five Task 4 implementation files before this report.
+- Independent self-review reported no issues.
 
 ## Concern
 
-Ruby, Bundler, and Jekyll are unavailable in this environment. Therefore `bundle exec jekyll build` and the Ruby generated-site verifier could not be run locally; run those commands in a Ruby-enabled environment after Task 5 provides the currently absent 404/feed/sitemap/robots endpoints.
+Ruby, Bundler, and Jekyll are unavailable, so the Ruby verifier and generated-site build could not be run locally. Run `bundle exec jekyll build && ruby scripts/verify_site.rb` in a Ruby-enabled environment.
