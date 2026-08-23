@@ -41,8 +41,19 @@ readme = Pathname.new("README.md")
 abort "FAIL: README is missing." unless readme.file?
 
 readme_content = readme.read
-required_readme_sections = %w[本地预览 写文章 添加项目 独立域名]
-missing_readme_sections = required_readme_sections.reject { |section| readme_content.include?(section) }
+required_readme_sections = %w[
+  单页结构
+  配置个人信息
+  添加经历
+  添加项目
+  写文章
+  兼容入口
+  本地预览
+  发布到GitHubPages
+  独立域名
+]
+normalized_readme = readme_content.gsub(/\s+/, "")
+missing_readme_sections = required_readme_sections.reject { |section| normalized_readme.include?(section) }
 unless missing_readme_sections.empty?
   abort "FAIL: README is missing required sections: #{missing_readme_sections.join(', ')}"
 end
