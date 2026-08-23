@@ -8,7 +8,8 @@ require "uri"
 require "yaml"
 
 SITE = Pathname.new("_site")
-PROJECT_FIELDS = %w[title description stack project_url repository_url].freeze
+PROJECT_FIELDS = %w[title description stack].freeze
+PROJECT_URL_FIELDS = %w[project_url repository_url].freeze
 EXPERIENCE_FIELDS = %w[period role summary highlights].freeze
 REDIRECT_ROUTES = {
   "projects/index.html" => { source: "projects/index.html", target: "/#projects" },
@@ -57,7 +58,7 @@ end
 
 
 def front_matter(path)
-  match = path.read.match(/\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|\z)/m)
+  match = path.read.match(/\A---[^\S\r\n]*\r?\n(.*?)^---[^\S\r\n]*(?:\r?\n|\z)/m)
   abort "FAIL: #{path} has no YAML front matter." unless match
 
   YAML.safe_load(match[1], permitted_classes: [Date, Time], aliases: true) || {}
@@ -77,6 +78,11 @@ def attribute_value(tag, name)
   opening_tag = tag[/\A<[^>]+>/m]
   match = opening_tag&.match(/(?:\A|\s)#{Regexp.escape(name)}\s*=\s*(["'])(.*?)\1/im)
   match && match[2]
+end
+
+
+def html_blocks(body, class_name)
+  body.scan(/<article\b(?=[^>]*\bclass\s*=\s*["'][^"']*\b#{Regexp.escape(class_name)}\b)[^>]*>.*?<\/article\s*>/im)
 end
 
 
@@ -150,7 +156,7 @@ projects.each_with_index do |project, index|
   unless project["title"].is_a?(String) && !project["title"].strip.empty? &&
          project["description"].is_a?(String) && !project["description"].strip.empty? &&
          project["stack"].is_a?(Array) && project["stack"].all? { |item| item.is_a?(String) && !item.strip.empty? } &&
-         %w[project_url repository_url].all? { |field| project[field].is_a?(String) }
+         PROJECT_URL_FIELDS.all? { |field| !project.key?(field) || project[field].is_a?(String) }
     abort "FAIL: project #{index + 1} has invalid field types or empty required content."
   end
 end
@@ -213,6 +219,10 @@ style_source = Pathname.new("assets/css/main.scss").read
 robots_source = Pathname.new("robots.txt").read
 
 abort "FAIL: header lacks theme control." unless header_source.include?('id="theme-toggle"')
+abort "FAIL: theme control must be hidden until JavaScript initializes." unless header_source.match?(/<button\b[^>]*id="theme-toggle"[^>]*\bhidden\b[^>]*>/)
+unless script_source.match?(/updateThemeControl\(initialTheme\).*?addEventListener\("click".*?themeToggle\.hidden\s*=\s*false/m)
+  abort "FAIL: site controller must synchronize and bind the theme control before revealing it."
+end
 %w[email github linkedin resume_url].each do |field|
   assignment = %({% assign #{field} = site.author.#{field} | default: "" | strip %})
   abort "FAIL: footer does not normalize #{field}." unless footer_source.include?(assignment)
@@ -252,7 +262,9 @@ abort "FAIL: short wide viewports lack a documented font-relative non-sticky sid
 abort "FAIL: mobile layout breakpoint is missing." unless style_source.include?("@media (max-width: 54rem)")
 abort "FAIL: mobile sidebar placement is incorrect." unless style_source.include?(".manual-sidebar { position: static; grid-row: 2; margin-bottom: 3rem; }")
 
-unless robots_source.start_with?("---\n---\n") && robots_source.include?("{{ '/sitemap.xml' | absolute_url }}")
+robots_path = Pathname.new("robots.txt")
+front_matter(robots_path)
+unless robots_source.include?("{{ '/sitemap.xml' | absolute_url }}")
   abort "FAIL: robots source does not render an absolute sitemap URL through Liquid."
 end
 
@@ -264,6 +276,20 @@ runtime_sources.each do |path|
 end
 
 home_source = Pathname.new("index.html").read
+home_sections = {
+  "experience" => { condition: /\{%\s*if\s+site\.data\.experience\s+and\s+site\.data\.experience\s*!=\s*empty\s*%\}/, empty: "经历内容待补充。" },
+  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "项目内容待补充。" },
+  "articles" => { condition: /\{%\s*if\s+site\.posts\.size\s*>\s*0\s*%\}/, empty: "文章内容待更新。" },
+  "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充。" }
+}.freeze
+home_sections.each do |id, contract|
+  section = home_source[/<section id="#{Regexp.escape(id)}"\b.*?<\/section>/m]
+  abort "FAIL: homepage source lacks the #{id} section." unless section
+  branch = section.match(/#{contract.fetch(:condition).source}(.*?)\{%\s*else\s*%\}(.*?)\{%\s*endif\s*%\}/m)
+  unless branch && branch[2].include?(contract.fetch(:empty))
+    abort "FAIL: homepage #{id} empty state is not in its reachable Liquid else branch."
+  end
+end
 required_home_source_markers = %w[
   id="capabilities"
   id="experience"
@@ -274,10 +300,6 @@ required_home_source_markers = %w[
   include\ experience-item.html
   site.data.projects
   site.posts
-  经历内容待补充。
-  项目内容待补充。
-  文章内容待更新。
-  公开联系方式待补充。
 ]
 missing_home_source_markers = required_home_source_markers.reject { |marker| home_source.include?(marker.tr("\\", "")) }
 unless missing_home_source_markers.empty?
@@ -315,6 +337,8 @@ REDIRECT_ROUTES.each_value do |route|
   body = Pathname.new(path).read
   abort "FAIL: #{path} lacks redirect target #{target}." unless body.include?("redirect_to: #{target}")
   abort "FAIL: #{path} lacks canonical target #{target}." unless body.include?("canonical_url: #{target}")
+  route_data = front_matter(Pathname.new(path))
+  abort "FAIL: #{path} must be excluded from the sitemap." unless route_data["sitemap"] == false
   abort "FAIL: #{path} lacks a fallback link." unless body.include?("继续前往")
   fallback_href = 'href="{{ page.redirect_to | relative_url }}"'
   abort "FAIL: #{path} fallback does not use page.redirect_to." unless body.include?(fallback_href)
@@ -340,10 +364,23 @@ end
 generated_html.each do |path, body|
   abort "FAIL: #{path} has no lang=\"zh-CN\" document language." unless body.include?('lang="zh-CN"')
   abort "FAIL: #{path} has no viewport metadata." unless body.include?('name="viewport"')
-  abort "FAIL: #{path} contains an empty href attribute." if body.match?(/href=["']\s*["']/)
+  empty_href = html_tags(body, "a").find { |tag| attribute_value(tag, "href")&.strip == "" }
+  abort "FAIL: #{path} contains an empty href attribute." if empty_href
 end
 
 home = generated_html.fetch("index.html")
+expected_stylesheet_url = relative_site_url("/assets/css/main.css", baseurl)
+expected_script_url = relative_site_url("/assets/js/site.js", baseurl)
+stylesheet = html_tags(home, "link").find do |tag|
+  attribute_value(tag, "rel")&.split&.any? { |rel| rel.casecmp?("stylesheet") } &&
+    attribute_value(tag, "href") == expected_stylesheet_url
+end
+abort "FAIL: generated homepage lacks stylesheet URL #{expected_stylesheet_url}." unless stylesheet
+script = html_tags(home, "script").find { |tag| attribute_value(tag, "src") == expected_script_url }
+abort "FAIL: generated homepage script URL is not #{expected_script_url}." unless script
+%w[assets/css/main.css assets/js/site.js].each do |asset|
+  abort "FAIL: generated asset is missing: #{asset}." unless (SITE / asset).file?
+end
 required_home_markers = %w[
   id="theme-toggle"
   id="capabilities"
@@ -352,8 +389,6 @@ required_home_markers = %w[
   id="articles"
   id="contact"
   class="profile-card"
-  /assets/css/main.css
-  /assets/js/site.js
 ]
 missing_markers = required_home_markers.reject { |marker| home.include?(marker) }
 abort "FAIL: generated homepage lacks #{missing_markers.join(', ')}." unless missing_markers.empty?
@@ -361,27 +396,39 @@ abort "FAIL: generated homepage lacks #{missing_markers.join(', ')}." unless mis
   abort "FAIL: generated homepage retains #{obsolete}." if home.include?(obsolete)
 end
 
+project_cards = html_blocks(home, "project-card")
 project_titles = projects.map { |project| project["title"] }
-missing_projects = project_titles.reject { |title| home.include?(CGI.escapeHTML(title)) }
-abort "FAIL: homepage omits projects: #{missing_projects.join(', ')}" unless missing_projects.empty?
-post_titles = post_metadata.values.map { |data| data["title"].to_s }
-missing_posts = post_titles.reject { |title| home.include?(CGI.escapeHTML(title)) }
-abort "FAIL: homepage omits posts: #{missing_posts.join(', ')}" unless missing_posts.empty?
+missing_projects = project_titles.reject do |title|
+  escaped_title = CGI.escapeHTML(title)
+  project_cards.any? { |card| card.match?(/<h3\b[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h3>/m) }
+end
+abort "FAIL: homepage project cards omit projects: #{missing_projects.join(', ')}" unless missing_projects.empty?
 
-article_links = home.scan(/<a\b[^>]*>.*?<\/a\s*>/im)
-                    .select { |tag| tag.include?("阅读全文") }
-                    .filter_map { |tag| attribute_value(tag, "href") }
-                    .uniq
-article_outputs = article_links.filter_map { |url| generated_path_for_url(url, baseurl) }
-unresolved_articles = article_links.reject do |url|
-  output = generated_path_for_url(url, baseurl)
-  output && generated_html.key?(output)
+post_cards = html_blocks(home, "post-card")
+article_outputs = []
+missing_posts = post_metadata.values.filter_map do |data|
+  title = data["title"].to_s
+  escaped_title = CGI.escapeHTML(title)
+  card = post_cards.find do |candidate|
+    candidate.match?(/<h3\b[^>]*>\s*<a\b[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/a\s*>\s*<\/h3>/m)
+  end
+  next title unless card
+
+  action = html_tags(card, "a").find { |tag| attribute_value(tag, "aria-label") == "阅读全文：#{escaped_title}" }
+  next title unless action
+
+  url = attribute_value(action, "href")
+  output = url && generated_path_for_url(url, baseurl)
+  generated_article = output && generated_html[output]
+  next title unless generated_article && generated_article.match?(/<h1\b[^>]*id="post-title"[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h1>/m)
+
+  article_outputs << output
+  nil
 end
-unless unresolved_articles.empty?
-  abort "FAIL: homepage article links do not resolve to generated HTML: #{unresolved_articles.join(', ')}"
-end
-unless article_outputs.uniq.length == post_metadata.length
-  abort "FAIL: homepage exposes #{article_outputs.uniq.length} generated article route(s) for #{post_metadata.length} source post(s)."
+abort "FAIL: homepage post cards omit valid article actions: #{missing_posts.join(', ')}" unless missing_posts.empty?
+article_outputs.uniq!
+unless article_outputs.length == post_metadata.length
+  abort "FAIL: homepage exposes #{article_outputs.length} generated article route(s) for #{post_metadata.length} source post(s)."
 end
 required_files = (CORE_REQUIRED_FILES + article_outputs).uniq.freeze
 
@@ -395,7 +442,7 @@ REDIRECT_ROUTES.each do |path, route|
     attribute_value(tag, "http-equiv")&.casecmp?("refresh")
   end
   refresh_content = attribute_value(refresh, "content")
-  unless refresh_content&.match?(/\A\s*\d+\s*;\s*url\s*=\s*#{Regexp.escape(relative_target)}\s*\z/i)
+  unless refresh_content&.match?(/\A\s*0\s*;\s*url\s*=\s*#{Regexp.escape(relative_target)}\s*\z/i)
     abort "FAIL: #{path} lacks refresh target #{relative_target}."
   end
 
@@ -413,7 +460,11 @@ REDIRECT_ROUTES.each do |path, route|
 end
 
 not_found = generated_html.fetch("404.html")
-abort "FAIL: 404 page lacks the home link." unless not_found.include?("返回首页")
+expected_home_path = relative_site_url("/", baseurl)
+not_found_home_link = not_found.scan(/<a\b[^>]*>.*?<\/a\s*>/im).find do |tag|
+  attribute_value(tag, "href") == expected_home_path && tag.match?(/>\s*返回首页\s*<\/a\s*>/m)
+end
+abort "FAIL: 404 page lacks a home link to #{expected_home_path}." unless not_found_home_link
 feed = (SITE / "feed.xml").read
 abort "FAIL: feed output has no feed element." unless feed.include?("<feed")
 abort "FAIL: feed output has no Atom media type." unless feed.include?("application/atom+xml")

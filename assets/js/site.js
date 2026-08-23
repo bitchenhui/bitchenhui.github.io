@@ -17,14 +17,15 @@
   }
 
   var initialTheme = root.dataset.theme;
-  updateThemeControl(initialTheme);
 
   if (themeToggle) {
+    updateThemeControl(initialTheme);
     themeToggle.addEventListener("click", function () {
       var nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
       root.dataset.theme = nextTheme;
       storeTheme(nextTheme);
       updateThemeControl(nextTheme);
     });
+    themeToggle.hidden = false;
   }
 }());
