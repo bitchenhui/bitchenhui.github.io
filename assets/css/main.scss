@@ -37,12 +37,10 @@
 * { box-sizing: border-box; }
 
 html {
-  min-width: 320px;
   scroll-behavior: smooth;
 }
 
 body {
-  min-width: 320px;
   margin: 0;
   background: var(--canvas);
   color: var(--ink);
@@ -54,6 +52,7 @@ body {
 
 h1, h2, h3, p, ul, ol { margin-top: 0; }
 h1, h2, h3 { line-height: 1.25; letter-spacing: -0.025em; }
+h1, h2, h3, a, .tag { overflow-wrap: anywhere; }
 h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
 h2 { font-size: clamp(1.5rem, 3vw, 2.15rem); }
 h3 { font-size: 1.2rem; }
@@ -92,6 +91,7 @@ button { font: inherit; }
   z-index: 10;
   top: 0;
   border-bottom: 1px solid var(--line);
+  background: var(--canvas);
   background: color-mix(in srgb, var(--canvas) 92%, transparent);
   backdrop-filter: blur(14px);
 }
@@ -133,7 +133,6 @@ button { font: inherit; }
 main { min-height: calc(100vh - 10rem); }
 .section { padding-block: clamp(3rem, 7vw, 6rem); }
 .section-heading { max-width: var(--reading); margin-bottom: 2rem; }
-.section-heading > :last-child { margin-bottom: 0; color: var(--muted); }
 
 .card-grid {
   display: grid;
@@ -192,6 +191,11 @@ main { min-height: calc(100vh - 10rem); }
 .site-footer__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; }
 .site-footer__inner p { margin: 0; }
 .site-footer__links { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+
+// Below 44em, the 6rem sticky offset plus a readable profile card cannot fit with safe viewport clearance.
+@media (min-width: 54.01rem) and (max-height: 44em) {
+  .manual-sidebar { position: static; }
+}
 
 @media (max-width: 54rem) {
   .manual-layout { grid-template-columns: minmax(0, 1fr); }

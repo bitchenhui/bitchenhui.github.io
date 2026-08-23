@@ -74,12 +74,11 @@ skills:
   stack:
     - 技术或工具 1
     - 技术或工具 2
-  featured: true
   project_url: "https://example.com/project"
   repository_url: "https://github.com/your-name/project"
 ```
 
-`title`、`description` 和 `stack` 用于展示项目内容；每个项目都会按数据顺序出现在首页，`featured` 仅为兼容现有数据而保留，不再控制首页筛选。`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
+`title`、`description` 和 `stack` 用于展示项目内容；每个项目都会按数据顺序出现在首页。`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
 
 ## 写文章
 

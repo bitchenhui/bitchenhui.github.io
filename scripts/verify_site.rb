@@ -1,26 +1,72 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "cgi"
+require "date"
 require "pathname"
+require "uri"
+require "yaml"
 
 SITE = Pathname.new("_site")
-REQUIRED_FILES = %w[
+PROJECT_FIELDS = %w[title description stack project_url repository_url].freeze
+EXPERIENCE_FIELDS = %w[period role summary highlights].freeze
+REDIRECT_ROUTES = {
+  "projects/index.html" => { source: "projects/index.html", target: "/#projects" },
+  "blog/index.html" => { source: "blog/index.html", target: "/#articles" },
+  "about/index.html" => { source: "about.md", target: "/#experience" }
+}.freeze
+CORE_REQUIRED_FILES = (%w[
   index.html
-  projects/index.html
-  blog/index.html
-  about/index.html
-  blog/encoding-performance/index.html
-  blog/engineering-practice/index.html
-  blog/toolchain-notes/index.html
   404.html
   feed.xml
   sitemap.xml
   robots.txt
+] + REDIRECT_ROUTES.keys).freeze
+RUNTIME_SCAN_GLOBS = %w[
+  _config.yml
+  *.html
+  about.md
+  robots.txt
+  _data/**/*.yml
+  _includes/**/*.html
+  _layouts/**/*.html
+  _posts/**/*.md
+  assets/**/*.scss
+  assets/**/*.js
+  blog/**/*.html
+  projects/**/*.html
 ].freeze
+OBSOLETE_RUNTIME_MARKERS = %w[
+  primary-navigation
+  mobile-menu-button
+  menuButton
+  featured_projects
+  查看全部项目
+  查看全部文章
+].freeze
+
+
+def load_yaml(path)
+  YAML.safe_load(path.read, permitted_classes: [Date, Time], aliases: true) || {}
+rescue Psych::Exception => error
+  abort "FAIL: #{path} is not valid YAML: #{error.message}"
+end
+
+
+def front_matter(path)
+  match = path.read.match(/\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|\z)/m)
+  abort "FAIL: #{path} has no YAML front matter." unless match
+
+  YAML.safe_load(match[1], permitted_classes: [Date, Time], aliases: true) || {}
+rescue Psych::Exception => error
+  abort "FAIL: #{path} has invalid front matter: #{error.message}"
+end
+
 
 def html_tags(body, name)
   body.scan(/<#{Regexp.escape(name)}\b[^>]*>/im)
 end
+
 
 def attribute_value(tag, name)
   return unless tag
@@ -30,16 +76,92 @@ def attribute_value(tag, name)
   match && match[2]
 end
 
+
+def relative_site_url(path, baseurl)
+  path = "/#{path}" unless path.start_with?("/")
+  baseurl.empty? ? path : "#{baseurl}#{path}"
+end
+
+
+def generated_path_for_url(url, baseurl)
+  raw_path = CGI.unescapeHTML(url).split(/[?#]/, 2).first
+  return if raw_path.match?(/\A(?:[a-z][a-z0-9+.-]*:|\/\/)/i)
+
+  path = URI::DEFAULT_PARSER.unescape(raw_path)
+  if baseurl.empty?
+    return unless path.start_with?("/")
+  else
+    return unless path == baseurl || path.start_with?("#{baseurl}/")
+
+    path = path.delete_prefix(baseurl)
+  end
+
+  relative_path = path.delete_prefix("/")
+  return "index.html" if relative_path.empty?
+
+  relative_path.end_with?("/") ? "#{relative_path}index.html" : relative_path
+rescue URI::InvalidURIError
+  nil
+end
+
+config = Pathname.new("_config.yml")
+abort "FAIL: _config.yml is missing." unless config.file?
+config_data = load_yaml(config)
+
+site_uri = URI.parse(config_data["url"].to_s)
+unless %w[http https].include?(site_uri.scheme) && site_uri.host
+  abort "FAIL: _config.yml has no valid HTTP(S) site URL."
+end
+port = site_uri.port unless [site_uri.default_port, nil].include?(site_uri.port)
+site_origin = "#{site_uri.scheme}://#{site_uri.host}#{port ? ":#{port}" : ""}"
+baseurl = config_data["baseurl"].to_s.strip
+baseurl = "" if baseurl == "/"
+baseurl = "/#{baseurl}" unless baseurl.empty? || baseurl.start_with?("/")
+baseurl = baseurl.delete_suffix("/")
+
+abort "FAIL: obsolete collections configuration remains." if config_data.key?("collections")
+abort "FAIL: obsolete navigation configuration remains." if config_data.key?("navigation")
+abort "FAIL: current focus is missing." unless config_data["current_focus"].is_a?(Array)
+skills = config_data["skills"]
+unless skills.is_a?(Array) && skills.all? { |skill| skill.is_a?(Hash) && %w[name description].all? { |field| skill[field].is_a?(String) && !skill[field].strip.empty? } }
+  abort "FAIL: capability data does not match the required name/description schema."
+end
+
 projects_data = Pathname.new("_data/projects.yml")
 abort "FAIL: project data file is missing." unless projects_data.file?
+projects = load_yaml(projects_data)
+unless projects.is_a?(Array) && !projects.empty?
+  abort "FAIL: project data must be a non-empty list."
+end
+projects.each_with_index do |project, index|
+  missing_fields = PROJECT_FIELDS.reject { |field| project.is_a?(Hash) && project.key?(field) }
+  abort "FAIL: project #{index + 1} lacks fields: #{missing_fields.join(', ')}" unless missing_fields.empty?
+  abort "FAIL: project #{index + 1} retains obsolete featured data." if project.key?("featured")
+  unless project["title"].is_a?(String) && !project["title"].strip.empty? &&
+         project["description"].is_a?(String) && !project["description"].strip.empty? &&
+         project["stack"].is_a?(Array) && project["stack"].all? { |item| item.is_a?(String) && !item.strip.empty? } &&
+         %w[project_url repository_url].all? { |field| project[field].is_a?(String) }
+    abort "FAIL: project #{index + 1} has invalid field types or empty required content."
+  end
+end
 
-projects_content = projects_data.read
-abort "FAIL: project data has no featured item." unless projects_content.include?("featured: true")
-abort "FAIL: project data has no explicit placeholder marker." unless projects_content.include?("TODO: 替换为")
+experience_data = Pathname.new("_data/experience.yml")
+abort "FAIL: experience data file is missing." unless experience_data.file?
+experience = load_yaml(experience_data)
+unless experience.is_a?(Array) && !experience.empty?
+  abort "FAIL: experience data must be a non-empty list."
+end
+experience.each_with_index do |item, index|
+  missing_fields = EXPERIENCE_FIELDS.reject { |field| item.is_a?(Hash) && item.key?(field) }
+  abort "FAIL: experience #{index + 1} lacks fields: #{missing_fields.join(', ')}" unless missing_fields.empty?
+  unless %w[period role summary].all? { |field| item[field].is_a?(String) && !item[field].strip.empty? } &&
+         item["highlights"].is_a?(Array) && item["highlights"].all? { |highlight| highlight.is_a?(String) && !highlight.strip.empty? }
+    abort "FAIL: experience #{index + 1} has invalid field types or empty required content."
+  end
+end
 
 readme = Pathname.new("README.md")
 abort "FAIL: README is missing." unless readme.file?
-
 readme_content = readme.read
 required_readme_sections = %w[
   单页结构
@@ -57,25 +179,7 @@ missing_readme_sections = required_readme_sections.reject { |section| normalized
 unless missing_readme_sections.empty?
   abort "FAIL: README is missing required sections: #{missing_readme_sections.join(', ')}"
 end
-
-config = Pathname.new("_config.yml")
-abort "FAIL: _config.yml is missing." unless config.file?
-config_content = config.read
-site_url = config_content[/^url:\s*["']?([^"'\s]+)["']?/, 1]
-abort "FAIL: _config.yml has no site URL." unless site_url
-site_url = site_url.delete_suffix("/")
-
-abort "FAIL: obsolete navigation configuration remains." if config_content.match?(/^navigation:/)
-abort "FAIL: current focus is missing." unless config_content.match?(/^current_focus:/)
-abort "FAIL: capability descriptions are missing." unless config_content.include?("description:")
-
-experience_data = Pathname.new("_data/experience.yml")
-abort "FAIL: experience data file is missing." unless experience_data.file?
-experience_content = experience_data.read
-%w[period role summary highlights].each do |field|
-  abort "FAIL: experience data lacks #{field}." unless experience_content.match?(/^\s*#{field}:/)
-end
-abort "FAIL: experience placeholders are not explicit." unless experience_content.include?("TODO: 替换为")
+abort "FAIL: README still documents obsolete featured project data." if readme_content.include?("featured")
 
 required_includes = {
   "_includes/profile-card.html" => ["profile-card", "site.current_focus", "site.skills"],
@@ -83,7 +187,6 @@ required_includes = {
   "_includes/post-card.html" => ["阅读全文", "include.post.url"],
   "_includes/project-card.html" => ["project_url", "repository_url"]
 }.freeze
-
 required_includes.each do |path, markers|
   file = Pathname.new(path)
   abort "FAIL: #{path} is missing." unless file.file?
@@ -93,29 +196,62 @@ required_includes.each do |path, markers|
 end
 
 header_source = Pathname.new("_includes/header.html").read
+head_source = Pathname.new("_includes/head.html").read
 footer_source = Pathname.new("_includes/footer.html").read
 script_source = Pathname.new("assets/js/site.js").read
 style_source = Pathname.new("assets/css/main.scss").read
+robots_source = Pathname.new("robots.txt").read
 
 abort "FAIL: header lacks theme control." unless header_source.include?('id="theme-toggle"')
-%w[mobile-menu-button primary-navigation site.navigation].each do |obsolete|
-  abort "FAIL: obsolete header marker remains: #{obsolete}." if header_source.include?(obsolete)
-end
-%w[menuButton navigation is-open].each do |obsolete|
-  abort "FAIL: obsolete menu script remains: #{obsolete}." if script_source.include?(obsolete)
-end
 %w[email github linkedin resume_url].each do |field|
   assignment = %({% assign #{field} = site.author.#{field} | default: "" | strip %})
   abort "FAIL: footer does not normalize #{field}." unless footer_source.include?(assignment)
 end
 abort "FAIL: footer lacks a resume link." unless footer_source.include?("resume_url")
 abort "FAIL: footer external links lack safe rel attributes." unless footer_source.include?('rel="noopener noreferrer"')
+%w[GitHub（新窗口） LinkedIn（新窗口） 简历（新窗口）].each do |label|
+  abort "FAIL: footer external link label lacks new-window disclosure: #{label}." unless footer_source.include?(label)
+end
+
+initializer_end = head_source.index('rel="stylesheet"')
+initializer = initializer_end && head_source[0...initializer_end]
+initializer_markers = ["<script>", "localStorage", "matchMedia", 'theme !== "light"', 'theme !== "dark"', "try", "catch", "dataset.theme"]
+missing_initializer_markers = initializer_markers.reject { |marker| initializer&.include?(marker) }
+abort "FAIL: pre-stylesheet theme initializer lacks #{missing_initializer_markers.join(', ')}." unless missing_initializer_markers.empty?
+abort "FAIL: site controller does not reuse the initialized theme." unless script_source.match?(/initialTheme\s*=\s*root\.dataset\.theme/)
+abort "FAIL: site controller does not preserve safe theme writes." unless script_source.include?("try { window.localStorage.setItem")
+%w[aria-pressed aria-label].each do |attribute|
+  abort "FAIL: theme control does not update #{attribute}." unless script_source.include?(attribute)
+end
+
+abort "FAIL: stylesheet still forces a 320px minimum width." if style_source.match?(/\bmin-width\s*:\s*320px/)
+abort "FAIL: stylesheet lacks safe wrapping for editable text." unless style_source.match?(/h1,\s*h2,\s*h3,\s*a,\s*\.tag\s*\{[^}]*overflow-wrap:\s*anywhere/m)
+header_rule = style_source[/\.site-header\s*\{(.*?)\}/m, 1]
+unless header_rule && header_rule.index("background: var(--canvas);") &&
+       header_rule.index("background: color-mix(") > header_rule.index("background: var(--canvas);")
+  abort "FAIL: site header lacks a pre-color-mix background fallback."
+end
+abort "FAIL: impossible section-heading child selector remains." if style_source.include?(".section-heading > :last-child")
 %w[manual-layout manual-sidebar profile-card position:\ sticky scroll-margin-top].each do |marker|
   abort "FAIL: stylesheet lacks #{marker}." unless style_source.include?(marker.tr("\\", ""))
 end
 abort "FAIL: desktop content is not pinned to grid column 1." unless style_source.include?(".manual-layout > :not(.manual-sidebar) { min-width: 0; grid-column: 1; }")
 abort "FAIL: desktop sidebar placement is incorrect." unless style_source.include?(".manual-sidebar { position: sticky; top: 6rem; grid-column: 2; grid-row: 1 / span 7; }")
+short_viewport_fallback = style_source.match?(/\/\/.*sticky offset.*\n@media\s*\(min-width:\s*54\.01rem\)\s*and\s*\(max-height:\s*\d+em\)\s*\{.*?\.manual-sidebar\s*\{[^}]*position:\s*static/m)
+abort "FAIL: short wide viewports lack a documented font-relative non-sticky sidebar fallback." unless short_viewport_fallback
+abort "FAIL: mobile layout breakpoint is missing." unless style_source.include?("@media (max-width: 54rem)")
 abort "FAIL: mobile sidebar placement is incorrect." unless style_source.include?(".manual-sidebar { position: static; grid-row: 2; margin-bottom: 3rem; }")
+
+unless robots_source.start_with?("---\n---\n") && robots_source.include?("{{ '/sitemap.xml' | absolute_url }}")
+  abort "FAIL: robots source does not render an absolute sitemap URL through Liquid."
+end
+
+runtime_sources = RUNTIME_SCAN_GLOBS.flat_map { |pattern| Pathname.glob(pattern) }.select(&:file?).uniq
+runtime_sources.each do |path|
+  body = path.read
+  obsolete = OBSOLETE_RUNTIME_MARKERS.select { |marker| body.include?(marker) }
+  abort "FAIL: obsolete runtime markers remain in #{path}: #{obsolete.join(', ')}" unless obsolete.empty?
+end
 
 home_source = Pathname.new("index.html").read
 required_home_source_markers = %w[
@@ -136,12 +272,9 @@ end
 abort "FAIL: homepage still filters featured projects." if home_source.include?('where: "featured"')
 abort "FAIL: homepage still limits primary content." if home_source.match?(/for (project|post).+limit:/)
 
-redirect_sources = {
-  "projects/index.html" => "/#projects",
-  "blog/index.html" => "/#articles",
-  "about.md" => "/#experience"
-}.freeze
-redirect_sources.each do |path, target|
+REDIRECT_ROUTES.each_value do |route|
+  path = route.fetch(:source)
+  target = route.fetch(:target)
   body = Pathname.new(path).read
   abort "FAIL: #{path} lacks redirect target #{target}." unless body.include?("redirect_to: #{target}")
   abort "FAIL: #{path} lacks canonical target #{target}." unless body.include?("canonical_url: #{target}")
@@ -154,22 +287,27 @@ post_source = Pathname.new("_layouts/post.html").read
 abort "FAIL: post layout does not return to /#articles." unless post_source.include?("/#articles")
 abort "FAIL: post layout still links to /blog/." if post_source.include?('href="{{ \'/blog/\'')
 
-abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
+post_files = Pathname.glob("_posts/*").select(&:file?)
+abort "FAIL: no source posts found." if post_files.empty?
+post_metadata = post_files.to_h { |post| [post, front_matter(post)] }
 
-missing = REQUIRED_FILES.reject { |path| (SITE / path).file? }
+abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
+missing = CORE_REQUIRED_FILES.reject { |path| (SITE / path).file? }
 abort "FAIL: missing generated files: #{missing.join(', ')}" unless missing.empty?
 
 html_files = SITE.glob("**/*.html")
 abort "FAIL: no generated HTML pages found." if html_files.empty?
-
-html_files.each do |file|
-  body = file.read
-  abort "FAIL: #{file} has no lang=\"zh-CN\" document language." unless body.include?("lang=\"zh-CN\"")
-  abort "FAIL: #{file} has no viewport metadata." unless body.include?("name=\"viewport\"")
-  abort "FAIL: #{file} contains an empty href attribute." if body.match?(/href=[\"']\s*[\"']/)
+generated_html = html_files.to_h do |file|
+  relative_path = file.relative_path_from(SITE).each_filename.to_a.join("/")
+  [relative_path, file.read]
+end
+generated_html.each do |path, body|
+  abort "FAIL: #{path} has no lang=\"zh-CN\" document language." unless body.include?('lang="zh-CN"')
+  abort "FAIL: #{path} has no viewport metadata." unless body.include?('name="viewport"')
+  abort "FAIL: #{path} contains an empty href attribute." if body.match?(/href=["']\s*["']/)
 end
 
-home = (SITE / "index.html").read
+home = generated_html.fetch("index.html")
 required_home_markers = %w[
   id="theme-toggle"
   id="capabilities"
@@ -187,53 +325,67 @@ abort "FAIL: generated homepage lacks #{missing_markers.join(', ')}." unless mis
   abort "FAIL: generated homepage retains #{obsolete}." if home.include?(obsolete)
 end
 
-project_titles = projects_content.scan(/^\s*- title:\s*["']?([^"'\n]+)["']?/).flatten
-missing_projects = project_titles.reject { |title| home.include?(title.strip) }
+project_titles = projects.map { |project| project["title"] }
+missing_projects = project_titles.reject { |title| home.include?(title) }
 abort "FAIL: homepage omits projects: #{missing_projects.join(', ')}" unless missing_projects.empty?
-
-post_titles = Pathname.glob("_posts/*").map do |post|
-  post.read[/^title:\s*["']?([^"'\n]+)["']?/, 1]
-end.compact
-missing_posts = post_titles.reject { |title| home.include?(title.strip) }
+post_titles = post_metadata.values.map { |data| data["title"].to_s }
+missing_posts = post_titles.reject { |title| home.include?(CGI.escapeHTML(title)) }
 abort "FAIL: homepage omits posts: #{missing_posts.join(', ')}" unless missing_posts.empty?
 
-redirect_outputs = {
-  "projects/index.html" => "/#projects",
-  "blog/index.html" => "/#articles",
-  "about/index.html" => "/#experience"
-}.freeze
-redirect_outputs.each do |path, target|
-  body = (SITE / path).read
+article_links = home.scan(/<a\b[^>]*>.*?<\/a\s*>/im)
+                    .select { |tag| tag.include?("阅读全文") }
+                    .filter_map { |tag| attribute_value(tag, "href") }
+                    .uniq
+article_outputs = article_links.filter_map { |url| generated_path_for_url(url, baseurl) }
+unresolved_articles = article_links.reject do |url|
+  output = generated_path_for_url(url, baseurl)
+  output && generated_html.key?(output)
+end
+unless unresolved_articles.empty?
+  abort "FAIL: homepage article links do not resolve to generated HTML: #{unresolved_articles.join(', ')}"
+end
+unless article_outputs.uniq.length == post_metadata.length
+  abort "FAIL: homepage exposes #{article_outputs.uniq.length} generated article route(s) for #{post_metadata.length} source post(s)."
+end
+required_files = (CORE_REQUIRED_FILES + article_outputs).uniq.freeze
+
+REDIRECT_ROUTES.each do |path, route|
+  target = route.fetch(:target)
+  body = generated_html.fetch(path)
+  relative_target = relative_site_url(target, baseurl)
+  absolute_target = "#{site_origin}#{relative_target}"
+
   refresh = html_tags(body, "meta").find do |tag|
     attribute_value(tag, "http-equiv")&.casecmp?("refresh")
   end
   refresh_content = attribute_value(refresh, "content")
-  unless refresh_content&.match?(/\A\s*\d+\s*;\s*url\s*=\s*#{Regexp.escape(target)}\s*\z/i)
-    abort "FAIL: #{path} lacks refresh target #{target}."
+  unless refresh_content&.match?(/\A\s*\d+\s*;\s*url\s*=\s*#{Regexp.escape(relative_target)}\s*\z/i)
+    abort "FAIL: #{path} lacks refresh target #{relative_target}."
   end
 
   canonical = html_tags(body, "link").find do |tag|
     attribute_value(tag, "rel")&.split&.any? { |rel| rel.casecmp?("canonical") }
   end
-  canonical_target = "#{site_url}#{target}"
-  unless attribute_value(canonical, "href") == canonical_target
-    abort "FAIL: #{path} lacks canonical target #{canonical_target}."
+  unless attribute_value(canonical, "href") == absolute_target
+    abort "FAIL: #{path} lacks canonical target #{absolute_target}."
   end
 
   fallback = body.scan(/<a\b[^>]*>.*?<\/a\s*>/im).find { |tag| tag.include?("继续前往") }
-  unless attribute_value(fallback, "href") == target
-    abort "FAIL: #{path} lacks clickable fallback to #{target}."
+  unless attribute_value(fallback, "href") == relative_target
+    abort "FAIL: #{path} lacks clickable fallback to #{relative_target}."
   end
 end
 
-not_found = (SITE / "404.html").read
+not_found = generated_html.fetch("404.html")
 abort "FAIL: 404 page lacks the home link." unless not_found.include?("返回首页")
 feed = (SITE / "feed.xml").read
 abort "FAIL: feed output has no feed element." unless feed.include?("<feed")
 abort "FAIL: feed output has no Atom media type." unless feed.include?("application/atom+xml")
+expected_sitemap_url = "#{site_origin}#{relative_site_url('/sitemap.xml', baseurl)}"
 robots = (SITE / "robots.txt").read
-abort "FAIL: robots output has no sitemap directive." unless robots.include?("Sitemap:")
+abort "FAIL: robots output lacks sitemap URL #{expected_sitemap_url}." unless robots.lines.any? { |line| line.strip == "Sitemap: #{expected_sitemap_url}" }
 sitemap = (SITE / "sitemap.xml").read
-abort "FAIL: sitemap output has no canonical site URL." unless sitemap.include?("https://bitchenhui.github.io/")
+expected_home_url = "#{site_origin}#{relative_site_url('/', baseurl)}"
+abort "FAIL: sitemap output has no canonical home URL #{expected_home_url}." unless sitemap.include?(expected_home_url)
 
-puts "PASS: verified #{html_files.length} HTML file(s) and #{REQUIRED_FILES.length} required site file(s)."
+puts "PASS: verified #{generated_html.length} HTML file(s) and #{required_files.length} required site file(s)."

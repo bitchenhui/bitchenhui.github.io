@@ -12,17 +12,11 @@
     themeToggle.setAttribute("aria-label", isDark ? "切换为浅色模式" : "切换为深色模式");
   }
 
-  function readStoredTheme() {
-    try { return window.localStorage.getItem("site-theme"); } catch (error) { return null; }
-  }
-
   function storeTheme(theme) {
     try { window.localStorage.setItem("site-theme", theme); } catch (error) { /* Theme still works for this page view. */ }
   }
 
-  var storedTheme = readStoredTheme();
-  var initialTheme = storedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-  root.dataset.theme = initialTheme;
+  var initialTheme = root.dataset.theme;
   updateThemeControl(initialTheme);
 
   if (themeToggle) {

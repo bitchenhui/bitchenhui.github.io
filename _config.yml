@@ -11,8 +11,6 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
 
-collections: {}
-
 author:
   name: "dch"
   role: "主动拥抱AGI的视频编解码算法工程师"

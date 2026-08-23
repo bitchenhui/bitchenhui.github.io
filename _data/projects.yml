@@ -4,7 +4,6 @@
     - C++
     - Python
     - 性能分析
-  featured: true
   project_url: ""
   repository_url: ""
 
@@ -14,7 +13,6 @@
     - 数据处理
     - 可视化
     - 自动化
-  featured: true
   project_url: ""
   repository_url: ""
 
@@ -24,6 +22,5 @@
     - 开源
     - CLI
     - 工程效率
-  featured: true
   project_url: ""
   repository_url: ""
