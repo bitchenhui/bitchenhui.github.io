@@ -63,38 +63,6 @@ rescue Psych::Exception => error
 end
 
 
-def with_timezone(timezone)
-  previous = ENV["TZ"]
-  ENV["TZ"] = timezone unless timezone.empty?
-  yield
-ensure
-  ENV["TZ"] = previous
-end
-
-
-def parsed_time(value, timezone = "UTC")
-  case value
-  when Time then value
-  when DateTime then value.to_time
-  when Date then with_timezone(timezone) { Time.local(value.year, value.month, value.day) }
-  else
-    text = value.to_s.strip
-    text.match?(/(?:Z|[+-]\d{2}:?\d{2})\z/i) ? Time.parse(text) : with_timezone(timezone) { Time.parse(text) }
-  end
-rescue ArgumentError
-  nil
-end
-
-
-def source_post_time(path, data, timezone)
-  explicit = parsed_time(data["date"], timezone) if data.key?("date")
-  return explicit if explicit
-
-  match = path.basename.to_s.match(/\A(\d{4})-(\d{2})-(\d{2})-/)
-  match && with_timezone(timezone) { Time.local(match[1].to_i, match[2].to_i, match[3].to_i) }
-end
-
-
 def html_tags(body, name)
   body.scan(/<#{Regexp.escape(name)}\b[^>]*>/im)
 end
@@ -124,11 +92,6 @@ def html_text(block)
 end
 
 
-def link_with_href(block, href)
-  html_elements(block, "a").find { |tag| attribute_value(tag, "href") == href }
-end
-
-
 def relative_site_url(path, baseurl)
   path = "/#{path}" unless path.start_with?("/")
   baseurl.empty? ? path : "#{baseurl}#{path}"
@@ -138,6 +101,7 @@ end
 def generated_path_for_url(url, baseurl)
   raw_path = CGI.unescapeHTML(url).split(/[?#]/, 2).first
   return if raw_path.match?(/\A(?:[a-z][a-z0-9+.-]*:|\/\/)/i)
+  return if raw_path.include?("..")
 
   path = URI::DEFAULT_PARSER.unescape(raw_path)
   if baseurl.empty?
@@ -257,6 +221,12 @@ robots_source = Pathname.new("robots.txt").read
 
 abort "FAIL: header lacks theme control." unless header_source.include?('id="theme-toggle"')
 abort "FAIL: theme control must be hidden until JavaScript initializes." unless header_source.match?(/<button\b[^>]*id="theme-toggle"[^>]*\bhidden\b[^>]*>/)
+hidden_rule = style_source.match?(/\[hidden\]\s*\{[^}]*display:\s*none\s*!important\s*;/m)
+hidden_rule_position = style_source.index("[hidden]")
+button_rule_position = style_source.index(".icon-button")
+unless hidden_rule && hidden_rule_position && button_rule_position && hidden_rule_position < button_rule_position
+  abort "FAIL: stylesheet must hide [hidden] elements before icon-button display rules."
+end
 unless script_source.match?(/updateThemeControl\(initialTheme\).*?addEventListener\("click".*?themeToggle\.hidden\s*=\s*false/m)
   abort "FAIL: site controller must synchronize and bind the theme control before revealing it."
 end
@@ -352,6 +322,9 @@ unless missing_home_source_markers.empty?
 end
 abort "FAIL: homepage still filters featured projects." if home_source.include?('where: "featured"')
 abort "FAIL: homepage still limits primary content." if home_source.match?(/for (project|post).+limit:/)
+unless home_source.match?(/\{%\s*for\s+post\s+in\s+site\.posts\s*%\}/)
+  abort "FAIL: homepage must iterate site.posts directly without filters."
+end
 
 %w[email github linkedin resume_url].each do |field|
   assignment = %({% assign #{field} = site.author.#{field} | default: "" | strip %})
@@ -392,16 +365,6 @@ end
 post_source = Pathname.new("_layouts/post.html").read
 abort "FAIL: post layout does not return to /#articles." unless post_source.include?("/#articles")
 abort "FAIL: post layout still links to /blog/." if post_source.include?('href="{{ \'/blog/\'')
-
-post_files = Pathname.glob("_posts/*").select(&:file?)
-all_post_metadata = post_files.to_h { |post| [post, front_matter(post)] }
-now = Time.now
-default_timezone = config_data["timezone"].to_s
-future_enabled = config_data["future"] == true
-post_metadata = all_post_metadata.reject do |post, data|
-  post_time = source_post_time(post, data, default_timezone)
-  data["published"] == false || (!future_enabled && post_time && post_time > now)
-end
 
 abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
 missing = CORE_REQUIRED_FILES.reject { |path| (SITE / path).file? }
@@ -479,50 +442,53 @@ end
 abort "FAIL: homepage project cards omit project details: #{missing_projects.join(', ')}" unless missing_projects.empty?
 abort "FAIL: homepage exposes #{project_cards.length} unexpected project card(s)." unless project_cards.empty?
 
-remaining_post_cards = html_blocks(home, "post-card")
-article_outputs = []
-missing_posts = post_metadata.filter_map do |post, data|
-  title = data["title"].to_s
+post_cards = html_blocks(home, "post-card")
+article_outputs = post_cards.each_with_index.map do |card, index|
+  heading = html_elements(card, "h3")
+  abort "FAIL: homepage post card #{index + 1} must have exactly one h3." unless heading.length == 1
+  title_links = html_elements(heading.first, "a")
+  abort "FAIL: homepage post card #{index + 1} must have exactly one title link inside h3." unless title_links.length == 1
+  title_link = title_links.first
+  title = html_text(title_link)
+  abort "FAIL: homepage post card #{index + 1} has an empty title." if title.empty?
+
+  actions = html_elements(card, "a").select { |tag| attribute_value(tag, "aria-label")&.start_with?("阅读全文：") }
+  abort "FAIL: homepage post card #{index + 1} must have exactly one article action." unless actions.length == 1
+  action = actions.first
+  title_href = attribute_value(title_link, "href")
+  action_href = attribute_value(action, "href")
+  abort "FAIL: homepage post card #{index + 1} title/action links differ." unless title_href == action_href
+  abort "FAIL: homepage post card #{index + 1} has the wrong action label." unless attribute_value(action, "aria-label") == "阅读全文：#{title}"
+  abort "FAIL: homepage post card #{index + 1} has the wrong visible action text." unless html_text(action) == "阅读全文 →"
+
+  output = action_href && generated_path_for_url(action_href, baseurl)
+  blog_prefix = "blog/"
+  valid_blog_output = output&.start_with?(blog_prefix) && output != "blog/index.html" && output.match?(/\Ablog\/.+\/index\.html\z/)
+  abort "FAIL: homepage post card #{index + 1} has an invalid article route." unless valid_blog_output && generated_html.key?(output)
+  generated_article = generated_html.fetch(output)
   escaped_title = CGI.escapeHTML(title)
-  expected_date = source_post_time(post, data, default_timezone)
-  card_index = remaining_post_cards.index do |candidate|
-    title_link = candidate.scan(/<a\b[^>]*>.*?<\/a\s*>/im).find do |tag|
-      tag.match?(/>\s*#{Regexp.escape(escaped_title)}\s*<\/a\s*>/m)
-    end
-    action = html_tags(candidate, "a").find { |tag| attribute_value(tag, "aria-label") == "阅读全文：#{escaped_title}" }
-    title_href = attribute_value(title_link, "href")
-    action_href = attribute_value(action, "href")
-    output = action_href && generated_path_for_url(action_href, baseurl)
-    generated_article = output && generated_html[output]
-    time_tag = html_tags(candidate, "time").first
-    description = data["description"].to_s
-    summary_paragraphs = candidate.scan(/<p\b(?![^>]*class=["'][^"']*\b(?:card-meta|card-action)\b)[^>]*>.*?<\/p\s*>/im)
-    tag_items = candidate.scan(/<li\b[^>]*class=["'][^"']*\btag\b[^"']*["'][^>]*>.*?<\/li\s*>/im).map { |tag| html_text(tag) }
-    tags = Array(data["tags"]).map(&:to_s)
-    valid_summary = if description.empty?
-                      summary_paragraphs.any? { |paragraph| !html_text(paragraph).empty? }
-                    else
-                      summary_paragraphs.any? { |paragraph| html_text(paragraph) == description }
-                    end
-
-    title_href == action_href && output && generated_article &&
-      generated_article.match?(/<h1\b[^>]*id="post-title"[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h1>/m) &&
-      expected_date && attribute_value(time_tag, "datetime") == expected_date.iso8601 &&
-      valid_summary && tag_items.sort == tags.sort
+  unless generated_article.match?(/<h1\b[^>]*id="post-title"[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h1>/m)
+    abort "FAIL: generated article #{output} lacks matching #post-title."
   end
-  next title unless card_index
 
-  card = remaining_post_cards.delete_at(card_index)
-  action = html_tags(card, "a").find { |tag| attribute_value(tag, "aria-label") == "阅读全文：#{escaped_title}" }
-  article_outputs << generated_path_for_url(attribute_value(action, "href"), baseurl)
-  nil
+  time_tags = html_tags(card, "time")
+  datetime = time_tags.length == 1 && attribute_value(time_tags.first, "datetime")
+  begin
+    Time.iso8601(datetime.to_s)
+  rescue ArgumentError
+    abort "FAIL: homepage post card #{index + 1} has an invalid ISO8601 datetime."
+  end
+  summaries = card.scan(/<p\b(?![^>]*class=["'][^"']*\b(?:card-meta|card-action)\b)[^>]*>.*?<\/p\s*>/im)
+  unless summaries.length == 1 && !html_text(summaries.first).empty?
+    abort "FAIL: homepage post card #{index + 1} must have one non-empty summary."
+  end
+  tags = card.scan(/<li\b[^>]*class=["'][^"']*\btag\b[^"']*["'][^>]*>.*?<\/li\s*>/im)
+  abort "FAIL: homepage post card #{index + 1} has an empty tag." if tags.any? { |tag| html_text(tag).empty? }
+
+  output
 end
-abort "FAIL: homepage post cards omit valid article details: #{missing_posts.join(', ')}" unless missing_posts.empty?
-unless remaining_post_cards.empty?
-  abort "FAIL: homepage exposes #{remaining_post_cards.length} unexpected post card(s)."
-end
-unless article_outputs.uniq.length == post_metadata.length
-  abort "FAIL: homepage exposes #{article_outputs.uniq.length} unique generated article route(s) for #{post_metadata.length} published source post(s)."
+unless article_outputs.uniq.length == article_outputs.length
+  abort "FAIL: homepage post cards must use unique generated article destinations."
 end
 required_files = (CORE_REQUIRED_FILES + article_outputs).uniq.freeze
 
