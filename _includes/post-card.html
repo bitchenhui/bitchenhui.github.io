@@ -7,5 +7,5 @@
       {% for tag in include.post.tags %}<li class="tag">{{ tag | escape }}</li>{% endfor %}
     </ul>
   {% endif %}
-  <p class="card-action"><a href="{{ include.post.url | relative_url }}">阅读全文<span aria-hidden="true"> →</span></a></p>
+  <p class="card-action"><a href="{{ include.post.url | relative_url }}" aria-label="阅读全文：{{ include.post.title | escape }}">阅读全文<span aria-hidden="true"> →</span></a></p>
 </article>

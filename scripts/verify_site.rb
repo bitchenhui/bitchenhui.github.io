@@ -22,15 +22,18 @@ CORE_REQUIRED_FILES = (%w[
   sitemap.xml
   robots.txt
 ] + REDIRECT_ROUTES.keys).freeze
+APPROVED_SKILL_NAMES = [
+  "llm的eoH算法自动迭代设计",
+  "视频编解码算法优化(H265/H266/AV1/NVC)",
+  "vod/live/rtc场景qos/qoe优化"
+].freeze
 RUNTIME_SCAN_GLOBS = %w[
   _config.yml
   *.html
   about.md
   robots.txt
-  _data/**/*.yml
   _includes/**/*.html
   _layouts/**/*.html
-  _posts/**/*.md
   assets/**/*.scss
   assets/**/*.js
   blog/**/*.html
@@ -121,17 +124,24 @@ baseurl = baseurl.delete_suffix("/")
 
 abort "FAIL: obsolete collections configuration remains." if config_data.key?("collections")
 abort "FAIL: obsolete navigation configuration remains." if config_data.key?("navigation")
-abort "FAIL: current focus is missing." unless config_data["current_focus"].is_a?(Array)
+current_focus = config_data["current_focus"]
+unless current_focus.is_a?(Array) && !current_focus.empty? && current_focus.all? { |focus| focus.is_a?(String) && !focus.strip.empty? }
+  abort "FAIL: current focus data must be a non-empty list of non-empty strings."
+end
 skills = config_data["skills"]
-unless skills.is_a?(Array) && skills.all? { |skill| skill.is_a?(Hash) && %w[name description].all? { |field| skill[field].is_a?(String) && !skill[field].strip.empty? } }
-  abort "FAIL: capability data does not match the required name/description schema."
+unless skills.is_a?(Array) && !skills.empty? && skills.all? { |skill| skill.is_a?(Hash) && %w[name description].all? { |field| skill[field].is_a?(String) && !skill[field].strip.empty? } }
+  abort "FAIL: capability data must be a non-empty list matching the required name/description schema."
+end
+skill_names = skills.map { |skill| skill["name"] }
+unless skill_names == APPROVED_SKILL_NAMES
+  abort "FAIL: capability names must remain exactly: #{APPROVED_SKILL_NAMES.join(', ')}"
 end
 
 projects_data = Pathname.new("_data/projects.yml")
 abort "FAIL: project data file is missing." unless projects_data.file?
 projects = load_yaml(projects_data)
-unless projects.is_a?(Array) && !projects.empty?
-  abort "FAIL: project data must be a non-empty list."
+unless projects.is_a?(Array)
+  abort "FAIL: project data must be a list."
 end
 projects.each_with_index do |project, index|
   missing_fields = PROJECT_FIELDS.reject { |field| project.is_a?(Hash) && project.key?(field) }
@@ -148,8 +158,8 @@ end
 experience_data = Pathname.new("_data/experience.yml")
 abort "FAIL: experience data file is missing." unless experience_data.file?
 experience = load_yaml(experience_data)
-unless experience.is_a?(Array) && !experience.empty?
-  abort "FAIL: experience data must be a non-empty list."
+unless experience.is_a?(Array)
+  abort "FAIL: experience data must be a list."
 end
 experience.each_with_index do |item, index|
   missing_fields = EXPERIENCE_FIELDS.reject { |field| item.is_a?(Hash) && item.key?(field) }
@@ -264,6 +274,10 @@ required_home_source_markers = %w[
   include\ experience-item.html
   site.data.projects
   site.posts
+  经历内容待补充。
+  项目内容待补充。
+  文章内容待更新。
+  公开联系方式待补充。
 ]
 missing_home_source_markers = required_home_source_markers.reject { |marker| home_source.include?(marker.tr("\\", "")) }
 unless missing_home_source_markers.empty?
@@ -271,6 +285,29 @@ unless missing_home_source_markers.empty?
 end
 abort "FAIL: homepage still filters featured projects." if home_source.include?('where: "featured"')
 abort "FAIL: homepage still limits primary content." if home_source.match?(/for (project|post).+limit:/)
+
+%w[email github linkedin resume_url].each do |field|
+  assignment = %({% assign #{field} = site.author.#{field} | default: "" | strip %})
+  abort "FAIL: homepage contact does not normalize #{field}." unless home_source.include?(assignment)
+end
+contact_source = home_source[/<section id="contact"\b.*?<\/section>/m]
+abort "FAIL: homepage contact section is missing." unless contact_source
+unless contact_source.include?('{% if email != "" or github != "" or linkedin != "" or resume_url != "" %}')
+  abort "FAIL: homepage contact empty state is not conditional on all contact fields."
+end
+abort "FAIL: homepage contact lacks an email link." unless contact_source.include?("mailto:")
+%w[github linkedin resume_url].each do |field|
+  link = /href="\{\{ #{field} \| escape \}\}"[^>]*target="_blank"[^>]*rel="noopener noreferrer"[^>]*>/
+  abort "FAIL: homepage contact does not safely render #{field}." unless contact_source.match?(link)
+end
+%w[GitHub（新窗口） LinkedIn（新窗口） 简历（新窗口）].each do |label|
+  abort "FAIL: homepage contact external link label lacks new-window disclosure: #{label}." unless contact_source.include?(label)
+end
+
+post_card_source = Pathname.new("_includes/post-card.html").read
+unless post_card_source.include?('aria-label="阅读全文：{{ include.post.title | escape }}"')
+  abort "FAIL: post-card action lacks an article-specific accessible name."
+end
 
 REDIRECT_ROUTES.each_value do |route|
   path = route.fetch(:source)
@@ -288,7 +325,6 @@ abort "FAIL: post layout does not return to /#articles." unless post_source.incl
 abort "FAIL: post layout still links to /blog/." if post_source.include?('href="{{ \'/blog/\'')
 
 post_files = Pathname.glob("_posts/*").select(&:file?)
-abort "FAIL: no source posts found." if post_files.empty?
 post_metadata = post_files.to_h { |post| [post, front_matter(post)] }
 
 abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
@@ -386,6 +422,7 @@ robots = (SITE / "robots.txt").read
 abort "FAIL: robots output lacks sitemap URL #{expected_sitemap_url}." unless robots.lines.any? { |line| line.strip == "Sitemap: #{expected_sitemap_url}" }
 sitemap = (SITE / "sitemap.xml").read
 expected_home_url = "#{site_origin}#{relative_site_url('/', baseurl)}"
-abort "FAIL: sitemap output has no canonical home URL #{expected_home_url}." unless sitemap.include?(expected_home_url)
+home_loc_pattern = /<loc>\s*#{Regexp.escape(expected_home_url)}\s*<\/loc>/
+abort "FAIL: sitemap output has no canonical home URL #{expected_home_url}." unless sitemap.match?(home_loc_pattern)
 
 puts "PASS: verified #{generated_html.length} HTML file(s) and #{required_files.length} required site file(s)."
