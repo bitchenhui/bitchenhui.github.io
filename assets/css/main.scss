@@ -153,8 +153,15 @@ main { min-height: calc(100vh - 10rem); }
 .tag { display: inline-flex; padding: 0.2rem 0.6rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent-strong); font-size: 0.85rem; font-weight: 650; }
 .button-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.5rem; }
 .button-secondary { background: transparent; color: var(--accent-strong); }
-.prose { width: min(100%, var(--reading)); }
+.prose { max-width: var(--reading); }
 .prose > * + * { margin-top: 1.3rem; }
+.prose pre,
+.prose table { max-width: 100%; overflow-x: auto; }
+.prose pre { white-space: pre; }
+.prose table { display: block; }
+.prose code,
+.prose p,
+.prose li { overflow-wrap: anywhere; }
 .prose img { max-width: 100%; height: auto; }
 .empty-state { padding: 2rem; border: 1px dashed var(--line); border-radius: var(--radius); color: var(--muted); text-align: center; }
 

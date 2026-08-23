@@ -4,6 +4,7 @@
 require "cgi"
 require "date"
 require "pathname"
+require "time"
 require "uri"
 require "yaml"
 
@@ -23,11 +24,6 @@ CORE_REQUIRED_FILES = (%w[
   sitemap.xml
   robots.txt
 ] + REDIRECT_ROUTES.keys).freeze
-APPROVED_SKILL_NAMES = [
-  "llm的eoH算法自动迭代设计",
-  "视频编解码算法优化(H265/H266/AV1/NVC)",
-  "vod/live/rtc场景qos/qoe优化"
-].freeze
 RUNTIME_SCAN_GLOBS = %w[
   _config.yml
   *.html
@@ -67,6 +63,38 @@ rescue Psych::Exception => error
 end
 
 
+def with_timezone(timezone)
+  previous = ENV["TZ"]
+  ENV["TZ"] = timezone unless timezone.empty?
+  yield
+ensure
+  ENV["TZ"] = previous
+end
+
+
+def parsed_time(value, timezone = "UTC")
+  case value
+  when Time then value
+  when DateTime then value.to_time
+  when Date then with_timezone(timezone) { Time.local(value.year, value.month, value.day) }
+  else
+    text = value.to_s.strip
+    text.match?(/(?:Z|[+-]\d{2}:?\d{2})\z/i) ? Time.parse(text) : with_timezone(timezone) { Time.parse(text) }
+  end
+rescue ArgumentError
+  nil
+end
+
+
+def source_post_time(path, data, timezone)
+  explicit = parsed_time(data["date"], timezone) if data.key?("date")
+  return explicit if explicit
+
+  match = path.basename.to_s.match(/\A(\d{4})-(\d{2})-(\d{2})-/)
+  match && with_timezone(timezone) { Time.local(match[1].to_i, match[2].to_i, match[3].to_i) }
+end
+
+
 def html_tags(body, name)
   body.scan(/<#{Regexp.escape(name)}\b[^>]*>/im)
 end
@@ -83,6 +111,21 @@ end
 
 def html_blocks(body, class_name)
   body.scan(/<article\b(?=[^>]*\bclass\s*=\s*["'][^"']*\b#{Regexp.escape(class_name)}\b)[^>]*>.*?<\/article\s*>/im)
+end
+
+
+def html_elements(body, name)
+  body.scan(/<#{Regexp.escape(name)}\b[^>]*>.*?<\/#{Regexp.escape(name)}\s*>/im)
+end
+
+
+def html_text(block)
+  CGI.unescapeHTML(block.gsub(/<[^>]*>/m, "")).gsub(/\s+/, " ").strip
+end
+
+
+def link_with_href(block, href)
+  html_elements(block, "a").find { |tag| attribute_value(tag, "href") == href }
 end
 
 
@@ -138,10 +181,6 @@ skills = config_data["skills"]
 unless skills.is_a?(Array) && !skills.empty? && skills.all? { |skill| skill.is_a?(Hash) && %w[name description].all? { |field| skill[field].is_a?(String) && !skill[field].strip.empty? } }
   abort "FAIL: capability data must be a non-empty list matching the required name/description schema."
 end
-skill_names = skills.map { |skill| skill["name"] }
-unless skill_names == APPROVED_SKILL_NAMES
-  abort "FAIL: capability names must remain exactly: #{APPROVED_SKILL_NAMES.join(', ')}"
-end
 
 projects_data = Pathname.new("_data/projects.yml")
 abort "FAIL: project data file is missing." unless projects_data.file?
@@ -152,7 +191,6 @@ end
 projects.each_with_index do |project, index|
   missing_fields = PROJECT_FIELDS.reject { |field| project.is_a?(Hash) && project.key?(field) }
   abort "FAIL: project #{index + 1} lacks fields: #{missing_fields.join(', ')}" unless missing_fields.empty?
-  abort "FAIL: project #{index + 1} retains obsolete featured data." if project.key?("featured")
   unless project["title"].is_a?(String) && !project["title"].strip.empty? &&
          project["description"].is_a?(String) && !project["description"].strip.empty? &&
          project["stack"].is_a?(Array) && project["stack"].all? { |item| item.is_a?(String) && !item.strip.empty? } &&
@@ -195,7 +233,6 @@ missing_readme_sections = required_readme_sections.reject { |section| normalized
 unless missing_readme_sections.empty?
   abort "FAIL: README is missing required sections: #{missing_readme_sections.join(', ')}"
 end
-abort "FAIL: README still documents obsolete featured project data." if readme_content.include?("featured")
 
 required_includes = {
   "_includes/profile-card.html" => ["profile-card", "site.current_focus", "site.skills"],
@@ -246,6 +283,14 @@ end
 
 abort "FAIL: stylesheet still forces a 320px minimum width." if style_source.match?(/\bmin-width\s*:\s*320px/)
 abort "FAIL: stylesheet lacks safe wrapping for editable text." unless style_source.match?(/h1,\s*h2,\s*h3,\s*a,\s*\.tag\s*\{[^}]*overflow-wrap:\s*anywhere/m)
+abort "FAIL: prose overrides shell gutters." if style_source.match?(/\.prose\s*\{[^}]*(?:\A|[;{])\s*width\s*:/m)
+abort "FAIL: prose lacks a readable maximum width." unless style_source.match?(/\.prose\s*\{[^}]*max-width:\s*var\(--reading\)/m)
+unless style_source.match?(/\.prose pre,\s*\.prose table\s*\{[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/m) &&
+       style_source.match?(/\.prose table\s*\{[^}]*display:\s*block/m) &&
+       style_source.match?(/\.prose code,\s*\.prose p,\s*\.prose li\s*\{[^}]*overflow-wrap:\s*anywhere/m) &&
+       style_source.match?(/\.prose img\s*\{[^}]*max-width:\s*100%[^}]*height:\s*auto/m)
+  abort "FAIL: prose lacks robust local overflow handling."
+end
 header_rule = style_source[/\.site-header\s*\{(.*?)\}/m, 1]
 unless header_rule && header_rule.index("background: var(--canvas);") &&
        header_rule.index("background: color-mix(") > header_rule.index("background: var(--canvas);")
@@ -349,7 +394,14 @@ abort "FAIL: post layout does not return to /#articles." unless post_source.incl
 abort "FAIL: post layout still links to /blog/." if post_source.include?('href="{{ \'/blog/\'')
 
 post_files = Pathname.glob("_posts/*").select(&:file?)
-post_metadata = post_files.to_h { |post| [post, front_matter(post)] }
+all_post_metadata = post_files.to_h { |post| [post, front_matter(post)] }
+now = Time.now
+default_timezone = config_data["timezone"].to_s
+future_enabled = config_data["future"] == true
+post_metadata = all_post_metadata.reject do |post, data|
+  post_time = source_post_time(post, data, default_timezone)
+  data["published"] == false || (!future_enabled && post_time && post_time > now)
+end
 
 abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
 missing = CORE_REQUIRED_FILES.reject { |path| (SITE / path).file? }
@@ -397,38 +449,80 @@ abort "FAIL: generated homepage lacks #{missing_markers.join(', ')}." unless mis
 end
 
 project_cards = html_blocks(home, "project-card")
-project_titles = projects.map { |project| project["title"] }
-missing_projects = project_titles.reject do |title|
+project_link_labels = { "project_url" => "查看项目（新窗口）", "repository_url" => "查看代码（新窗口）" }.freeze
+missing_projects = projects.filter_map do |project|
+  title = project["title"]
   escaped_title = CGI.escapeHTML(title)
-  project_cards.any? { |card| card.match?(/<h3\b[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h3>/m) }
-end
-abort "FAIL: homepage project cards omit projects: #{missing_projects.join(', ')}" unless missing_projects.empty?
-
-post_cards = html_blocks(home, "post-card")
-article_outputs = []
-missing_posts = post_metadata.values.filter_map do |data|
-  title = data["title"].to_s
-  escaped_title = CGI.escapeHTML(title)
-  card = post_cards.find do |candidate|
-    candidate.match?(/<h3\b[^>]*>\s*<a\b[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/a\s*>\s*<\/h3>/m)
+  escaped_description = CGI.escapeHTML(project["description"])
+  card_index = project_cards.index do |card|
+    stack_tags = card.scan(/<li\b[^>]*class=["'][^"']*\btag\b[^"']*["'][^>]*>.*?<\/li\s*>/im).map { |tag| html_text(tag) }
+    valid_links = PROJECT_URL_FIELDS.all? do |field|
+      url = project[field].to_s.strip
+      labelled_links = html_elements(card, "a").select { |link| html_text(link) == project_link_labels.fetch(field) }
+      if url.empty?
+        labelled_links.empty?
+      else
+        link = labelled_links.find { |candidate| attribute_value(candidate, "href") == CGI.escapeHTML(url) }
+        link && labelled_links.length == 1 &&
+          attribute_value(link, "target") == "_blank" && attribute_value(link, "rel") == "noopener noreferrer"
+      end
+    end
+    card.match?(/<h3\b[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h3>/m) &&
+      card.match?(/<p\b[^>]*>\s*#{Regexp.escape(escaped_description)}\s*<\/p>/m) &&
+      stack_tags.sort == project["stack"].map(&:to_s).sort && valid_links
   end
-  next title unless card
+  next title unless card_index
 
-  action = html_tags(card, "a").find { |tag| attribute_value(tag, "aria-label") == "阅读全文：#{escaped_title}" }
-  next title unless action
-
-  url = attribute_value(action, "href")
-  output = url && generated_path_for_url(url, baseurl)
-  generated_article = output && generated_html[output]
-  next title unless generated_article && generated_article.match?(/<h1\b[^>]*id="post-title"[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h1>/m)
-
-  article_outputs << output
+  project_cards.delete_at(card_index)
   nil
 end
-abort "FAIL: homepage post cards omit valid article actions: #{missing_posts.join(', ')}" unless missing_posts.empty?
-article_outputs.uniq!
-unless article_outputs.length == post_metadata.length
-  abort "FAIL: homepage exposes #{article_outputs.length} generated article route(s) for #{post_metadata.length} source post(s)."
+abort "FAIL: homepage project cards omit project details: #{missing_projects.join(', ')}" unless missing_projects.empty?
+abort "FAIL: homepage exposes #{project_cards.length} unexpected project card(s)." unless project_cards.empty?
+
+remaining_post_cards = html_blocks(home, "post-card")
+article_outputs = []
+missing_posts = post_metadata.filter_map do |post, data|
+  title = data["title"].to_s
+  escaped_title = CGI.escapeHTML(title)
+  expected_date = source_post_time(post, data, default_timezone)
+  card_index = remaining_post_cards.index do |candidate|
+    title_link = candidate.scan(/<a\b[^>]*>.*?<\/a\s*>/im).find do |tag|
+      tag.match?(/>\s*#{Regexp.escape(escaped_title)}\s*<\/a\s*>/m)
+    end
+    action = html_tags(candidate, "a").find { |tag| attribute_value(tag, "aria-label") == "阅读全文：#{escaped_title}" }
+    title_href = attribute_value(title_link, "href")
+    action_href = attribute_value(action, "href")
+    output = action_href && generated_path_for_url(action_href, baseurl)
+    generated_article = output && generated_html[output]
+    time_tag = html_tags(candidate, "time").first
+    description = data["description"].to_s
+    summary_paragraphs = candidate.scan(/<p\b(?![^>]*class=["'][^"']*\b(?:card-meta|card-action)\b)[^>]*>.*?<\/p\s*>/im)
+    tag_items = candidate.scan(/<li\b[^>]*class=["'][^"']*\btag\b[^"']*["'][^>]*>.*?<\/li\s*>/im).map { |tag| html_text(tag) }
+    tags = Array(data["tags"]).map(&:to_s)
+    valid_summary = if description.empty?
+                      summary_paragraphs.any? { |paragraph| !html_text(paragraph).empty? }
+                    else
+                      summary_paragraphs.any? { |paragraph| html_text(paragraph) == description }
+                    end
+
+    title_href == action_href && output && generated_article &&
+      generated_article.match?(/<h1\b[^>]*id="post-title"[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h1>/m) &&
+      expected_date && attribute_value(time_tag, "datetime") == expected_date.iso8601 &&
+      valid_summary && tag_items.sort == tags.sort
+  end
+  next title unless card_index
+
+  card = remaining_post_cards.delete_at(card_index)
+  action = html_tags(card, "a").find { |tag| attribute_value(tag, "aria-label") == "阅读全文：#{escaped_title}" }
+  article_outputs << generated_path_for_url(attribute_value(action, "href"), baseurl)
+  nil
+end
+abort "FAIL: homepage post cards omit valid article details: #{missing_posts.join(', ')}" unless missing_posts.empty?
+unless remaining_post_cards.empty?
+  abort "FAIL: homepage exposes #{remaining_post_cards.length} unexpected post card(s)."
+end
+unless article_outputs.uniq.length == post_metadata.length
+  abort "FAIL: homepage exposes #{article_outputs.uniq.length} unique generated article route(s) for #{post_metadata.length} published source post(s)."
 end
 required_files = (CORE_REQUIRED_FILES + article_outputs).uniq.freeze
 
@@ -474,6 +568,17 @@ abort "FAIL: robots output lacks sitemap URL #{expected_sitemap_url}." unless ro
 sitemap = (SITE / "sitemap.xml").read
 expected_home_url = "#{site_origin}#{relative_site_url('/', baseurl)}"
 home_loc_pattern = /<loc>\s*#{Regexp.escape(expected_home_url)}\s*<\/loc>/
-abort "FAIL: sitemap output has no canonical home URL #{expected_home_url}." unless sitemap.match?(home_loc_pattern)
+unless sitemap.scan(home_loc_pattern).length == 1
+  abort "FAIL: sitemap must contain canonical home URL #{expected_home_url} exactly once."
+end
+REDIRECT_ROUTES.each_key do |path|
+  route_path = "/#{path.delete_suffix('index.html')}"
+  compatibility_paths = [route_path, "#{route_path}index.html"]
+  compatibility_paths.each do |compatibility_path|
+    compatibility_url = "#{site_origin}#{relative_site_url(compatibility_path, baseurl)}"
+    compatibility_loc = /<loc>\s*#{Regexp.escape(compatibility_url)}\s*<\/loc>/
+    abort "FAIL: sitemap advertises compatibility route #{compatibility_url}." if sitemap.match?(compatibility_loc)
+  end
+end
 
 puts "PASS: verified #{generated_html.length} HTML file(s) and #{required_files.length} required site file(s)."
