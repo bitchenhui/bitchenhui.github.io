@@ -326,7 +326,7 @@ abort "FAIL: generated homepage lacks #{missing_markers.join(', ')}." unless mis
 end
 
 project_titles = projects.map { |project| project["title"] }
-missing_projects = project_titles.reject { |title| home.include?(title) }
+missing_projects = project_titles.reject { |title| home.include?(CGI.escapeHTML(title)) }
 abort "FAIL: homepage omits projects: #{missing_projects.join(', ')}" unless missing_projects.empty?
 post_titles = post_metadata.values.map { |data| data["title"].to_s }
 missing_posts = post_titles.reject { |title| home.include?(CGI.escapeHTML(title)) }
