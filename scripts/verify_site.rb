@@ -253,8 +253,10 @@ end
 
 abort "FAIL: stylesheet still forces a 320px minimum width." if style_source.match?(/\bmin-width\s*:\s*320px/)
 abort "FAIL: stylesheet lacks safe wrapping for editable text." unless style_source.match?(/h1,\s*h2,\s*h3,\s*a,\s*\.tag\s*\{[^}]*overflow-wrap:\s*anywhere/m)
-abort "FAIL: prose overrides shell gutters." if style_source.match?(/\.prose\s*\{[^}]*(?:\A|[;{])\s*width\s*:/m)
-abort "FAIL: prose lacks a readable maximum width." unless style_source.match?(/\.prose\s*\{[^}]*max-width:\s*var\(--reading\)/m)
+prose_rule_body = style_source[/\.prose\s*\{([^}]*)\}/m, 1]
+abort "FAIL: prose rule is missing." unless prose_rule_body
+abort "FAIL: prose overrides shell gutters." if prose_rule_body.match?(/(?:\A|;)\s*width\s*:/m)
+abort "FAIL: prose lacks a readable maximum width." unless prose_rule_body.match?(/(?:\A|;)\s*max-width:\s*var\(--reading\)/m)
 unless style_source.match?(/\.prose pre,\s*\.prose table\s*\{[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/m) &&
        style_source.match?(/\.prose table\s*\{[^}]*display:\s*block/m) &&
        style_source.match?(/\.prose code,\s*\.prose p,\s*\.prose li\s*\{[^}]*overflow-wrap:\s*anywhere/m) &&
@@ -458,12 +460,12 @@ article_outputs = post_cards.each_with_index.map do |card, index|
   title_href = attribute_value(title_link, "href")
   action_href = attribute_value(action, "href")
   abort "FAIL: homepage post card #{index + 1} title/action links differ." unless title_href == action_href
-  abort "FAIL: homepage post card #{index + 1} has the wrong action label." unless attribute_value(action, "aria-label") == "阅读全文：#{title}"
+  decoded_label = CGI.unescapeHTML(attribute_value(action, "aria-label").to_s)
+  abort "FAIL: homepage post card #{index + 1} has the wrong action label." unless decoded_label == "阅读全文：#{title}"
   abort "FAIL: homepage post card #{index + 1} has the wrong visible action text." unless html_text(action) == "阅读全文 →"
 
   output = action_href && generated_path_for_url(action_href, baseurl)
-  blog_prefix = "blog/"
-  valid_blog_output = output&.start_with?(blog_prefix) && output != "blog/index.html" && output.match?(/\Ablog\/.+\/index\.html\z/)
+  valid_blog_output = output&.match?(/\Ablog\/[^\/]+\/index\.html\z/)
   abort "FAIL: homepage post card #{index + 1} has an invalid article route." unless valid_blog_output && generated_html.key?(output)
   generated_article = generated_html.fetch(output)
   escaped_title = CGI.escapeHTML(title)
@@ -536,6 +538,14 @@ expected_home_url = "#{site_origin}#{relative_site_url('/', baseurl)}"
 home_loc_pattern = /<loc>\s*#{Regexp.escape(expected_home_url)}\s*<\/loc>/
 unless sitemap.scan(home_loc_pattern).length == 1
   abort "FAIL: sitemap must contain canonical home URL #{expected_home_url} exactly once."
+end
+article_outputs.each do |output|
+  article_path = "/#{output.delete_suffix('index.html')}"
+  article_url = "#{site_origin}#{relative_site_url(article_path, baseurl)}"
+  article_loc_pattern = /<loc>\s*#{Regexp.escape(article_url)}\s*<\/loc>/
+  unless sitemap.scan(article_loc_pattern).length == 1
+    abort "FAIL: sitemap must contain generated article URL #{article_url} exactly once."
+  end
 end
 REDIRECT_ROUTES.each_key do |path|
   route_path = "/#{path.delete_suffix('index.html')}"
