@@ -2,51 +2,88 @@
 layout: default
 title: 首页
 ---
-<section class="section hero">
-  <div class="shell">
-    <p class="tag">PERSONAL SITE / 01</p>
-    <h1 class="section-heading">个人网站首版示例<br>TODO: 替换为你的个人定位</h1>
-    <p class="section-lead">{{ site.author.intro }}</p>
-    <div class="button-row">
-      <a class="button" href="{{ '/projects/' | relative_url }}">查看项目</a>
-      <a class="button button-secondary" href="{{ '/blog/' | relative_url }}">阅读博客</a>
-    </div>
-  </div>
-</section>
+<div class="shell manual-layout">
+  <section class="manual-hero" aria-labelledby="intro-title">
+    <p class="eyebrow">PERSONAL MANUAL / 01</p>
+    <h1 id="intro-title">{{ site.author.role | escape }}</h1>
+    <p class="manual-hero__lead">{{ site.author.intro | escape }}</p>
+    <nav class="anchor-nav" aria-label="本页内容">
+      <a href="#capabilities">核心能力</a>
+      <a href="#experience">工作经历</a>
+      <a href="#projects">代表项目</a>
+      <a href="#articles">技术文章</a>
+      <a href="#contact">联系我</a>
+    </nav>
+  </section>
 
-<section class="section">
-  <div class="shell">
-    <h2 class="section-heading">关注的方向</h2>
-    <ul class="tag-list" aria-label="技能与方向">
+  <div class="manual-sidebar">{% include profile-card.html %}</div>
+
+  <section id="capabilities" class="manual-section" aria-labelledby="capabilities-title">
+    <p class="section-index">02 / CAPABILITIES</p>
+    <h2 id="capabilities-title">核心能力</h2>
+    <div class="capability-list">
       {% for skill in site.skills %}
-        <li class="tag">{{ skill | escape }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
-
-<section class="section">
-  <div class="shell">
-    <h2 class="section-heading">精选项目</h2>
-    <p class="section-lead">这些内容均为待替换的结构示例，用于说明作品集的呈现方式。</p>
-    <div class="card-grid">
-      {% assign featured_projects = site.data.projects | where: "featured", true %}
-      {% for project in featured_projects limit: 3 %}
-        {% include project-card.html project=project %}
+        <article class="capability-item">
+          <h3>{{ skill.name | escape }}</h3>
+          <p>{{ skill.description | escape }}</p>
+        </article>
       {% endfor %}
     </div>
-    <p><a href="{{ '/projects/' | relative_url }}">查看全部项目 →</a></p>
-  </div>
-</section>
+  </section>
 
-<section class="section">
-  <div class="shell">
-    <h2 class="section-heading">最新文章</h2>
-    <div class="card-grid">
-      {% for post in site.posts limit: 3 %}
-        {% include post-card.html post=post %}
-      {% endfor %}
-    </div>
-    <p><a href="{{ '/blog/' | relative_url }}">查看全部文章 →</a></p>
-  </div>
-</section>
+  <section id="experience" class="manual-section" aria-labelledby="experience-title">
+    <p class="section-index">03 / EXPERIENCE</p>
+    <h2 id="experience-title">工作经历</h2>
+    {% if site.data.experience and site.data.experience != empty %}
+      <div class="experience-list">
+        {% for item in site.data.experience %}{% include experience-item.html item=item %}{% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-state">经历内容待补充。</p>
+    {% endif %}
+  </section>
+
+  <section id="projects" class="manual-section" aria-labelledby="projects-title">
+    <p class="section-index">04 / PROJECTS</p>
+    <h2 id="projects-title">代表项目</h2>
+    {% if site.data.projects and site.data.projects != empty %}
+      <div class="card-grid">
+        {% for project in site.data.projects %}{% include project-card.html project=project %}{% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-state">项目内容待补充。</p>
+    {% endif %}
+  </section>
+
+  <section id="articles" class="manual-section" aria-labelledby="articles-title">
+    <p class="section-index">05 / WRITING</p>
+    <h2 id="articles-title">技术文章</h2>
+    {% if site.posts.size > 0 %}
+      <div class="card-grid">
+        {% for post in site.posts %}{% include post-card.html post=post %}{% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-state">文章内容待更新。</p>
+    {% endif %}
+  </section>
+
+  <section id="contact" class="manual-section contact-section" aria-labelledby="contact-title">
+    <p class="section-index">06 / CONTACT</p>
+    <h2 id="contact-title">联系我</h2>
+    {% assign email = site.author.email | default: "" | strip %}
+    {% assign github = site.author.github | default: "" | strip %}
+    {% assign linkedin = site.author.linkedin | default: "" | strip %}
+    {% assign resume_url = site.author.resume_url | default: "" | strip %}
+    {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
+      <p>如果你正在寻找视频编解码算法、AI 驱动研发流程或音视频体验优化方向的合作，可以通过以下方式联系我。</p>
+      <ul class="profile-card__links">
+        {% if email != "" %}<li><a href="mailto:{{ email | escape }}">{{ email | escape }}</a></li>{% endif %}
+        {% if github != "" %}<li><a href="{{ github | escape }}" target="_blank" rel="noopener noreferrer">GitHub（新窗口）</a></li>{% endif %}
+        {% if linkedin != "" %}<li><a href="{{ linkedin | escape }}" target="_blank" rel="noopener noreferrer">LinkedIn（新窗口）</a></li>{% endif %}
+        {% if resume_url != "" %}<li><a href="{{ resume_url | escape }}" target="_blank" rel="noopener noreferrer">简历（新窗口）</a></li>{% endif %}
+      </ul>
+    {% else %}
+      <p class="empty-state">公开联系方式待补充。</p>
+    {% endif %}
+  </section>
+</div>

@@ -1,14 +1,15 @@
+{% assign email = site.author.email | default: "" | strip %}
+{% assign github = site.author.github | default: "" | strip %}
+{% assign linkedin = site.author.linkedin | default: "" | strip %}
+{% assign resume_url = site.author.resume_url | default: "" | strip %}
 <div class="shell site-footer__inner">
-  <p>© {{ 'now' | date: '%Y' }} {{ site.author.name }}。保留所有权利。</p>
-  <div class="site-footer__links" aria-label="社交链接">
-    {% if site.author.email != empty %}
-      <a href="mailto:{{ site.author.email }}">邮箱</a>
-    {% endif %}
-    {% if site.author.github != empty %}
-      <a href="{{ site.author.github }}" target="_blank" rel="me noopener">GitHub</a>
-    {% endif %}
-    {% if site.author.linkedin != empty %}
-      <a href="{{ site.author.linkedin }}" target="_blank" rel="me noopener">LinkedIn</a>
-    {% endif %}
-  </div>
+  <p>© {{ 'now' | date: '%Y' }} {{ site.author.name | escape }}</p>
+  {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
+    <div class="site-footer__links" aria-label="联系与资料">
+      {% if email != "" %}<a href="mailto:{{ email | escape }}">邮箱</a>{% endif %}
+      {% if github != "" %}<a href="{{ github | escape }}" target="_blank" rel="noopener noreferrer">GitHub（新窗口）</a>{% endif %}
+      {% if linkedin != "" %}<a href="{{ linkedin | escape }}" target="_blank" rel="noopener noreferrer">LinkedIn（新窗口）</a>{% endif %}
+      {% if resume_url != "" %}<a href="{{ resume_url | escape }}" target="_blank" rel="noopener noreferrer">简历（新窗口）</a>{% endif %}
+    </div>
+  {% endif %}
 </div>

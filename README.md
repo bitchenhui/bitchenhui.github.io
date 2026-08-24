@@ -4,6 +4,10 @@
 
 > **安全提醒：先完成所有 `TODO: 替换为…` 的个人信息，再公开发布。** 示例中的姓名、定位、项目描述和链接并不代表真实经历；请勿把它们当作可对外声明的内容。
 
+## 单页结构
+
+首页 `/` 是唯一主要内容入口，依次展示个人定位、核心能力、经历、项目、技术文章和联系方式。文章详情继续使用 `/blog/<slug>/`；`/projects/`、`/blog/`、`/about/` 仅用于把旧链接引导到首页对应板块。
+
 ## 本地预览
 
 请先安装 Ruby 3.1 或更高版本以及 Bundler，并在仓库根目录执行：
@@ -32,9 +36,33 @@ ruby scripts/verify_site.rb
 - `url`、`baseurl`：实际部署地址与站点子路径；个人 GitHub Pages 通常保持 `baseurl: ""`；
 - `author.name`、`author.role`、`author.intro`：姓名、角色和简介；
 - `author.email`、`author.github`、`author.linkedin`、`author.resume_url`：可公开的联系和资料链接；
-- `skills`：希望展示的技术方向。
+- `current_focus`：当前重点方向的字符串列表；
+- `skills`：核心能力对象列表，每项包含 `name` 和 `description`。
 
-发布前再次检查所有页面和 `_data/projects.yml` 是否仍有示例性 `TODO`，并只填写可以公开、能够佐证的真实信息。
+```yaml
+current_focus:
+  - "当前重点方向"
+
+skills:
+  - name: "能力名称"
+    description: "能力说明"
+```
+
+发布前再次检查所有页面、`_data/experience.yml` 和 `_data/projects.yml` 是否仍有示例性 `TODO`，并只填写可以公开、能够佐证的真实信息。
+
+## 添加经历
+
+在 `_data/experience.yml` 中按展示顺序添加条目：
+
+```yaml
+- period: "真实时间范围"
+  role: "真实职位 / 团队 / 工作场景"
+  summary: "职责和业务背景"
+  highlights:
+    - "可公开、可验证的职责或成果"
+```
+
+未确认的信息继续使用 `TODO: 替换为……`，不要发布虚构履历或量化成果。
 
 ## 添加项目
 
@@ -46,12 +74,11 @@ ruby scripts/verify_site.rb
   stack:
     - 技术或工具 1
     - 技术或工具 2
-  featured: true
   project_url: "https://example.com/project"
   repository_url: "https://github.com/your-name/project"
 ```
 
-`title`、`description`、`stack` 和 `featured` 用于展示项目内容；`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
+`title`、`description` 和 `stack` 用于展示项目内容；每个项目都会按数据顺序出现在首页。`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
 
 ## 写文章
 
@@ -71,7 +98,11 @@ tags:
 这里开始写正文。可使用标准 Markdown 标题、列表、链接和代码块。
 ```
 
-仓库配置的永久链接规则为 `/blog/:title/`，因此文件 `_posts/2026-08-21-article-slug.md` 发布后对应地址是 `/blog/article-slug/`。保存文章后运行本地预览或构建检查，确认 front matter、链接和 Markdown 渲染正常。
+仓库配置的永久链接规则为 `/blog/:title/`，因此文件 `_posts/2026-08-21-article-slug.md` 发布后对应地址是 `/blog/article-slug/`。全部文章卡片会按文章数据直接展示在首页，点击后进入各自的 `/blog/<slug>/` 详情页。保存文章后运行本地预览或构建检查，确认 front matter、链接和 Markdown 渲染正常。
+
+## 兼容入口
+
+`/projects/`、`/blog/` 和 `/about/` 是最小兼容跳转页，不维护重复内容。项目与全部文章卡片直接维护在首页的数据源中；文章正文仍由 `_posts/` 生成独立详情页。
 
 ## 发布到 GitHub Pages
 

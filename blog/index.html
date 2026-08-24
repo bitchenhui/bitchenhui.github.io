@@ -1,29 +1,9 @@
 ---
 layout: page
-title: 博客
+title: 文章入口已合并
 permalink: /blog/
+redirect_to: /#articles
+canonical_url: /#articles
+sitemap: false
 ---
-<p class="section-lead">记录工程实践、性能思考与工具链探索。</p>
-<h2>全部文章</h2>
-{% if site.posts.size > 0 %}
-  <div class="card-grid">
-    {% for post in site.posts %}
-      {% include post-card.html post=post %}
-    {% endfor %}
-  </div>
-{% else %}
-  <p class="empty-state">暂时还没有文章。请在 <code>_posts/</code> 中新增一篇 Markdown 文章。</p>
-{% endif %}
-
-<section aria-labelledby="archive-heading">
-  <h2 id="archive-heading">文章归档</h2>
-  {% if site.posts.size > 0 %}
-    <ul>
-      {% for post in site.posts %}
-        <li><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y年%m月%d日" }}</time>：<a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>暂时还没有可归档的文章。</p>
-  {% endif %}
-</section>
+<p>文章内容已合并到个人说明书首页。<a href="{{ page.redirect_to | relative_url }}">继续前往文章板块</a>。</p>
