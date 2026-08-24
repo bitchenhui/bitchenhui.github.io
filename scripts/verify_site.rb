@@ -300,7 +300,7 @@ home_sections = {
   "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充。" }
 }.freeze
 home_sections.each do |id, contract|
-  section = home_source[/<section id="#{Regexp.escape(id)}"\b.*?<\/section>/m]
+  section = home_source[/<section id="#{Regexp.escape(id)}"(?=[\s>]).*?<\/section>/m]
   abort "FAIL: homepage source lacks the #{id} section." unless section
   branch = section.match(/#{contract.fetch(:condition).source}(.*?)\{%\s*else\s*%\}(.*?)\{%\s*endif\s*%\}/m)
   unless branch && branch[2].include?(contract.fetch(:empty))
@@ -332,7 +332,7 @@ end
   assignment = %({% assign #{field} = site.author.#{field} | default: "" | strip %})
   abort "FAIL: homepage contact does not normalize #{field}." unless home_source.include?(assignment)
 end
-contact_source = home_source[/<section id="contact"\b.*?<\/section>/m]
+contact_source = home_source[/<section id="contact"(?=[\s>]).*?<\/section>/m]
 abort "FAIL: homepage contact section is missing." unless contact_source
 unless contact_source.include?('{% if email != "" or github != "" or linkedin != "" or resume_url != "" %}')
   abort "FAIL: homepage contact empty state is not conditional on all contact fields."
