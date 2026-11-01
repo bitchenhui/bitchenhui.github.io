@@ -311,7 +311,7 @@ end
 home_source = Pathname.new("index.html").read
 home_sections = {
   "experience" => { condition: /\{%\s*if\s+site\.data\.experience\s+and\s+site\.data\.experience\s*!=\s*empty\s*%\}/, empty: "经历内容待补充。" },
-  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "项目内容待补充。" },
+  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "个人开源作品整理中，敬请期待；工作项目成果见上方「工作经历」。" },
   "articles" => { condition: /\{%\s*if\s+site\.posts\.size\s*>\s*0\s*%\}/, empty: "文章内容待更新。" },
   "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充。" }
 }.freeze
@@ -573,7 +573,7 @@ REDIRECT_ROUTES.each_key do |path|
   end
 end
 resume_output = generated_html.fetch("resume/index.html")
-%w[id="resume-title" 当前关注 核心能力 工作经历 项目经历 教育背景 荣誉与专利].each do |marker|
+%w[id="resume-title" 当前关注 核心能力 工作经历 教育背景 荣誉与专利].each do |marker|
   abort "FAIL: generated resume page lacks #{marker}." unless resume_output.include?(marker)
 end
 resume_url_pattern = /<loc>\s*#{Regexp.escape("#{site_origin}#{relative_site_url('/resume/', baseurl)}")}\s*<\/loc>/

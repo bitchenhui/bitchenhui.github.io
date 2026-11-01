@@ -66,7 +66,7 @@ skills:
 
 ## 添加项目
 
-项目数据集中在 `_data/projects.yml`。为每个项目新增一段 YAML，并填写这些字段：
+项目数据集中在 `_data/projects.yml`，定位是**个人作品 / 开源项目**——公司里的工作成果写在 `_data/experience.yml` 的 highlights 中即可，不要两边重复。为每个项目新增一段 YAML，并填写这些字段：
 
 ```yaml
 - title: "项目名称"

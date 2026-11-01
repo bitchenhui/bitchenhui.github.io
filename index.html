@@ -10,7 +10,7 @@ title: 首页
     <nav class="anchor-nav" aria-label="本页内容">
       <a href="#capabilities">核心能力</a>
       <a href="#experience">工作经历</a>
-      <a href="#projects">代表项目</a>
+      <a href="#projects">个人作品</a>
       <a href="#articles">技术文章</a>
       <a href="#contact">联系我</a>
       <a href="{{ '/resume/' | relative_url }}">简历</a>
@@ -45,14 +45,14 @@ title: 首页
   </section>
 
   <section id="projects" class="manual-section" aria-labelledby="projects-title">
-    <p class="section-index">04 / PROJECTS</p>
-    <h2 id="projects-title">代表项目</h2>
+    <p class="section-index">04 / OPEN SOURCE</p>
+    <h2 id="projects-title">个人作品</h2>
     {% if site.data.projects and site.data.projects != empty %}
       <div class="card-grid">
         {% for project in site.data.projects %}{% include project-card.html project=project %}{% endfor %}
       </div>
     {% else %}
-      <p class="empty-state">项目内容待补充。</p>
+      <p class="empty-state">个人开源作品整理中，敬请期待；工作项目成果见上方「工作经历」。</p>
     {% endif %}
   </section>
 
