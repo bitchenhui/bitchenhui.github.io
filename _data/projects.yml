@@ -1,46 +1,47 @@
 # 每个项目一段 YAML。必填：title / description / stack。
-# 可选字段：
-#   period          —— 时间范围，如 "2024.03 – 至今"
-#   highlights      —— 量化成果列表（可公开、可验证的数据最有说服力，如 "同档位码率节省 x%"）
-#   cover           —— 封面图路径，图片放入 assets/img/ 后填 "/assets/img/xxx.png"
-#   project_url     —— 在线演示或落地页链接，留空则不显示按钮
-#   repository_url  —— 代码仓库链接，留空则不显示按钮
-# 未经确认的成果、客户或数据不要填写；没有把握的内容继续保留 TODO。
-- title: "TODO: 替换为项目名称"
-  period: "TODO: 替换为时间范围"
-  description: "TODO: 替换为真实项目。示例：用于定位编码热点、比较实验结果并辅助优化决策的本地工具。"
+# 可选字段：period、highlights（量化成果）、cover（assets/img/ 下的封面图）、
+#           project_url / repository_url（留空则不显示按钮）。
+- title: "AV1/VVC 自研编解码器性能优化"
+  period: "2023.04 – 至今"
+  description: "面向自研 AV1/VVC 编解码器的速度与压缩率优化：覆盖运动估计、块划分、AQ、环路滤波等核心模块，并下沉到 NEON 汇编级加速。"
   highlights:
-    - "TODO: 替换为一项可公开、可验证的量化成果。"
+    - "AV1 单线程编码加速 20%"
+    - "VVC 单线程解码速度提升 30%"
+    - "VVC 编码收益 2%"
   stack:
     - C++
-    - Python
-    - 性能分析
+    - NEON 汇编
+    - AV1
+    - VVC
   cover: ""
   project_url: ""
   repository_url: ""
 
-- title: "TODO: 替换为项目名称"
-  period: "TODO: 替换为时间范围"
-  description: "TODO: 替换为真实项目。示例：将性能数据处理、可视化与自动化流程集中管理的平台。"
+- title: "直播场景自研编解码器端上落地"
+  period: "2023.04 – 至今"
+  description: "自研 H.264/H.265 软编解码器在直播推流与播放链路的端上落地与体验优化，覆盖 iOS、Android 与 PC 三端，并解决黑屏兼容、音画不同步等线上问题。"
   highlights:
-    - "TODO: 替换为一项可公开、可验证的量化成果。"
+    - "720p 推流平均节省码率 20%，VQA 提升 2%"
+    - "播放端卡顿率降低 5%"
   stack:
-    - 数据处理
-    - 可视化
-    - 自动化
+    - H.264
+    - H.265
+    - iOS
+    - Android
   cover: ""
   project_url: ""
   repository_url: ""
 
-- title: "TODO: 替换为项目名称"
-  period: "TODO: 替换为时间范围"
-  description: "TODO: 替换为真实项目。示例：面向日常开发的命令行工具集合，用于提升工程效率。"
+- title: "RTC QoS 优化与强化学习带宽预测"
+  period: "2021.03 – 2023.04"
+  description: "RTC 场景端到端 QoS：双人视频流控模块重构（编码参数、软硬编自适应决策、ARQ/FEC 协同调控），以及服务端强化学习带宽预测的落地。"
   highlights:
-    - "TODO: 替换为一项可公开、可验证的量化成果。"
+    - "上线后卡顿率下降 23%，通话次数提升 19%"
+    - "强化学习带宽预测实验卡顿率下降 20%"
   stack:
-    - 开源
-    - CLI
-    - 工程效率
+    - RTC
+    - 强化学习
+    - C++
   cover: ""
   project_url: ""
   repository_url: ""

@@ -573,7 +573,7 @@ REDIRECT_ROUTES.each_key do |path|
   end
 end
 resume_output = generated_html.fetch("resume/index.html")
-%w[id="resume-title" 当前关注 核心能力 工作经历 项目经历].each do |marker|
+%w[id="resume-title" 当前关注 核心能力 工作经历 项目经历 教育背景 荣誉与专利].each do |marker|
   abort "FAIL: generated resume page lacks #{marker}." unless resume_output.include?(marker)
 end
 resume_url_pattern = /<loc>\s*#{Regexp.escape("#{site_origin}#{relative_site_url('/resume/', baseurl)}")}\s*<\/loc>/

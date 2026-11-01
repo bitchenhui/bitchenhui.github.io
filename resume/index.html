@@ -2,7 +2,7 @@
 layout: default
 title: 简历
 permalink: /resume/
-description: "dch 的个人简历：视频编解码算法工程师，聚焦编码算法优化与 AI 驱动研发流程。"
+description: "段晨辉的个人简历：视频编解码算法工程师，聚焦 AV1/VVC 编解码优化、端上落地与 RTC QoS。"
 ---
 {% assign email = site.author.email | default: "" | strip %}
 {% assign github = site.author.github | default: "" | strip %}
@@ -72,6 +72,27 @@ description: "dch 的个人简历：视频编解码算法工程师，聚焦编�
             {% endif %}
           </div>
         {% endfor %}
+      </section>
+    {% endif %}
+
+    {% if site.data.education and site.data.education != empty %}
+      <section class="resume__section" aria-labelledby="resume-education-title">
+        <h2 id="resume-education-title">教育背景</h2>
+        {% for school in site.data.education %}
+          <div class="resume__project">
+            <p class="experience-item__period">{% if school.period %}{{ school.period | escape }} · {% endif %}{{ school.school | escape }}</p>
+            <p>{{ school.detail | escape }}</p>
+          </div>
+        {% endfor %}
+      </section>
+    {% endif %}
+
+    {% if site.data.honors and site.data.honors != empty %}
+      <section class="resume__section" aria-labelledby="resume-honors-title">
+        <h2 id="resume-honors-title">荣誉与专利</h2>
+        <ul>
+          {% for honor in site.data.honors %}<li>{{ honor | escape }}</li>{% endfor %}
+        </ul>
       </section>
     {% endif %}
 
