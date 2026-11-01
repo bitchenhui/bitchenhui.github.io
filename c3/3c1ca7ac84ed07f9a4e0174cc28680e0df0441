@@ -1,0 +1,20 @@
+README.md
+  h_bc262c8ac47a2c 69
+_data/projects.yml
+  h_bc262c8ac47a2c 1-11
+index.html
+  h_bc262c8ac47a2c 13,48-49,55
+scripts/verify_site.rb
+  h_bc262c8ac47a2c 314,576
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c33c1ca7ac84ed07f9a4e0174cc28680e0df0441",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
