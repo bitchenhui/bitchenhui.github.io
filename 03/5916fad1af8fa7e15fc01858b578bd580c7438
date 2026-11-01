@@ -1,0 +1,40 @@
+README.md
+  h_bc262c8ac47a2c 38,73,75-76,80,85,107-114
+_config.yml
+  h_bc262c8ac47a2c 2,19,21,30,32,34
+_data/experience.yml
+  h_bc262c8ac47a2c 1-3,5-6
+_data/projects.yml
+  h_bc262c8ac47a2c 1-10,12-13,18,22-23,25-26,31,35-36,38-39,44
+_includes/experience-item.html
+  h_bc262c8ac47a2c 1,3
+_includes/head.html
+  h_bc262c8ac47a2c 10-17,31-45
+_includes/profile-card.html
+  h_bc262c8ac47a2c 27
+_includes/project-card.html
+  h_bc262c8ac47a2c 3,5-9,12-16
+assets/css/main.scss
+  h_bc262c8ac47a2c 196-234
+assets/img/favicon.svg
+  h_bc262c8ac47a2c 1-4
+assets/js/site.js
+  h_bc262c8ac47a2c 6-12
+index.html
+  h_bc262c8ac47a2c 16,81
+resume/index.html
+  h_bc262c8ac47a2c 1-82
+scripts/verify_site.rb
+  h_bc262c8ac47a2c 26,206,225-228,258-268,575-582
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "035916fad1af8fa7e15fc01858b578bd580c7438",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
