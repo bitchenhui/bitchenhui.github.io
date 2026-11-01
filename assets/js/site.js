@@ -3,6 +3,13 @@
 
   var root = document.documentElement;
   var themeToggle = document.getElementById("theme-toggle");
+  var printButton = document.querySelector("[data-print-button]");
+
+  if (printButton) {
+    printButton.addEventListener("click", function () {
+      window.print();
+    });
+  }
 
   function updateThemeControl(theme) {
     if (!themeToggle) return;

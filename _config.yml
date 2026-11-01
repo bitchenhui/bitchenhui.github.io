@@ -1,5 +1,5 @@
 title: "dch个人空间"
-description: "A video codecer who running to AGI"
+description: "视频编解码算法工程师的个人主页：编码算法优化、AI 驱动研发与音视频体验。"
 url: "https://bitchenhui.github.io"
 baseurl: ""
 lang: "zh-CN"
@@ -16,8 +16,9 @@ author:
   role: "主动拥抱AGI的视频编解码算法工程师"
   intro: "用AI重塑所有流程中；ACL努力康复中的篮球爱好者；北京探店"
   email: "dch950301@163.com"
-  github: ""
+  github: "https://github.com/bitchenhui"
   linkedin: ""
+  # 可选：上传 PDF 简历到 assets/ 后填 "/assets/resume.pdf"；留空则只显示在线简历 /resume/
   resume_url: ""
 
 current_focus:
@@ -26,11 +27,11 @@ current_focus:
   - VOD / Live / RTC 场景体验优化
 
 skills:
-  - name: llm的eoH算法自动迭代设计
+  - name: LLM 驱动的 EoH 算法自动迭代设计
     description: 探索 AI 驱动的算法生成、评估与持续迭代流程。
-  - name: 视频编解码算法优化(H265/H266/AV1/NVC)
+  - name: 视频编解码算法优化（H.265/H.266/AV1/NVC）
     description: 聚焦 H.265、H.266、AV1 与 NVC 的编码效率和工程性能。
-  - name: vod/live/rtc场景qos/qoe优化
+  - name: VOD / Live / RTC 场景 QoS/QoE 优化
     description: 面向 VOD、Live 与 RTC 场景分析并改善端到端体验。
 
 exclude:

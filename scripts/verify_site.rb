@@ -23,6 +23,7 @@ CORE_REQUIRED_FILES = (%w[
   feed.xml
   sitemap.xml
   robots.txt
+  resume/index.html
 ] + REDIRECT_ROUTES.keys).freeze
 RUNTIME_SCAN_GLOBS = %w[
   _config.yml
@@ -202,7 +203,7 @@ required_includes = {
   "_includes/profile-card.html" => ["profile-card", "site.current_focus", "site.skills"],
   "_includes/experience-item.html" => ["experience-item", "include.item.highlights"],
   "_includes/post-card.html" => ["阅读全文", "include.post.url"],
-  "_includes/project-card.html" => ["project_url", "repository_url"]
+  "_includes/project-card.html" => ["project_url", "repository_url", "project-card__cover", "project-card__highlights"]
 }.freeze
 required_includes.each do |path, markers|
   file = Pathname.new(path)
@@ -221,6 +222,10 @@ robots_source = Pathname.new("robots.txt").read
 
 abort "FAIL: header lacks theme control." unless header_source.include?('id="theme-toggle"')
 abort "FAIL: theme control must be hidden until JavaScript initializes." unless header_source.match?(/<button\b[^>]*id="theme-toggle"[^>]*\bhidden\b[^>]*>/)
+resume_source = Pathname.new("resume/index.html").read
+%w[site.data.experience site.data.projects site.skills data-print-button].each do |marker|
+  abort "FAIL: resume page lacks #{marker}." unless resume_source.include?(marker)
+end
 hidden_rule = style_source.match?(/\[hidden\]\s*\{[^}]*display:\s*none\s*!important\s*;/m)
 hidden_rule_position = style_source.index("[hidden]")
 button_rule_position = style_source.index(".icon-button")
@@ -250,6 +255,17 @@ abort "FAIL: site controller does not preserve safe theme writes." unless script
 %w[aria-pressed aria-label].each do |attribute|
   abort "FAIL: theme control does not update #{attribute}." unless script_source.include?(attribute)
 end
+%w[
+  rel="icon"
+  property="og:title"
+  property="og:description"
+  name="twitter:card"
+  application/ld+json
+].each do |marker|
+  abort "FAIL: head lacks SEO marker #{marker}." unless head_source.include?(marker)
+end
+abort "FAIL: stylesheet lacks print rules." unless style_source.include?("@media print")
+abort "FAIL: stylesheet lacks project card highlight styles." unless style_source.include?(".project-card__highlights")
 
 abort "FAIL: stylesheet still forces a 320px minimum width." if style_source.match?(/\bmin-width\s*:\s*320px/)
 abort "FAIL: stylesheet lacks safe wrapping for editable text." unless style_source.match?(/h1,\s*h2,\s*h3,\s*a,\s*\.tag\s*\{[^}]*overflow-wrap:\s*anywhere/m)
@@ -555,6 +571,14 @@ REDIRECT_ROUTES.each_key do |path|
     compatibility_loc = /<loc>\s*#{Regexp.escape(compatibility_url)}\s*<\/loc>/
     abort "FAIL: sitemap advertises compatibility route #{compatibility_url}." if sitemap.match?(compatibility_loc)
   end
+end
+resume_output = generated_html.fetch("resume/index.html")
+%w[id="resume-title" 当前关注 核心能力 工作经历 项目经历].each do |marker|
+  abort "FAIL: generated resume page lacks #{marker}." unless resume_output.include?(marker)
+end
+resume_url_pattern = /<loc>\s*#{Regexp.escape("#{site_origin}#{relative_site_url('/resume/', baseurl)}")}\s*<\/loc>/
+unless sitemap.scan(resume_url_pattern).length == 1
+  abort "FAIL: sitemap must contain the resume URL exactly once."
 end
 
 puts "PASS: verified #{generated_html.length} HTML file(s) and #{required_files.length} required site file(s)."

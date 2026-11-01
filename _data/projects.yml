@@ -1,26 +1,46 @@
-- title: "视频编码优化工具"
+# 每个项目一段 YAML。必填：title / description / stack。
+# 可选字段：
+#   period          —— 时间范围，如 "2024.03 – 至今"
+#   highlights      —— 量化成果列表（可公开、可验证的数据最有说服力，如 "同档位码率节省 x%"）
+#   cover           —— 封面图路径，图片放入 assets/img/ 后填 "/assets/img/xxx.png"
+#   project_url     —— 在线演示或落地页链接，留空则不显示按钮
+#   repository_url  —— 代码仓库链接，留空则不显示按钮
+# 未经确认的成果、客户或数据不要填写；没有把握的内容继续保留 TODO。
+- title: "TODO: 替换为项目名称"
+  period: "TODO: 替换为时间范围"
   description: "TODO: 替换为真实项目。示例：用于定位编码热点、比较实验结果并辅助优化决策的本地工具。"
+  highlights:
+    - "TODO: 替换为一项可公开、可验证的量化成果。"
   stack:
     - C++
     - Python
     - 性能分析
+  cover: ""
   project_url: ""
   repository_url: ""
 
-- title: "性能分析平台"
+- title: "TODO: 替换为项目名称"
+  period: "TODO: 替换为时间范围"
   description: "TODO: 替换为真实项目。示例：将性能数据处理、可视化与自动化流程集中管理的平台。"
+  highlights:
+    - "TODO: 替换为一项可公开、可验证的量化成果。"
   stack:
     - 数据处理
     - 可视化
     - 自动化
+  cover: ""
   project_url: ""
   repository_url: ""
 
-- title: "个人开源工具"
+- title: "TODO: 替换为项目名称"
+  period: "TODO: 替换为时间范围"
   description: "TODO: 替换为真实项目。示例：面向日常开发的命令行工具集合，用于提升工程效率。"
+  highlights:
+    - "TODO: 替换为一项可公开、可验证的量化成果。"
   stack:
     - 开源
     - CLI
     - 工程效率
+  cover: ""
   project_url: ""
   repository_url: ""

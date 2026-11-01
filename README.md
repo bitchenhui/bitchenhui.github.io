@@ -35,7 +35,7 @@ ruby scripts/verify_site.rb
 - `title`、`description`：网站名称和一句中文个人定位；
 - `url`、`baseurl`：实际部署地址与站点子路径；个人 GitHub Pages 通常保持 `baseurl: ""`；
 - `author.name`、`author.role`、`author.intro`：姓名、角色和简介；
-- `author.email`、`author.github`、`author.linkedin`、`author.resume_url`：可公开的联系和资料链接；
+- `author.email`、`author.github`、`author.linkedin`、`author.resume_url`：可公开的联系和资料链接；`resume_url` 可选——把 PDF 简历放入 `assets/` 后填 `/assets/resume.pdf`，留空则网站只展示在线简历页 `/resume/`；
 - `current_focus`：当前重点方向的字符串列表；
 - `skills`：核心能力对象列表，每项包含 `name` 和 `description`。
 
@@ -70,15 +70,19 @@ skills:
 
 ```yaml
 - title: "项目名称"
+  period: "时间范围（可选）"
   description: "项目的真实用途、职责或成果说明"
+  highlights:
+    - "可公开、可验证的量化成果（可选）"
   stack:
     - 技术或工具 1
     - 技术或工具 2
+  cover: "/assets/img/项目封面.png（可选）"
   project_url: "https://example.com/project"
   repository_url: "https://github.com/your-name/project"
 ```
 
-`title`、`description` 和 `stack` 用于展示项目内容；每个项目都会按数据顺序出现在首页。`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
+`title`、`description` 和 `stack` 用于展示项目内容；`period`、`highlights`、`cover` 为可选字段，分别展示时间范围、量化成果列表和项目封面图（封面图放入 `assets/img/`）。每个项目都会按数据顺序出现在首页，并同步汇总到简历页 `/resume/` 的「项目经历」。`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
 
 ## 写文章
 
@@ -99,6 +103,14 @@ tags:
 ```
 
 仓库配置的永久链接规则为 `/blog/:title/`，因此文件 `_posts/2026-08-21-article-slug.md` 发布后对应地址是 `/blog/article-slug/`。全部文章卡片会按文章数据直接展示在首页，点击后进入各自的 `/blog/<slug>/` 详情页。保存文章后运行本地预览或构建检查，确认 front matter、链接和 Markdown 渲染正常。
+
+## 简历页
+
+`/resume/` 是页面版简历，数据完全复用 `_config.yml`、`_data/experience.yml` 和 `_data/projects.yml`——更新这些数据源后简历页自动同步，无需单独维护。页面提供「打印 / 导出 PDF」按钮（打印样式会自动隐藏导航和页脚）；如需挂 PDF 版简历，把文件放入 `assets/` 并在 `_config.yml` 的 `author.resume_url` 填入路径。`_data/experience.yml` 中的 `org`（公司/团队）与 `_data/projects.yml` 中的 `period`、`highlights`、`cover` 均为可选字段。
+
+## SEO 与分享
+
+站点在 `_includes/head.html` 中内置 Open Graph / Twitter Card 分享元信息、SVG favicon（`assets/img/favicon.svg`）与首页 Person 结构化数据（JSON-LD）。页面标题与描述分别来自各页 front matter 的 `title`、`description`，新增页面时建议填写 `description` 以获得更好的分享摘要。
 
 ## 兼容入口
 

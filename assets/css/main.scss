@@ -193,6 +193,45 @@ main { min-height: calc(100vh - 10rem); }
 .card-action { margin-top: 1.25rem; font-weight: 700; }
 .contact-section p { max-width: var(--reading); }
 
+.project-card__cover {
+  width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 0.25rem);
+}
+.project-card__highlights { padding-left: 1.15rem; color: var(--muted); }
+
+.resume-layout { padding-block: clamp(2.5rem, 6vw, 5rem); }
+.resume-toolbar { display: flex; gap: 0.8rem; margin-bottom: 2rem; }
+.resume {
+  max-width: var(--reading);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.resume__header h1 { margin-bottom: 0.5rem; font-size: clamp(1.6rem, 4vw, 2.4rem); }
+.resume__role { margin-bottom: 0.35rem; font-weight: 700; }
+.resume__intro { color: var(--muted); }
+.resume__section { margin-top: 2.25rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.resume__section h2 { margin-bottom: 1rem; font-size: 1.3rem; }
+.resume__skills { display: grid; gap: 0.9rem; margin: 0; }
+.resume__skill dt { font-weight: 700; }
+.resume__skill dd { margin: 0.15rem 0 0; color: var(--muted); }
+.resume__project { margin-bottom: 1.25rem; }
+.resume__project > p { margin-bottom: 0.4rem; }
+.resume__footer { margin-top: 2.25rem; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+
+@media print {
+  :root { --canvas: #ffffff; --surface: #ffffff; --ink: #111111; --muted: #444444; --line: #cccccc; --shadow: none; }
+  .site-header, .site-footer, .no-print { display: none !important; }
+  body { background: #ffffff; }
+  .resume { border: none; box-shadow: none; padding: 0; }
+  a { color: inherit; text-decoration: none; }
+}
+
 .site-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 0.92rem; }
 .site-footer__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; }
 .site-footer__inner p { margin: 0; }
