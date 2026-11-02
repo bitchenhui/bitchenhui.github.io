@@ -3,7 +3,7 @@
 {% assign cover = include.project.cover | default: "" | strip %}
 <article class="card project-card">
   {% if cover != "" %}
-    <img class="project-card__cover" src="{{ cover | relative_url }}" alt="{{ include.project.title | escape }} 项目封面" loading="lazy">
+    <img class="project-card__cover" src="{{ cover | relative_url }}" alt="{{ include.project.title | escape }} 作品截图" loading="lazy">
   {% endif %}
   {% assign project_period = include.project.period | default: "" | strip %}
   {% if project_period != "" %}<p class="card-meta">{{ project_period | escape }}</p>{% endif %}

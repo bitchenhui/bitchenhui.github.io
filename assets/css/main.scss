@@ -320,13 +320,18 @@ main { min-height: calc(100vh - 10rem); }
 .card-action { margin-top: 1.25rem; font-weight: 700; }
 .contact-section p { max-width: var(--reading); }
 
+/* 作品封面：卡片顶部通栏、16:9 裁切，悬停轻微放大，构成作品集主视觉。 */
 .project-card__cover {
-  width: 100%;
-  height: auto;
-  margin-bottom: 1rem;
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) - 0.25rem);
+  display: block;
+  width: calc(100% + 2.8rem);
+  margin: -1.4rem -1.4rem 1.1rem;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  transition: transform 0.35s ease;
 }
+.project-card:hover .project-card__cover { transform: scale(1.035); }
 .project-card__highlights { padding-left: 1.15rem; color: var(--muted); }
 .project-card__highlights li::marker { color: var(--accent); }
 

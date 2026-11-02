@@ -84,7 +84,7 @@ skills:
   repository_url: "https://github.com/your-name/project"
 ```
 
-`title`、`description` 和 `stack` 用于展示项目内容；`period`、`highlights`、`cover` 为可选字段，分别展示时间范围、量化成果列表和项目封面图（封面图放入 `assets/img/`）。每个项目都会按数据顺序出现在首页，并同步汇总到简历页 `/resume/` 的「项目经历」。`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
+`title`、`description` 和 `stack` 用于展示项目内容；`period`、`highlights`、`cover` 为可选字段，分别展示时间范围、量化成果列表和项目封面图。封面图建议放入 `assets/img/works/`（如 `/assets/img/works/工具界面.png`），以 16:9 比例通栏展示在卡片顶部，也支持外部图片 URL——没有仓库链接时，真实截图是最好的展示。每个项目都会按数据顺序出现在首页，并同步汇总到简历页 `/resume/` 的「项目经历」。`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
 
 ## 写文章（暂未开放）
 
