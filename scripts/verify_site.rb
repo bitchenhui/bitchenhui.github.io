@@ -221,6 +221,7 @@ style_source = Pathname.new("assets/css/main.scss").read
 robots_source = Pathname.new("robots.txt").read
 
 abort "FAIL: header lacks theme control." unless header_source.include?('id="theme-toggle"')
+abort "FAIL: header lacks quality control." unless header_source.include?('id="quality-toggle"')
 abort "FAIL: theme control must be hidden until JavaScript initializes." unless header_source.match?(/<button\b[^>]*id="theme-toggle"[^>]*\bhidden\b[^>]*>/)
 resume_source = Pathname.new("resume/index.html").read
 %w[site.data.experience site.data.projects site.skills data-print-button].each do |marker|
@@ -252,6 +253,8 @@ missing_initializer_markers = initializer_markers.reject { |marker| initializer&
 abort "FAIL: pre-stylesheet theme initializer lacks #{missing_initializer_markers.join(', ')}." unless missing_initializer_markers.empty?
 abort "FAIL: site controller does not reuse the initialized theme." unless script_source.match?(/initialTheme\s*=\s*root\.dataset\.theme/)
 abort "FAIL: site controller does not preserve safe theme writes." unless script_source.include?("try { window.localStorage.setItem")
+abort "FAIL: quality preference is not persisted." unless script_source.include?("site-quality")
+abort "FAIL: hero decode layer missing controller support." unless script_source.include?("hero-decode") && script_source.include?("hero-motion")
 %w[aria-pressed aria-label].each do |attribute|
   abort "FAIL: theme control does not update #{attribute}." unless script_source.include?(attribute)
 end
@@ -333,6 +336,9 @@ required_home_source_markers = %w[
   include\ experience-item.html
   site.data.projects
   site.posts
+  hero-decode
+  hero-motion
+  hero-meta
 ]
 missing_home_source_markers = required_home_source_markers.reject { |marker| home_source.include?(marker.tr("\\", "")) }
 unless missing_home_source_markers.empty?

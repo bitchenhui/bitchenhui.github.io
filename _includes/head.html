@@ -23,6 +23,9 @@
       theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
     document.documentElement.dataset.theme = theme;
+    var quality;
+    try { quality = window.localStorage.getItem("site-quality"); } catch (error) { quality = null; }
+    document.documentElement.dataset.quality = quality === "low" ? "low" : "high";
   }());
 </script>
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
