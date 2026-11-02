@@ -1,0 +1,24 @@
+README.md
+  h_bc262c8ac47a2c 87
+_data/experience.yml
+  h_bc262c8ac47a2c 3-17,27
+_data/honors.yml
+  h_bc262c8ac47a2c 3
+_data/projects.yml
+  h_bc262c8ac47a2c 1,3-45
+_includes/project-card.html
+  h_bc262c8ac47a2c 6
+assets/css/main.scss
+  h_bc262c8ac47a2c 323,325-332,334
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2ab59cb4313f6bbea721e16c49997888a4eeb3b8",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
