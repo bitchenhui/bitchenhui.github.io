@@ -437,3 +437,15 @@ main { min-height: calc(100vh - 10rem); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* 宽屏适配：PC 横屏放开容器与侧栏宽度，卡片铺满可视区域；
+   正文阅读列（--reading）保持封顶，长文本行宽不随屏幕变宽。 */
+@media (min-width: 80rem) {
+  :root { --shell: 86rem; }
+  .manual-layout { grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem); }
+  .resume { max-width: 56rem; }
+}
+
+@media (min-width: 120rem) {
+  :root { --shell: 110rem; }
+}
