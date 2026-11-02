@@ -6,7 +6,7 @@
 
 ## 单页结构
 
-首页 `/` 是唯一主要内容入口，依次展示个人定位、核心能力、经历、项目、技术文章和联系方式。文章详情继续使用 `/blog/<slug>/`；`/projects/`、`/blog/`、`/about/` 仅用于把旧链接引导到首页对应板块。
+首页 `/` 是唯一主要内容入口，依次展示个人定位、核心能力、经历、项目（个人作品）和联系方式。`/projects/`、`/blog/`、`/about/` 仅用于把旧链接引导到首页对应板块。当前版本定位为线上简历，技术文章板块暂未开放；`_layouts/post.html`、`_includes/post-card.html` 与 `_posts/` 已移除，未来恢复写作时再按 Jekyll 惯例重建。
 
 首页带有一组「码流美学」交互：标题以宏块马赛克逐步解码入场；鼠标划过 Hero 区会点亮宏块并显示运动矢量；右上角 `HiFi / 240p` 按钮模拟低码率画质（去圆角、像素化、扫描线），偏好与主题一样保存在浏览器本地。所有效果尊重 `prefers-reduced-motion`，仅用原生 Canvas 实现，不引入外部依赖。
 
@@ -86,25 +86,9 @@ skills:
 
 `title`、`description` 和 `stack` 用于展示项目内容；`period`、`highlights`、`cover` 为可选字段，分别展示时间范围、量化成果列表和项目封面图（封面图放入 `assets/img/`）。每个项目都会按数据顺序出现在首页，并同步汇总到简历页 `/resume/` 的「项目经历」。`project_url` 与 `repository_url` 是可选字段。只有在对应 URL 非空时，项目卡片才会分别显示“查看项目”或“查看代码”链接；没有真实可公开链接时请保留为空，避免生成无效链接。不要用未经确认的成果、客户或数据填充项目描述。
 
-## 写文章
+## 写文章（暂未开放）
 
-文章存放在 `_posts/`，文件名必须采用 `YYYY-MM-DD-article-slug.md` 格式。新文章使用 Markdown 和 YAML front matter，例如：
-
-```markdown
----
-layout: post
-title: "文章标题"
-date: 2026-08-21 10:00:00 +0800
-description: "一段简短的文章摘要"
-tags:
-  - Jekyll
-  - 工程实践
----
-
-这里开始写正文。可使用标准 Markdown 标题、列表、链接和代码块。
-```
-
-仓库配置的永久链接规则为 `/blog/:title/`，因此文件 `_posts/2026-08-21-article-slug.md` 发布后对应地址是 `/blog/article-slug/`。全部文章卡片会按文章数据直接展示在首页，点击后进入各自的 `/blog/<slug>/` 详情页。保存文章后运行本地预览或构建检查，确认 front matter、链接和 Markdown 渲染正常。
+当前版本为线上简历定位，文章板块已移除，本章节仅保留未来恢复时的约定：文章存放于 `_posts/`，文件名必须采用 `YYYY-MM-DD-article-slug.md` 格式，使用 Markdown 和 YAML front matter（`layout: post`、`title`、`date`、`description`、`tags`），永久链接规则为 `/blog/:title/`。恢复前需重建 `_layouts/post.html` 与 `_includes/post-card.html`，并同步更新 `scripts/verify_site.rb`。
 
 ## 简历页
 
@@ -116,7 +100,7 @@ tags:
 
 ## 兼容入口
 
-`/projects/`、`/blog/` 和 `/about/` 是最小兼容跳转页，不维护重复内容。项目与全部文章卡片直接维护在首页的数据源中；文章正文仍由 `_posts/` 生成独立详情页。
+`/projects/`、`/blog/` 和 `/about/` 是最小兼容跳转页，不维护重复内容。项目内容直接维护在首页的数据源中；`/blog/` 因文章板块下线而跳转回首页。
 
 ## 发布到 GitHub Pages
 

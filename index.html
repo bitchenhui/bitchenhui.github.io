@@ -16,7 +16,6 @@ title: 首页
       <a href="#capabilities">核心能力</a>
       <a href="#experience">工作经历</a>
       <a href="#projects">个人作品</a>
-      <a href="#articles">技术文章</a>
       <a href="#contact">联系我</a>
       <a href="{{ '/resume/' | relative_url }}">简历</a>
     </nav>
@@ -61,20 +60,8 @@ title: 首页
     {% endif %}
   </section>
 
-  <section id="articles" class="manual-section" aria-labelledby="articles-title">
-    <p class="section-index">05 / WRITING</p>
-    <h2 id="articles-title">技术文章</h2>
-    {% if site.posts.size > 0 %}
-      <div class="card-grid">
-        {% for post in site.posts %}{% include post-card.html post=post %}{% endfor %}
-      </div>
-    {% else %}
-      <p class="empty-state">文章内容待更新。</p>
-    {% endif %}
-  </section>
-
   <section id="contact" class="manual-section contact-section" aria-labelledby="contact-title">
-    <p class="section-index">06 / CONTACT</p>
+    <p class="section-index">05 / CONTACT</p>
     <h2 id="contact-title">联系我</h2>
     {% assign email = site.author.email | default: "" | strip %}
     {% assign github = site.author.github | default: "" | strip %}

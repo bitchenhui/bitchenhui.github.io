@@ -14,7 +14,7 @@ PROJECT_URL_FIELDS = %w[project_url repository_url].freeze
 EXPERIENCE_FIELDS = %w[period role summary highlights].freeze
 REDIRECT_ROUTES = {
   "projects/index.html" => { source: "projects/index.html", target: "/#projects" },
-  "blog/index.html" => { source: "blog/index.html", target: "/#articles" },
+  "blog/index.html" => { source: "blog/index.html", target: "/" },
   "about/index.html" => { source: "about.md", target: "/#experience" }
 }.freeze
 CORE_REQUIRED_FILES = (%w[
@@ -187,7 +187,6 @@ required_readme_sections = %w[
   配置个人信息
   添加经历
   添加项目
-  写文章
   兼容入口
   本地预览
   发布到GitHubPages
@@ -202,7 +201,6 @@ end
 required_includes = {
   "_includes/profile-card.html" => ["profile-card", "site.current_focus", "site.skills"],
   "_includes/experience-item.html" => ["experience-item", "include.item.highlights"],
-  "_includes/post-card.html" => ["阅读全文", "include.post.url"],
   "_includes/project-card.html" => ["project_url", "repository_url", "project-card__cover", "project-card__highlights"]
 }.freeze
 required_includes.each do |path, markers|
@@ -315,7 +313,6 @@ home_source = Pathname.new("index.html").read
 home_sections = {
   "experience" => { condition: /\{%\s*if\s+site\.data\.experience\s+and\s+site\.data\.experience\s*!=\s*empty\s*%\}/, empty: "经历内容待补充。" },
   "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "个人开源作品整理中，敬请期待；工作项目成果见上方「工作经历」。" },
-  "articles" => { condition: /\{%\s*if\s+site\.posts\.size\s*>\s*0\s*%\}/, empty: "文章内容待更新。" },
   "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充。" }
 }.freeze
 home_sections.each do |id, contract|
@@ -330,12 +327,10 @@ required_home_source_markers = %w[
   id="capabilities"
   id="experience"
   id="projects"
-  id="articles"
   id="contact"
   include\ profile-card.html
   include\ experience-item.html
   site.data.projects
-  site.posts
   hero-decode
   hero-motion
   hero-meta
@@ -346,8 +341,8 @@ unless missing_home_source_markers.empty?
 end
 abort "FAIL: homepage still filters featured projects." if home_source.include?('where: "featured"')
 abort "FAIL: homepage still limits primary content." if home_source.match?(/for (project|post).+limit:/)
-unless home_source.match?(/\{%\s*for\s+post\s+in\s+site\.posts\s*%\}/)
-  abort "FAIL: homepage must iterate site.posts directly without filters."
+unless home_source.match?(/\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/)
+  abort "FAIL: homepage must render site.data.projects conditionally."
 end
 
 %w[email github linkedin resume_url].each do |field|
@@ -368,11 +363,6 @@ end
   abort "FAIL: homepage contact external link label lacks new-window disclosure: #{label}." unless contact_source.include?(label)
 end
 
-post_card_source = Pathname.new("_includes/post-card.html").read
-unless post_card_source.include?('aria-label="阅读全文：{{ include.post.title | escape }}"')
-  abort "FAIL: post-card action lacks an article-specific accessible name."
-end
-
 REDIRECT_ROUTES.each_value do |route|
   path = route.fetch(:source)
   target = route.fetch(:target)
@@ -386,9 +376,8 @@ REDIRECT_ROUTES.each_value do |route|
   abort "FAIL: #{path} fallback does not use page.redirect_to." unless body.include?(fallback_href)
 end
 
-post_source = Pathname.new("_layouts/post.html").read
-abort "FAIL: post layout does not return to /#articles." unless post_source.include?("/#articles")
-abort "FAIL: post layout still links to /blog/." if post_source.include?('href="{{ \'/blog/\'')
+post_source_absent = !Pathname.new("_layouts/post.html").exist?
+abort "FAIL: article phase is retired; _layouts/post.html should stay removed." unless post_source_absent
 
 abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
 missing = CORE_REQUIRED_FILES.reject { |path| (SITE / path).file? }
@@ -425,7 +414,6 @@ required_home_markers = %w[
   id="capabilities"
   id="experience"
   id="projects"
-  id="articles"
   id="contact"
   class="profile-card"
 ]
@@ -465,56 +453,6 @@ missing_projects = projects.filter_map do |project|
 end
 abort "FAIL: homepage project cards omit project details: #{missing_projects.join(', ')}" unless missing_projects.empty?
 abort "FAIL: homepage exposes #{project_cards.length} unexpected project card(s)." unless project_cards.empty?
-
-post_cards = html_blocks(home, "post-card")
-article_outputs = post_cards.each_with_index.map do |card, index|
-  heading = html_elements(card, "h3")
-  abort "FAIL: homepage post card #{index + 1} must have exactly one h3." unless heading.length == 1
-  title_links = html_elements(heading.first, "a")
-  abort "FAIL: homepage post card #{index + 1} must have exactly one title link inside h3." unless title_links.length == 1
-  title_link = title_links.first
-  title = html_text(title_link)
-  abort "FAIL: homepage post card #{index + 1} has an empty title." if title.empty?
-
-  actions = html_elements(card, "a").select { |tag| attribute_value(tag, "aria-label")&.start_with?("阅读全文：") }
-  abort "FAIL: homepage post card #{index + 1} must have exactly one article action." unless actions.length == 1
-  action = actions.first
-  title_href = attribute_value(title_link, "href")
-  action_href = attribute_value(action, "href")
-  abort "FAIL: homepage post card #{index + 1} title/action links differ." unless title_href == action_href
-  decoded_label = CGI.unescapeHTML(attribute_value(action, "aria-label").to_s)
-  abort "FAIL: homepage post card #{index + 1} has the wrong action label." unless decoded_label == "阅读全文：#{title}"
-  abort "FAIL: homepage post card #{index + 1} has the wrong visible action text." unless html_text(action) == "阅读全文 →"
-
-  output = action_href && generated_path_for_url(action_href, baseurl)
-  valid_blog_output = output&.match?(/\Ablog\/[^\/]+\/index\.html\z/)
-  abort "FAIL: homepage post card #{index + 1} has an invalid article route." unless valid_blog_output && generated_html.key?(output)
-  generated_article = generated_html.fetch(output)
-  escaped_title = CGI.escapeHTML(title)
-  unless generated_article.match?(/<h1\b[^>]*id="post-title"[^>]*>\s*#{Regexp.escape(escaped_title)}\s*<\/h1>/m)
-    abort "FAIL: generated article #{output} lacks matching #post-title."
-  end
-
-  time_tags = html_tags(card, "time")
-  datetime = time_tags.length == 1 && attribute_value(time_tags.first, "datetime")
-  begin
-    Time.iso8601(datetime.to_s)
-  rescue ArgumentError
-    abort "FAIL: homepage post card #{index + 1} has an invalid ISO8601 datetime."
-  end
-  summaries = card.scan(/<p\b(?![^>]*class=["'][^"']*\b(?:card-meta|card-action)\b)[^>]*>.*?<\/p\s*>/im)
-  unless summaries.length == 1 && !html_text(summaries.first).empty?
-    abort "FAIL: homepage post card #{index + 1} must have one non-empty summary."
-  end
-  tags = card.scan(/<li\b[^>]*class=["'][^"']*\btag\b[^"']*["'][^>]*>.*?<\/li\s*>/im)
-  abort "FAIL: homepage post card #{index + 1} has an empty tag." if tags.any? { |tag| html_text(tag).empty? }
-
-  output
-end
-unless article_outputs.uniq.length == article_outputs.length
-  abort "FAIL: homepage post cards must use unique generated article destinations."
-end
-required_files = (CORE_REQUIRED_FILES + article_outputs).uniq.freeze
 
 REDIRECT_ROUTES.each do |path, route|
   target = route.fetch(:target)
@@ -561,14 +499,8 @@ home_loc_pattern = /<loc>\s*#{Regexp.escape(expected_home_url)}\s*<\/loc>/
 unless sitemap.scan(home_loc_pattern).length == 1
   abort "FAIL: sitemap must contain canonical home URL #{expected_home_url} exactly once."
 end
-article_outputs.each do |output|
-  article_path = "/#{output.delete_suffix('index.html')}"
-  article_url = "#{site_origin}#{relative_site_url(article_path, baseurl)}"
-  article_loc_pattern = /<loc>\s*#{Regexp.escape(article_url)}\s*<\/loc>/
-  unless sitemap.scan(article_loc_pattern).length == 1
-    abort "FAIL: sitemap must contain generated article URL #{article_url} exactly once."
-  end
-end
+blog_article_locs = sitemap.scan(%r{<loc>\s*#{Regexp.escape(site_origin)}#{Regexp.escape(relative_site_url('/blog/', baseurl))}[^<]*</loc>})
+abort "FAIL: sitemap must not advertise retired article routes." unless blog_article_locs.empty?
 REDIRECT_ROUTES.each_key do |path|
   route_path = "/#{path.delete_suffix('index.html')}"
   compatibility_paths = [route_path, "#{route_path}index.html"]
@@ -587,4 +519,5 @@ unless sitemap.scan(resume_url_pattern).length == 1
   abort "FAIL: sitemap must contain the resume URL exactly once."
 end
 
+required_files = CORE_REQUIRED_FILES.freeze
 puts "PASS: verified #{generated_html.length} HTML file(s) and #{required_files.length} required site file(s)."
