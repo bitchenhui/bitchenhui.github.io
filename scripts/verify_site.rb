@@ -331,6 +331,7 @@ required_home_source_markers = %w[
   include\ profile-card.html
   include\ experience-item.html
   site.data.projects
+  site.data.education
   hero-decode
   hero-motion
   hero-meta
