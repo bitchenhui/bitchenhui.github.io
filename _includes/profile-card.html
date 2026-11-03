@@ -21,6 +21,13 @@
     </ul>
   {% endif %}
 
+  {% if site.data.honors and site.data.honors != empty %}
+    <h3>荣誉与专利</h3>
+    <ul class="profile-card__list" aria-label="荣誉与专利">
+      {% for honor in site.data.honors %}<li>{{ honor | escape }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+
   {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
     <h3>联系与资料</h3>
     <ul class="profile-card__links">
