@@ -12,7 +12,7 @@ plugins:
   - jekyll-sitemap
 
 author:
-  name: "段晨辉"
+  name: "dch"
   role: "主动拥抱AGI的视频编解码算法工程师"
   intro: "用AI重塑所有流程中；ACL努力康复中的篮球爱好者；北京探店"
   email: "ppduan50@gmail.com"
