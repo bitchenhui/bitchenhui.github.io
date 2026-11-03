@@ -145,16 +145,7 @@ button { font: inherit; }
   gap: 1rem;
 }
 
-.site-header__actions { display: flex; gap: 0.5rem; }
-
-.site-brand {
-  color: var(--ink);
-  font-weight: 750;
-  font-family: var(--mono);
-  letter-spacing: -0.03em;
-  text-decoration: none;
-}
-.site-brand::before { content: "~/"; color: var(--accent); }
+.site-header__actions { grid-column: 2; display: flex; gap: 0.5rem; }
 
 .icon-button,
 .button {
