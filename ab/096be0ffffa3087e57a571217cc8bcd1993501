@@ -1,0 +1,48 @@
+404.html
+  h_bc262c8ac47a2c 5-6
+Gemfile
+  h_bc262c8ac47a2c 3-4,7-8
+README.md
+  h_bc262c8ac47a2c 7,9,13,25,29-35,39,44,57,99
+_config.yml
+  h_bc262c8ac47a2c 40
+_includes/experience-item.html
+  h_bc262c8ac47a2c 3
+_includes/footer.html
+  h_bc262c8ac47a2c 13
+_includes/head.html
+  h_bc262c8ac47a2c 4,21-23,31-33,41,45
+_includes/header.html
+  h_bc262c8ac47a2c 2-17
+_includes/profile-card.html
+  h_bc262c8ac47a2c 7-14,37
+_includes/project-card.html
+  h_bc262c8ac47a2c 8
+_includes/signal-frame.html
+  h_bc262c8ac47a2c 1-48
+assets/css/main.scss
+  h_bc262c8ac47a2c 6-92,126,137,161,168,170-171,173-203,208,211,215,222,229-275,284-285,289,292,294,296,304,330,332-333,336-365,368-369,372-373,375-394,396-439,442-454,457,460-476,478-513,516-521,523-530,532-542,558,562-563,566,577,597,599-600,604,607-611,614-627,631-635,639-670
+assets/img/favicon.svg
+  h_bc262c8ac47a2c 2-4
+assets/js/home.js
+  h_bc262c8ac47a2c 1-188
+assets/js/site.js
+  h_bc262c8ac47a2c 5,12,15-21,23,26,51-68,70-72
+index.html
+  h_bc262c8ac47a2c 7-17,20-23,44,68,72,77,97-100,102-104,106
+resume/index.html
+  h_bc262c8ac47a2c 14,26,100
+scripts/verify_site.rb
+  h_bc262c8ac47a2c 11,103-104,131,218,242,244,296,317,358,368-370,374-397,410-417,420
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ab096be0ffffa3087e57a571217cc8bcd1993501",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
