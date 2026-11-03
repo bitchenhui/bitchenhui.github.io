@@ -1,0 +1,14 @@
+_config.yml
+  h_bc262c8ac47a2c 18-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1e1f41ffc01f59d93eb15807c18562c277b70292",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
