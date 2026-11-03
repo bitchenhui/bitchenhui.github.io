@@ -31,7 +31,6 @@
   {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
     <h3>联系与资料</h3>
     <ul class="profile-card__links">
-      <li><a href="{{ '/resume/' | relative_url }}">在线简历</a></li>
       {% if email != "" %}<li><a href="mailto:{{ email | escape }}">发送邮件</a></li>{% endif %}
       {% if github != "" %}<li><a href="{{ github | escape }}" target="_blank" rel="noopener noreferrer">GitHub（新窗口）</a></li>{% endif %}
       {% if linkedin != "" %}<li><a href="{{ linkedin | escape }}" target="_blank" rel="noopener noreferrer">LinkedIn（新窗口）</a></li>{% endif %}

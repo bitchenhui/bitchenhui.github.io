@@ -17,7 +17,6 @@ title: 首页
       <a href="#experience">工作经历</a>
       <a href="#projects">个人作品</a>
       <a href="#contact">联系我</a>
-      <a href="{{ '/resume/' | relative_url }}">简历</a>
     </nav>
   </section>
 
@@ -70,7 +69,6 @@ title: 首页
     {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
       <p>如果你正在寻找视频编解码算法、AI 驱动研发流程或音视频体验优化方向的合作，可以通过以下方式联系我。</p>
       <ul class="profile-card__links">
-        <li><a href="{{ '/resume/' | relative_url }}">在线简历</a></li>
         {% if email != "" %}<li><a href="mailto:{{ email | escape }}">{{ email | escape }}</a></li>{% endif %}
         {% if github != "" %}<li><a href="{{ github | escape }}" target="_blank" rel="noopener noreferrer">GitHub（新窗口）</a></li>{% endif %}
         {% if linkedin != "" %}<li><a href="{{ linkedin | escape }}" target="_blank" rel="noopener noreferrer">LinkedIn（新窗口）</a></li>{% endif %}
