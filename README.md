@@ -2,17 +2,15 @@
 
 这是一个使用 **Jekyll** 构建、由 **GitHub Pages** 从仓库发布的中文个人网站。网站保持原生 Jekyll 结构：不需要额外前端框架、应用服务器、数据库或 GitHub Actions。
 
-> **安全提醒：先完成所有 `TODO: 替换为…` 的个人信息，再公开发布。** 示例中的姓名、定位、项目描述和链接并不代表真实经历；请勿把它们当作可对外声明的内容。
-
 ## 单页结构
 
-首页 `/` 是唯一主要内容入口，依次展示个人定位、核心能力、经历、项目（个人作品）和联系方式。`/projects/`、`/blog/`、`/about/` 仅用于把旧链接引导到首页对应板块。当前版本定位为线上简历，技术文章板块暂未开放；`_layouts/post.html`、`_includes/post-card.html` 与 `_posts/` 已移除，未来恢复写作时再按 Jekyll 惯例重建。
+首页 `/` 展示个人定位、核心能力、工作与教育经历、个人作品和联系方式。首屏的「查看在线简历」通往可打印的 `/resume/`。`/projects/`、`/blog/`、`/about/` 保留为旧链接的跳转入口。技术文章板块暂未开放。
 
-首页带有一组「码流美学」交互：标题以宏块马赛克逐步解码入场；鼠标划过 Hero 区会点亮宏块并显示运动矢量；右上角 `HiFi / 240p` 按钮模拟低码率画质（去圆角、像素化、扫描线），偏好与主题一样保存在浏览器本地。所有效果尊重 `prefers-reduced-motion`，仅用原生 Canvas 实现，不引入外部依赖。
+首页采用深色信号面板，内置 SVG 码流示意。标题背后有短暂的宏块入场效果；鼠标划过监看器时会点亮宏块并显示运动矢量。网站仅保留深色模式，可从右上角切换电光青（默认）、珊瑚红、雾紫、冰蓝和琥珀配色。右上角 `240p` 按钮切换低码率画质模拟（去圆角、像素化、扫描线），画质和配色偏好都保存在浏览器本地。系统启用「减少动态效果」时，首页保留静态网格，关闭入场和指针动画。
 
 ## 本地预览
 
-请先安装 Ruby 3.1 或更高版本以及 Bundler，并在仓库根目录执行：
+请使用与 GitHub Pages 同系列的 Ruby 3.3 和 Bundler，在仓库根目录执行：
 
 ```bash
 bundle install
@@ -24,20 +22,26 @@ bundle exec jekyll serve
 要生成静态文件并运行仓库检查，请执行：
 
 ```bash
-bundle exec jekyll build
+JEKYLL_ENV=production bundle exec jekyll build
 ruby scripts/verify_site.rb
 ```
 
-生成结果位于 `_site/`，不需要提交该目录。
+生成结果位于 `_site/`，不需要提交该目录。检查脚本会验证站内链接、锚点、静态资源、旧入口和站点地图。若需要验证子路径部署：
+
+```bash
+preview_dir=$(mktemp -d)
+JEKYLL_ENV=production bundle exec jekyll build --baseurl /preview --destination "$preview_dir"
+ruby scripts/verify_site.rb "$preview_dir" /preview
+```
 
 ## 配置个人信息
 
-编辑根目录的 `_config.yml`，将以下带有 `TODO: 替换为…` 的字段替换为自己的信息：
+编辑根目录的 `_config.yml` 更新公开资料：
 
 - `title`、`description`：网站名称和一句中文个人定位；
 - `url`、`baseurl`：实际部署地址与站点子路径；个人 GitHub Pages 通常保持 `baseurl: ""`；
 - `author.name`、`author.role`、`author.intro`：姓名、角色和简介；
-- `author.email`、`author.github`、`author.linkedin`、`author.resume_url`、`author.wechat`：可公开的联系和资料链接；`wechat` 展示在侧栏卡片的「联系」中，留空则不显示；`resume_url` 可选——把 PDF 简历放入 `assets/` 后填 `/assets/resume.pdf`，留空则网站只展示在线简历页 `/resume/`；
+- `author.email`、`author.github`、`author.linkedin`、`author.resume_url`、`author.wechat`：可公开的联系方式和资料链接，留空则不显示对应项。微信号支持手动复制，浏览器允许访问剪贴板时也提供复制按钮。要附上现成的 PDF，可把文件放入 `assets/` 后填写 `/assets/resume.pdf`；
 - `current_focus`：当前重点方向的字符串列表；
 - `skills`：核心能力对象列表，每项包含 `name` 和 `description`。
 
@@ -50,7 +54,7 @@ skills:
     description: "能力说明"
 ```
 
-发布前再次检查所有页面、`_data/experience.yml` 和 `_data/projects.yml` 是否仍有示例性 `TODO`，并只填写可以公开、能够佐证的真实信息。
+工作经历、教育背景、荣誉和作品分别维护在 `_data/experience.yml`、`_data/education.yml`、`_data/honors.yml` 和 `_data/projects.yml`。
 
 ## 添加经历
 
@@ -92,7 +96,7 @@ skills:
 
 ## 简历页
 
-`/resume/` 是页面版简历，数据完全复用 `_config.yml`、`_data/experience.yml` 和 `_data/projects.yml`——更新这些数据源后简历页自动同步，无需单独维护。页面提供「打印 / 导出 PDF」按钮（打印样式会自动隐藏导航和页脚）；如需挂 PDF 版简历，把文件放入 `assets/` 并在 `_config.yml` 的 `author.resume_url` 填入路径。`_data/experience.yml` 中的 `org`（公司/团队）与 `_data/projects.yml` 中的 `period`、`highlights`、`cover` 均为可选字段。
+`/resume/` 复用首页的数据源，重新构建后会同步更新。点击「打印 / 导出 PDF」或使用浏览器的打印菜单，即可得到白底简历；打印版隐藏站点工具栏，保留简历正文、联系信息和在线地址。
 
 ## SEO 与分享
 

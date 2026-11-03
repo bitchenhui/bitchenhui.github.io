@@ -10,7 +10,7 @@
       {% if email != "" %}<a href="mailto:{{ email | escape }}">邮箱</a>{% endif %}
       {% if github != "" %}<a href="{{ github | escape }}" target="_blank" rel="noopener noreferrer">GitHub（新窗口）</a>{% endif %}
       {% if linkedin != "" %}<a href="{{ linkedin | escape }}" target="_blank" rel="noopener noreferrer">LinkedIn（新窗口）</a>{% endif %}
-      {% if resume_url != "" %}<a href="{{ resume_url | escape }}" target="_blank" rel="noopener noreferrer">简历（新窗口）</a>{% endif %}
+      {% if resume_url != "" %}<a href="{{ resume_url | relative_url | escape }}" target="_blank" rel="noopener noreferrer">简历（新窗口）</a>{% endif %}
     </div>
   {% endif %}
 </div>

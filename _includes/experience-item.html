@@ -1,6 +1,6 @@
 {% assign item_org = include.item.org | default: "" | strip %}
 <article class="experience-item">
-  <p class="experience-item__period">{{ include.item.period | escape }}{% if item_org != "" %} · {{ item_org | escape }}{% endif %}</p>
+  <p class="experience-item__period">{{ include.item.period | escape }}{% if item_org != "" %}<span class="experience-item__org">{{ item_org | escape }}</span>{% endif %}</p>
   <div class="experience-item__body">
     <h3>{{ include.item.role | escape }}</h3>
     <p>{{ include.item.summary | escape }}</p>

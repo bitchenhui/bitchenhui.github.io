@@ -37,6 +37,7 @@ skills:
     description: 面向 直播，RTC和点播 场景分析并改善端到端体验和成本。
 
 exclude:
+  - README.md
   - Gemfile
   - Gemfile.lock
   - scripts

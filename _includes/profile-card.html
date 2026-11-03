@@ -4,9 +4,14 @@
 {% assign linkedin = site.author.linkedin | default: "" | strip %}
 {% assign resume_url = site.author.resume_url | default: "" | strip %}
 <aside class="profile-card" aria-labelledby="profile-card-title">
-  <p class="eyebrow">个人速览</p>
-  <h2 id="profile-card-title">{{ site.author.name | escape }}</h2>
-  <p class="profile-card__role">{{ site.author.role | escape }}</p>
+  <p class="eyebrow profile-card__label">个人速览 <span aria-hidden="true">/ PROFILE</span></p>
+  <div class="profile-card__identity">
+    <span class="profile-card__mark" aria-hidden="true">{{ site.author.name | slice: 0, 3 | upcase | escape }}</span>
+    <div>
+      <h2 id="profile-card-title">{{ site.author.name | escape }}</h2>
+      <p class="profile-card__role">{{ site.author.role | escape }}</p>
+    </div>
+  </div>
 
   {% if site.data.honors and site.data.honors != empty %}
     <h3>过往</h3>
@@ -29,7 +34,7 @@
       {% if email != "" %}<li><a href="mailto:{{ email | escape }}">发送邮件</a></li>{% endif %}
       {% if github != "" %}<li><a href="{{ github | escape }}" target="_blank" rel="noopener noreferrer">GitHub（新窗口）</a></li>{% endif %}
       {% if linkedin != "" %}<li><a href="{{ linkedin | escape }}" target="_blank" rel="noopener noreferrer">LinkedIn（新窗口）</a></li>{% endif %}
-      {% if resume_url != "" %}<li><a href="{{ resume_url | escape }}" target="_blank" rel="noopener noreferrer">查看简历（新窗口）</a></li>{% endif %}
+      {% if resume_url != "" %}<li><a href="{{ resume_url | relative_url | escape }}" target="_blank" rel="noopener noreferrer">PDF 简历（新窗口）</a></li>{% endif %}
     </ul>
   {% endif %}
 </aside>

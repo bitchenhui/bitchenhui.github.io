@@ -4,19 +4,23 @@ title: 首页
 ---
 <div class="shell manual-layout">
   <section class="manual-hero" aria-labelledby="intro-title">
-    <p class="eyebrow">PORTFOLIO // VIDEO CODEC × AI</p>
-    <div class="hero-stage">
-      <h1 id="intro-title">{{ site.author.role | escape }}</h1>
-      <canvas class="hero-decode" aria-hidden="true"></canvas>
+    <div class="hero-panel">
+      <div class="hero-panel__copy">
+        <p class="eyebrow"><span>01 /</span> VIDEO CODEC × AI</p>
+        <div class="hero-stage">
+          <h1 id="intro-title">{{ site.author.role | escape | replace: "音视频算法工程师", '<span class="hero-title__role">音视频算法工程师</span>' }}</h1>
+          <canvas class="hero-decode" aria-hidden="true" hidden></canvas>
+        </div>
+        <p class="manual-hero__lead">{{ site.author.intro | escape }}</p>
+        <a class="button button-primary" href="{{ '/resume/' | relative_url }}">查看在线简历 <span aria-hidden="true">↗</span></a>
+      </div>
+      {% include signal-frame.html %}
     </div>
-    <p class="manual-hero__lead">{{ site.author.intro | escape }}</p>
-    <p class="hero-meta" aria-hidden="true">SEQ <b>8K@120fps</b> · QP <b>22</b> · AV1/VVC/NEON · IDR <b>#1042</b> · CLOSED GOP</p>
-    <canvas class="hero-motion" aria-hidden="true"></canvas>
     <nav class="anchor-nav" aria-label="本页内容">
-      <a href="#capabilities">核心能力</a>
-      <a href="#experience">工作经历</a>
-      <a href="#projects">个人作品</a>
-      <a href="#contact">联系我</a>
+      <a href="#capabilities"><span aria-hidden="true">02</span> 核心能力</a>
+      <a href="#experience"><span aria-hidden="true">03</span> 工作与教育</a>
+      <a href="#projects"><span aria-hidden="true">04</span> 个人作品</a>
+      <a href="#contact"><span aria-hidden="true">05</span> 联系我</a>
     </nav>
   </section>
 
@@ -37,7 +41,7 @@ title: 首页
 
   <section id="experience" class="manual-section" aria-labelledby="experience-title">
     <p class="section-index">03 / EXPERIENCE</p>
-    <h2 id="experience-title">工作经历</h2>
+    <h2 id="experience-title">工作与教育经历</h2>
     {% if site.data.experience and site.data.experience != empty %}
       <div class="experience-list">
         {% for item in site.data.experience %}{% include experience-item.html item=item %}{% endfor %}
@@ -61,16 +65,16 @@ title: 首页
   </section>
 
   <section id="projects" class="manual-section" aria-labelledby="projects-title">
-    <p class="section-index">04 / OPEN SOURCE</p>
+    <p class="section-index">04 / SELECTED WORK</p>
     <h2 id="projects-title">个人作品</h2>
     {% if site.data.projects and site.data.projects != empty %}
       <div class="card-grid">
-        {% for project in site.data.projects %}{% include project-card.html project=project %}{% endfor %}
+        {% for project in site.data.projects %}{% include project-card.html project=project ordinal=forloop.index %}{% endfor %}
       </div>
     {% else %}
       <div class="empty-state">
         <p class="empty-state__code" aria-hidden="true">/// WORKS.LOADING</p>
-        <p>作品截图整理中。工作项目成果见上方「工作经历」。</p>
+        <p>作品截图整理中。工作项目成果见上方经历板块。</p>
       </div>
     {% endif %}
   </section>
@@ -90,9 +94,16 @@ title: 首页
           <a class="button contact-action" href="mailto:{{ email | escape }}">{{ email | escape }}</a>
         {% endif %}
         {% if wechat != "" %}
-          <button class="button contact-action" type="button" data-copy-wechat="{{ wechat | escape }}" title="点击复制微信号">微信 · {{ wechat | escape }}</button>
+          <div class="contact-wechat">
+            <span>微信：<span class="profile-card__wechat">{{ wechat | escape }}</span></span>
+            <button class="button" type="button" data-copy-wechat="{{ wechat | escape }}" hidden>复制微信号</button>
+          </div>
         {% endif %}
+        {% if github != "" %}<a class="button contact-action" href="{{ github | escape }}">GitHub</a>{% endif %}
+        {% if linkedin != "" %}<a class="button contact-action" href="{{ linkedin | escape }}">LinkedIn</a>{% endif %}
+        {% if resume_url != "" %}<a class="button contact-action" href="{{ resume_url | relative_url | escape }}">PDF 简历</a>{% endif %}
       </div>
+      {% if wechat != "" %}<p class="contact-status" role="status"></p>{% endif %}
     {% else %}
       <p class="empty-state">公开联系方式待补充。</p>
     {% endif %}

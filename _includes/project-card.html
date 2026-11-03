@@ -5,6 +5,7 @@
   {% if cover != "" %}
     <img class="project-card__cover" src="{{ cover | relative_url }}" alt="{{ include.project.title | escape }} 作品截图" loading="lazy">
   {% endif %}
+  <p class="project-card__label" aria-hidden="true"><span>WORK / {% if include.ordinal < 10 %}0{% endif %}{{ include.ordinal }}</span><span>▦</span></p>
   {% assign project_period = include.project.period | default: "" | strip %}
   {% if project_period != "" %}<p class="card-meta">{{ project_period | escape }}</p>{% endif %}
   <h3>{{ include.project.title | escape }}</h3>

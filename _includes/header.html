@@ -1,6 +1,19 @@
 <div class="shell site-header__inner">
-  <div class="site-header__actions">
-    <button id="quality-toggle" class="icon-button" type="button" aria-pressed="false" aria-label="模拟 240p 低码率画质" hidden>HiFi</button>
-    <button id="theme-toggle" class="icon-button" type="button" aria-pressed="false" aria-label="切换深色模式" hidden>深色</button>
+  <a class="site-brand" href="{{ '/' | relative_url }}" aria-label="{{ site.author.name | escape }} 首页">
+    <span class="site-brand__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9V3h6m6 0h6v6m0 6v6h-6m-6 0H3v-6"/><path d="m9 7 7 5-7 5z" fill="currentColor" stroke="none"/></svg></span>
+    <strong>{{ site.author.name | escape }}</strong>
+    <span class="site-brand__label" aria-hidden="true">CODEC / PORTFOLIO</span>
+  </a>
+  <div class="site-header__actions" aria-label="显示设置">
+    <button id="quality-toggle" class="icon-button" type="button" aria-pressed="false" aria-label="240p 低码率模式" hidden>240p</button>
+    <div class="palette-control" hidden>
+      <select id="palette-select" aria-label="深色配色">
+        <option value="electric">电光青</option>
+        <option value="coral">珊瑚红</option>
+        <option value="mist">雾紫</option>
+        <option value="ice">冰蓝</option>
+        <option value="amber">琥珀</option>
+      </select>
+    </div>
   </div>
 </div>

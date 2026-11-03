@@ -11,7 +11,7 @@ description: "dch 的个人简历：视频编解码算法工程师，聚焦 AV1/
 <div class="shell resume-layout">
   <div class="resume-toolbar no-print">
     <a class="button" href="{{ '/' | relative_url }}">← 返回主页</a>
-    <button class="button" type="button" data-print-button>打印 / 导出 PDF</button>
+    <button class="button" type="button" data-print-button hidden>打印 / 导出 PDF</button>
   </div>
 
   <article class="resume" aria-labelledby="resume-title">
@@ -23,7 +23,7 @@ description: "dch 的个人简历：视频编解码算法工程师，聚焦 AV1/
         {% if email != "" %}<li class="tag"><a href="mailto:{{ email | escape }}">{{ email | escape }}</a></li>{% endif %}
         {% if github != "" %}<li class="tag"><a href="{{ github | escape }}">{{ github | remove: "https://" | remove: "http://" | escape }}</a></li>{% endif %}
         {% if linkedin != "" %}<li class="tag"><a href="{{ linkedin | escape }}">LinkedIn</a></li>{% endif %}
-        {% if resume_url != "" %}<li class="tag"><a href="{{ resume_url | escape }}">PDF 简历</a></li>{% endif %}
+        {% if resume_url != "" %}<li class="tag"><a href="{{ resume_url | relative_url | escape }}">PDF 简历</a></li>{% endif %}
       </ul>
     </header>
 
@@ -97,7 +97,7 @@ description: "dch 的个人简历：视频编解码算法工程师，聚焦 AV1/
     {% endif %}
 
     <footer class="resume__footer">
-      <p>本页由仓库数据自动生成，最新版本见 <a href="{{ '/' | relative_url }}">{{ site.url | remove: "https://" | remove: "http://" }}</a>。</p>
+      <p>最新在线简历：<a href="{{ '/resume/' | absolute_url }}">{{ '/resume/' | absolute_url | remove: "https://" | remove: "http://" | escape }}</a></p>
     </footer>
   </article>
 </div>

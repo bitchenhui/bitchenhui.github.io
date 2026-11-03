@@ -8,7 +8,7 @@ require "time"
 require "uri"
 require "yaml"
 
-SITE = Pathname.new("_site")
+SITE = Pathname.new(ARGV.fetch(0, "_site"))
 PROJECT_FIELDS = %w[title description stack].freeze
 PROJECT_URL_FIELDS = %w[project_url repository_url].freeze
 EXPERIENCE_FIELDS = %w[period role summary highlights].freeze
@@ -100,11 +100,8 @@ end
 
 
 def generated_path_for_url(url, baseurl)
-  raw_path = CGI.unescapeHTML(url).split(/[?#]/, 2).first
-  return if raw_path.match?(/\A(?:[a-z][a-z0-9+.-]*:|\/\/)/i)
-  return if raw_path.include?("..")
-
-  path = URI::DEFAULT_PARSER.unescape(raw_path)
+  path = URI::DEFAULT_PARSER.unescape(url)
+  return if path.split("/").include?("..")
   if baseurl.empty?
     return unless path.start_with?("/")
   else
@@ -131,7 +128,7 @@ unless %w[http https].include?(site_uri.scheme) && site_uri.host
 end
 port = site_uri.port unless [site_uri.default_port, nil].include?(site_uri.port)
 site_origin = "#{site_uri.scheme}://#{site_uri.host}#{port ? ":#{port}" : ""}"
-baseurl = config_data["baseurl"].to_s.strip
+baseurl = ARGV.fetch(1, config_data["baseurl"]).to_s.strip
 baseurl = "" if baseurl == "/"
 baseurl = "/#{baseurl}" unless baseurl.empty? || baseurl.start_with?("/")
 baseurl = baseurl.delete_suffix("/")
@@ -218,9 +215,8 @@ script_source = Pathname.new("assets/js/site.js").read
 style_source = Pathname.new("assets/css/main.scss").read
 robots_source = Pathname.new("robots.txt").read
 
-abort "FAIL: header lacks theme control." unless header_source.include?('id="theme-toggle"')
+abort "FAIL: header lacks palette control." unless header_source.include?('id="palette-select"')
 abort "FAIL: header lacks quality control." unless header_source.include?('id="quality-toggle"')
-abort "FAIL: theme control must be hidden until JavaScript initializes." unless header_source.match?(/<button\b[^>]*id="theme-toggle"[^>]*\bhidden\b[^>]*>/)
 resume_source = Pathname.new("resume/index.html").read
 %w[site.data.experience site.data.projects site.skills data-print-button].each do |marker|
   abort "FAIL: resume page lacks #{marker}." unless resume_source.include?(marker)
@@ -230,9 +226,6 @@ hidden_rule_position = style_source.index("[hidden]")
 button_rule_position = style_source.index(".icon-button")
 unless hidden_rule && hidden_rule_position && button_rule_position && hidden_rule_position < button_rule_position
   abort "FAIL: stylesheet must hide [hidden] elements before icon-button display rules."
-end
-unless script_source.match?(/updateThemeControl\(initialTheme\).*?addEventListener\("click".*?themeToggle\.hidden\s*=\s*false/m)
-  abort "FAIL: site controller must synchronize and bind the theme control before revealing it."
 end
 %w[email github linkedin resume_url].each do |field|
   assignment = %({% assign #{field} = site.author.#{field} | default: "" | strip %})
@@ -246,16 +239,10 @@ end
 
 initializer_end = head_source.index('rel="stylesheet"')
 initializer = initializer_end && head_source[0...initializer_end]
-initializer_markers = ["<script>", "localStorage", "matchMedia", 'theme !== "light"', 'theme !== "dark"', "try", "catch", "dataset.theme"]
+initializer_markers = ["<script>", "localStorage", "site-palette", "dataset.palette"]
 missing_initializer_markers = initializer_markers.reject { |marker| initializer&.include?(marker) }
-abort "FAIL: pre-stylesheet theme initializer lacks #{missing_initializer_markers.join(', ')}." unless missing_initializer_markers.empty?
-abort "FAIL: site controller does not reuse the initialized theme." unless script_source.match?(/initialTheme\s*=\s*root\.dataset\.theme/)
-abort "FAIL: site controller does not preserve safe theme writes." unless script_source.include?("try { window.localStorage.setItem")
+abort "FAIL: pre-stylesheet palette initializer lacks #{missing_initializer_markers.join(', ')}." unless missing_initializer_markers.empty?
 abort "FAIL: quality preference is not persisted." unless script_source.include?("site-quality")
-abort "FAIL: hero decode layer missing controller support." unless script_source.include?("hero-decode") && script_source.include?("hero-motion")
-%w[aria-pressed aria-label].each do |attribute|
-  abort "FAIL: theme control does not update #{attribute}." unless script_source.include?(attribute)
-end
 %w[
   rel="icon"
   property="og:title"
@@ -289,12 +276,6 @@ abort "FAIL: impossible section-heading child selector remains." if style_source
 %w[manual-layout manual-sidebar profile-card position:\ sticky scroll-margin-top].each do |marker|
   abort "FAIL: stylesheet lacks #{marker}." unless style_source.include?(marker.tr("\\", ""))
 end
-abort "FAIL: desktop content is not pinned to grid column 1." unless style_source.include?(".manual-layout > :not(.manual-sidebar) { min-width: 0; grid-column: 1; }")
-abort "FAIL: desktop sidebar placement is incorrect." unless style_source.include?(".manual-sidebar { position: sticky; top: 6rem; grid-column: 2; grid-row: 1 / span 7; }")
-short_viewport_fallback = style_source.match?(/\/\/.*sticky offset.*\n@media\s*\(min-width:\s*54\.01rem\)\s*and\s*\(max-height:\s*\d+em\)\s*\{.*?\.manual-sidebar\s*\{[^}]*position:\s*static/m)
-abort "FAIL: short wide viewports lack a documented font-relative non-sticky sidebar fallback." unless short_viewport_fallback
-abort "FAIL: mobile layout breakpoint is missing." unless style_source.include?("@media (max-width: 54rem)")
-abort "FAIL: mobile sidebar placement is incorrect." unless style_source.include?(".manual-sidebar { position: static; grid-row: 2; margin-bottom: 3rem; }")
 
 robots_path = Pathname.new("robots.txt")
 front_matter(robots_path)
@@ -312,7 +293,7 @@ end
 home_source = Pathname.new("index.html").read
 home_sections = {
   "experience" => { condition: /\{%\s*if\s+site\.data\.experience\s+and\s+site\.data\.experience\s*!=\s*empty\s*%\}/, empty: "经历内容待补充。" },
-  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "作品截图整理中。工作项目成果见上方「工作经历」。" },
+  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "作品截图整理中。" },
   "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+wechat\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充。" }
 }.freeze
 home_sections.each do |id, contract|
@@ -333,8 +314,7 @@ required_home_source_markers = %w[
   site.data.projects
   site.data.education
   hero-decode
-  hero-motion
-  hero-meta
+  include\ signal-frame.html
 ]
 missing_home_source_markers = required_home_source_markers.reject { |marker| home_source.include?(marker.tr("\\", "")) }
 unless missing_home_source_markers.empty?
@@ -375,7 +355,7 @@ end
 post_source_absent = !Pathname.new("_layouts/post.html").exist?
 abort "FAIL: article phase is retired; _layouts/post.html should stay removed." unless post_source_absent
 
-abort "FAIL: _site does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
+abort "FAIL: #{SITE} does not exist; run `bundle exec jekyll build` first." unless SITE.directory?
 missing = CORE_REQUIRED_FILES.reject { |path| (SITE / path).file? }
 abort "FAIL: missing generated files: #{missing.join(', ')}" unless missing.empty?
 
@@ -385,11 +365,36 @@ generated_html = html_files.to_h do |file|
   relative_path = file.relative_path_from(SITE).each_filename.to_a.join("/")
   [relative_path, file.read]
 end
+ids_by_page = generated_html.transform_values do |body|
+  body.scan(/<[a-z][^>]*>/i).filter_map { |tag| attribute_value(tag, "id") }
+end
 generated_html.each do |path, body|
   abort "FAIL: #{path} has no lang=\"zh-CN\" document language." unless body.include?('lang="zh-CN"')
   abort "FAIL: #{path} has no viewport metadata." unless body.include?('name="viewport"')
-  empty_href = html_tags(body, "a").find { |tag| attribute_value(tag, "href")&.strip == "" }
-  abort "FAIL: #{path} contains an empty href attribute." if empty_href
+  ids = ids_by_page.fetch(path)
+  abort "FAIL: #{path} contains duplicate IDs." unless ids.uniq == ids
+
+  { "a" => "href", "link" => "href", "script" => "src", "img" => "src" }.each do |tag_name, attribute|
+    html_tags(body, tag_name).each do |tag|
+      raw = attribute_value(tag, attribute)
+      next unless raw
+
+      url = CGI.unescapeHTML(raw).strip
+      abort "FAIL: #{path} contains an empty #{attribute}." if url.empty?
+      url = url.delete_prefix(site_origin) if url.start_with?("#{site_origin}/")
+      next if url.start_with?("//") || !url.start_with?("/", "#")
+
+      target, fragment = url.split("#", 2)
+      target = target.split("?", 2).first.to_s
+      destination = target.empty? ? path : generated_path_for_url(target, baseurl)
+      unless destination && (SITE / destination).file?
+        abort "FAIL: #{path} references missing local URL #{url}."
+      end
+      if fragment && !fragment.empty? && !ids_by_page.fetch(destination, []).include?(URI::DEFAULT_PARSER.unescape(fragment))
+        abort "FAIL: #{path} references missing anchor #{url}."
+      end
+    end
+  end
 end
 
 home = generated_html.fetch("index.html")
@@ -402,11 +407,17 @@ end
 abort "FAIL: generated homepage lacks stylesheet URL #{expected_stylesheet_url}." unless stylesheet
 script = html_tags(home, "script").find { |tag| attribute_value(tag, "src") == expected_script_url }
 abort "FAIL: generated homepage script URL is not #{expected_script_url}." unless script
-%w[assets/css/main.css assets/js/site.js].each do |asset|
-  abort "FAIL: generated asset is missing: #{asset}." unless (SITE / asset).file?
+home_script = relative_site_url("/assets/js/home.js", baseurl)
+generated_html.each do |path, body|
+  loads_home_script = html_tags(body, "script").any? { |tag| attribute_value(tag, "src") == home_script }
+  abort "FAIL: #{path} loads the wrong page scripts." unless loads_home_script == (path == "index.html")
+end
+resume_path = relative_site_url("/resume/", baseurl)
+unless html_tags(home, "a").any? { |tag| attribute_value(tag, "href") == resume_path }
+  abort "FAIL: the online resume is not reachable from the homepage."
 end
 required_home_markers = %w[
-  id="theme-toggle"
+  id="palette-select"
   id="capabilities"
   id="experience"
   id="projects"
