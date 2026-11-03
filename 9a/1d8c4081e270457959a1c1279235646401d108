@@ -1,0 +1,22 @@
+_includes/footer.html
+  h_bc262c8ac47a2c 7
+assets/css/main.scss
+  h_bc262c8ac47a2c 242,279-286,324-325,387,443
+assets/js/site.js
+  h_bc262c8ac47a2c 273-334
+index.html
+  h_bc262c8ac47a2c 71-74,82,86-95
+scripts/verify_site.rb
+  h_bc262c8ac47a2c 315-316,349,355,359-360
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a1d8c4081e270457959a1c1279235646401d108",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
