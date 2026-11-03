@@ -1,5 +1,5 @@
-title: "dch个人空间"
-description: "视频编解码算法工程师的个人主页：编码算法优化、AI 驱动研发与音视频体验。"
+title: "dch空间"
+description: "dch个人主页：音视频算法优化、AI 驱动研发与成本体验优化。"
 url: "https://bitchenhui.github.io"
 baseurl: ""
 lang: "zh-CN"
@@ -13,7 +13,7 @@ plugins:
 
 author:
   name: "dch"
-  role: "视频编解码算法专家 · 教 AI 设计编码器"
+  role: "飞速RSI的音视频算法工程师"
   intro: "用AI重塑所有流程中；ACL努力康复中的篮球爱好者；北京探店"
   email: "ppduan50@gmail.com"
   # 展示在侧栏卡片「联系」中的微信号
@@ -24,17 +24,17 @@ author:
   resume_url: ""
 
 current_focus:
-  - 用 AI 重塑视频编码算法研发流程
-  - 视频编解码性能与质量优化
-  - VOD / Live / RTC 场景体验优化
+  - 用 AI 重塑算法研发日常工作流
+  - 视频图像编解码性能优化
+  - 直播 / RTC / 点播场景的成本体验优化
 
 skills:
-  - name: LLM 驱动的 EoH 算法自动迭代设计
-    description: 探索 AI 驱动的算法生成、评估与持续迭代流程。
-  - name: 视频编解码算法优化（H.265/H.266/AV1/NVC）
+  - name: LLM 驱动的算法自进化agent设计优化
+    description: 探索 llm 驱动的视频编解码内核算法生成、评估与持续迭代优化loop流程。
+  - name: 视频图像编解码算法优化（H.265/H.266/AV1/NVC）
     description: 聚焦 H.265、H.266、AV1 与 NVC 的编码效率和工程性能。
-  - name: VOD / Live / RTC 场景 QoS/QoE 优化
-    description: 面向 VOD、Live 与 RTC 场景分析并改善端到端体验。
+  - name: 直播 / RTC / 点播 场景的 QoS/QoE 体验和成本优化
+    description: 面向 直播，RTC和点播 场景分析并改善端到端体验和成本。
 
 exclude:
   - Gemfile
