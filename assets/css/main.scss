@@ -93,7 +93,7 @@ body::after {
 h1, h2, h3, p, ul, ol { margin-top: 0; }
 h1, h2, h3 { line-height: 1.25; letter-spacing: -0.025em; }
 h1, h2, h3, a, .tag { overflow-wrap: anywhere; }
-h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); text-wrap: balance; }
 h2 { font-size: clamp(1.5rem, 3vw, 2.15rem); }
 h3 { font-size: 1.2rem; }
 a { color: var(--accent-strong); text-underline-offset: 0.18em; transition: color 0.2s ease; }
