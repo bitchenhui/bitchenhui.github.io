@@ -7,6 +7,13 @@
   <h2 id="profile-card-title">{{ site.author.name | escape }}</h2>
   <p class="profile-card__role">{{ site.author.role | escape }}</p>
 
+  {% if site.data.honors and site.data.honors != empty %}
+    <h3>荣誉与专利</h3>
+    <ul class="profile-card__list" aria-label="荣誉与专利">
+      {% for honor in site.data.honors %}<li>{{ honor | escape }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+
   {% if site.current_focus and site.current_focus != empty %}
     <h3>当前关注</h3>
     <ul class="profile-card__list">
@@ -18,13 +25,6 @@
     <h3>核心能力</h3>
     <ul class="tag-list" aria-label="核心能力">
       {% for skill in site.skills %}<li class="tag">{{ skill.name | escape }}</li>{% endfor %}
-    </ul>
-  {% endif %}
-
-  {% if site.data.honors and site.data.honors != empty %}
-    <h3>荣誉与专利</h3>
-    <ul class="profile-card__list" aria-label="荣誉与专利">
-      {% for honor in site.data.honors %}<li>{{ honor | escape }}</li>{% endfor %}
     </ul>
   {% endif %}
 
