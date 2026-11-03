@@ -270,4 +270,66 @@
       }
     }());
   }
+
+  // 滚动监听：视口所在板块的锚点导航项高亮。
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll(".anchor-nav a[href^='#']"));
+  var watchedSections = navLinks
+    .map(function (link) { return document.querySelector(link.getAttribute("href")); })
+    .filter(Boolean);
+
+  if (navLinks.length && watchedSections.length && "IntersectionObserver" in window) {
+    var visibility = {};
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        visibility[entry.target.id] = entry.isIntersecting ? entry.intersectionRatio : 0;
+      });
+      var currentId = null;
+      var bestRatio = 0;
+      Object.keys(visibility).forEach(function (id) {
+        if (visibility[id] > bestRatio) {
+          bestRatio = visibility[id];
+          currentId = id;
+        }
+      });
+      navLinks.forEach(function (link) {
+        var isActive = currentId !== null && link.getAttribute("href") === "#" + currentId;
+        link.classList.toggle("is-active", isActive);
+        if (isActive) {
+          link.setAttribute("aria-current", "true");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    }, { threshold: [0, 0.15, 0.4] });
+    watchedSections.forEach(function (section) { spy.observe(section); });
+  }
+
+  // 量化成果高亮：把指标数字包上强调样式（先转义再包 span，纯文本安全）。
+  var metricPattern = /(\d[\d,.]*\s*(?:%|％|ms|fps|万|亿|x)(?:\+)?|\d[\d,.]*\+)(?![\d%])/g;
+  function escapeHtml(text) {
+    return text.replace(/[&<>]/g, function (ch) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch];
+    });
+  }
+  function accentMetrics(element) {
+    element.innerHTML = escapeHtml(element.textContent).replace(metricPattern, '<span class="num-accent">$1</span>');
+  }
+  Array.prototype.forEach.call(
+    document.querySelectorAll(
+      ".experience-item__body li, .experience-item__body > p, .project-card__highlights li, .resume li, .resume__project > p"
+    ),
+    accentMetrics
+  );
+
+  // 微信号点击复制。
+  Array.prototype.forEach.call(document.querySelectorAll("[data-copy-wechat]"), function (button) {
+    button.addEventListener("click", function () {
+      var value = button.getAttribute("data-copy-wechat");
+      if (!value || !navigator.clipboard || !navigator.clipboard.writeText) return;
+      navigator.clipboard.writeText(value).then(function () {
+        button.classList.add("is-copied");
+        window.setTimeout(function () { button.classList.remove("is-copied"); }, 1600);
+      }, function () { /* 复制失败时保持原样。 */ });
+    });
+  });
 }());

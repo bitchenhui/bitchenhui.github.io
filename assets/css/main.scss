@@ -239,6 +239,7 @@ main { min-height: calc(100vh - 10rem); }
 .prose img { max-width: 100%; height: auto; }
 .prose blockquote { margin-inline: 0; padding: 0.75rem 1.1rem; border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; background: var(--accent-soft); color: var(--muted); }
 .empty-state { padding: 2rem; border: 1px dashed var(--line); border-radius: var(--radius); color: var(--muted); text-align: center; }
+.empty-state__code { margin-bottom: 0.5rem; color: var(--accent); font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.14em; }
 
 .manual-layout {
   display: grid;
@@ -275,6 +276,14 @@ main { min-height: calc(100vh - 10rem); }
 .section-index::before { content: "// "; opacity: 0.55; }
 .anchor-nav { display: flex; flex-wrap: wrap; gap: 0.65rem 1.2rem; margin-top: 2rem; }
 .anchor-nav a { font-weight: 700; }
+.anchor-nav a.is-active,
+.anchor-nav a[aria-current="true"] {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 0.15rem;
+}
+.num-accent { font-family: var(--mono); color: var(--accent-strong); font-weight: 650; }
 .manual-section { padding-block: clamp(2.75rem, 6vw, 5rem); border-top: 1px solid var(--line); }
 .manual-section > h2 { margin-bottom: 2rem; }
 .manual-sidebar { position: sticky; top: 6rem; grid-column: 2; grid-row: 1 / span 7; }
@@ -312,6 +321,8 @@ main { min-height: calc(100vh - 10rem); }
 .experience-item__body h3::before { content: "▸"; margin-right: 0.5rem; color: var(--accent); }
 .card-action { margin-top: 1.25rem; font-weight: 700; }
 .contact-section p { max-width: var(--reading); }
+.contact-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.6rem; }
+.contact-action.is-copied::after { content: "已复制 ✓"; margin-left: 0.5rem; color: var(--accent); font-family: var(--mono); }
 
 /* 作品封面：卡片顶部通栏、16:9 裁切，悬停轻微放大，构成作品集主视觉。 */
 .project-card__cover {
@@ -373,6 +384,7 @@ main { min-height: calc(100vh - 10rem); }
 .site-footer__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; }
 .site-footer__inner p { margin: 0; font-family: var(--mono); }
 .site-footer__links { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+.site-footer__signoff { color: var(--accent); font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.14em; }
 
 // Below 44em, the 6rem sticky offset plus a readable profile card cannot fit with safe viewport clearance.
 @media (min-width: 54.01rem) and (max-height: 44em) {
@@ -428,6 +440,7 @@ main { min-height: calc(100vh - 10rem); }
   .resume, .manual-hero h1, .resume__header h1 { border: none; box-shadow: none; padding: 0; background: none; color: inherit; -webkit-text-fill-color: inherit; }
   .resume { padding: 0; }
   .manual-hero h1, .resume__header h1 { -webkit-background-clip: initial; background-clip: initial; color: #111111; }
+  .num-accent { color: inherit; font-family: inherit; font-weight: inherit; }
   a { color: inherit; text-decoration: none; }
 }
 

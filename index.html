@@ -68,7 +68,10 @@ title: 首页
         {% for project in site.data.projects %}{% include project-card.html project=project %}{% endfor %}
       </div>
     {% else %}
-      <p class="empty-state">个人开源作品整理中，敬请期待；工作项目成果见上方「工作经历」。</p>
+      <div class="empty-state">
+        <p class="empty-state__code" aria-hidden="true">/// WORKS.LOADING</p>
+        <p>作品截图整理中。工作项目成果见上方「工作经历」。</p>
+      </div>
     {% endif %}
   </section>
 
@@ -76,17 +79,20 @@ title: 首页
     <p class="section-index">05 / CONTACT</p>
     <h2 id="contact-title">联系我</h2>
     {% assign email = site.author.email | default: "" | strip %}
+    {% assign wechat = site.author.wechat | default: "" | strip %}
     {% assign github = site.author.github | default: "" | strip %}
     {% assign linkedin = site.author.linkedin | default: "" | strip %}
     {% assign resume_url = site.author.resume_url | default: "" | strip %}
-    {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
-      <p>如果你正在寻找视频编解码算法、AI 驱动研发流程或音视频体验优化方向的合作，可以通过以下方式联系我。</p>
-      <ul class="profile-card__links">
-        {% if email != "" %}<li><a href="mailto:{{ email | escape }}">{{ email | escape }}</a></li>{% endif %}
-        {% if github != "" %}<li><a href="{{ github | escape }}" target="_blank" rel="noopener noreferrer">GitHub（新窗口）</a></li>{% endif %}
-        {% if linkedin != "" %}<li><a href="{{ linkedin | escape }}" target="_blank" rel="noopener noreferrer">LinkedIn（新窗口）</a></li>{% endif %}
-        {% if resume_url != "" %}<li><a href="{{ resume_url | escape }}" target="_blank" rel="noopener noreferrer">简历（新窗口）</a></li>{% endif %}
-      </ul>
+    {% if email != "" or wechat != "" or github != "" or linkedin != "" or resume_url != "" %}
+      <p>正在寻找视频编解码算法、AI 驱动研发流程或音视频体验优化方向的合作？欢迎随时联系。</p>
+      <div class="contact-actions">
+        {% if email != "" %}
+          <a class="button contact-action" href="mailto:{{ email | escape }}">{{ email | escape }}</a>
+        {% endif %}
+        {% if wechat != "" %}
+          <button class="button contact-action" type="button" data-copy-wechat="{{ wechat | escape }}" title="点击复制微信号">微信 · {{ wechat | escape }}</button>
+        {% endif %}
+      </div>
     {% else %}
       <p class="empty-state">公开联系方式待补充。</p>
     {% endif %}

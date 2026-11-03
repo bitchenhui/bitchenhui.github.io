@@ -4,6 +4,7 @@
 {% assign resume_url = site.author.resume_url | default: "" | strip %}
 <div class="shell site-footer__inner">
   <p>© {{ 'now' | date: '%Y' }} {{ site.author.name | escape }}</p>
+  <p class="site-footer__signoff" aria-hidden="true">/// EOF · FRAME END</p>
   {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
     <div class="site-footer__links" aria-label="联系与资料">
       {% if email != "" %}<a href="mailto:{{ email | escape }}">邮箱</a>{% endif %}

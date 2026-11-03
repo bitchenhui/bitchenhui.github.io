@@ -312,8 +312,8 @@ end
 home_source = Pathname.new("index.html").read
 home_sections = {
   "experience" => { condition: /\{%\s*if\s+site\.data\.experience\s+and\s+site\.data\.experience\s*!=\s*empty\s*%\}/, empty: "经历内容待补充。" },
-  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "个人开源作品整理中，敬请期待；工作项目成果见上方「工作经历」。" },
-  "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充。" }
+  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "作品截图整理中。工作项目成果见上方「工作经历」。" },
+  "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+wechat\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充。" }
 }.freeze
 home_sections.each do |id, contract|
   section = home_source[/<section id="#{Regexp.escape(id)}"(?=[\s>]).*?<\/section>/m]
@@ -346,23 +346,18 @@ unless home_source.match?(/\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.p
   abort "FAIL: homepage must render site.data.projects conditionally."
 end
 
-%w[email github linkedin resume_url].each do |field|
+%w[email wechat github linkedin resume_url].each do |field|
   assignment = %({% assign #{field} = site.author.#{field} | default: "" | strip %})
   abort "FAIL: homepage contact does not normalize #{field}." unless home_source.include?(assignment)
 end
 contact_source = home_source[/<section id="contact"(?=[\s>]).*?<\/section>/m]
 abort "FAIL: homepage contact section is missing." unless contact_source
-unless contact_source.include?('{% if email != "" or github != "" or linkedin != "" or resume_url != "" %}')
+unless contact_source.include?('{% if email != "" or wechat != "" or github != "" or linkedin != "" or resume_url != "" %}')
   abort "FAIL: homepage contact empty state is not conditional on all contact fields."
 end
 abort "FAIL: homepage contact lacks an email link." unless contact_source.include?("mailto:")
-%w[github linkedin resume_url].each do |field|
-  link = /href="\{\{ #{field} \| escape \}\}"[^>]*target="_blank"[^>]*rel="noopener noreferrer"[^>]*>/
-  abort "FAIL: homepage contact does not safely render #{field}." unless contact_source.match?(link)
-end
-%w[GitHub（新窗口） LinkedIn（新窗口） 简历（新窗口）].each do |label|
-  abort "FAIL: homepage contact external link label lacks new-window disclosure: #{label}." unless contact_source.include?(label)
-end
+abort "FAIL: homepage contact lacks a copyable WeChat action." unless contact_source.include?("data-copy-wechat")
+abort "FAIL: homepage contact copy button must come from site.author.wechat." unless contact_source.include?("data-copy-wechat=\"{{ wechat | escape }}\"")
 
 REDIRECT_ROUTES.each_value do |route|
   path = route.fetch(:source)
