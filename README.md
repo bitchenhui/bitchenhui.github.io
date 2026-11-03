@@ -37,7 +37,7 @@ ruby scripts/verify_site.rb
 - `title`、`description`：网站名称和一句中文个人定位；
 - `url`、`baseurl`：实际部署地址与站点子路径；个人 GitHub Pages 通常保持 `baseurl: ""`；
 - `author.name`、`author.role`、`author.intro`：姓名、角色和简介；
-- `author.email`、`author.github`、`author.linkedin`、`author.resume_url`：可公开的联系和资料链接；`resume_url` 可选——把 PDF 简历放入 `assets/` 后填 `/assets/resume.pdf`，留空则网站只展示在线简历页 `/resume/`；
+- `author.email`、`author.github`、`author.linkedin`、`author.resume_url`、`author.wechat`：可公开的联系和资料链接；`wechat` 展示在侧栏卡片的「联系」中，留空则不显示；`resume_url` 可选——把 PDF 简历放入 `assets/` 后填 `/assets/resume.pdf`，留空则网站只展示在线简历页 `/resume/`；
 - `current_focus`：当前重点方向的字符串列表；
 - `skills`：核心能力对象列表，每项包含 `name` 和 `description`。
 

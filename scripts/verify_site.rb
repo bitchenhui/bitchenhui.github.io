@@ -199,7 +199,7 @@ unless missing_readme_sections.empty?
 end
 
 required_includes = {
-  "_includes/profile-card.html" => ["profile-card", "site.current_focus", "site.skills", "site.data.honors"],
+  "_includes/profile-card.html" => ["profile-card", "site.current_focus", "site.data.honors", "site.author.wechat"],
   "_includes/experience-item.html" => ["experience-item", "include.item.highlights"],
   "_includes/project-card.html" => ["project_url", "repository_url", "project-card__cover", "project-card__highlights"]
 }.freeze

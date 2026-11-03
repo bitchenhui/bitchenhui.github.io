@@ -16,6 +16,8 @@ author:
   role: "主动拥抱AGI的视频编解码算法工程师"
   intro: "用AI重塑所有流程中；ACL努力康复中的篮球爱好者；北京探店"
   email: "ppduan50@gmail.com"
+  # 展示在侧栏卡片「联系」中的微信号
+  wechat: "ppneversleep"
   github: ""
   linkedin: ""
   # 可选：上传 PDF 简历到 assets/ 后填 "/assets/resume.pdf"；留空则只显示在线简历 /resume/

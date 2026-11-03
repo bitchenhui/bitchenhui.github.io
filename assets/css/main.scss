@@ -300,6 +300,7 @@ main { min-height: calc(100vh - 10rem); }
 .profile-card h3 { margin-top: 1.5rem; font-size: 0.95rem; font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .profile-card__role { color: var(--muted); }
 .profile-card__list, .profile-card__links { padding-left: 1.15rem; }
+.profile-card__wechat { font-family: var(--mono); color: var(--accent-strong); }
 .capability-list, .experience-list { display: grid; gap: 1rem; }
 .capability-item { padding: 1.3rem 0; border-bottom: 1px solid var(--line); transition: border-color 0.2s ease; }
 .capability-item:hover { border-bottom-color: var(--accent); }
