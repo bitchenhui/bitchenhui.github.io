@@ -1,0 +1,16 @@
+_config.yml
+  h_bc262c8ac47a2c 16
+assets/css/main.scss
+  h_bc262c8ac47a2c 96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8e7d3084516fe60110818b07627a0bcf52ca9edc",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
