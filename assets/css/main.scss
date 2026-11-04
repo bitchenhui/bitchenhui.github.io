@@ -341,11 +341,11 @@ main { min-height: calc(100vh - 10rem); }
 .hero-panel {
   display: grid;
   grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
-  gap: clamp(1.2rem, 4vw, 3.75rem);
+  gap: 1.4rem clamp(1.2rem, 4vw, 3.75rem);
   align-items: center;
   position: relative;
   isolation: isolate;
-  padding: clamp(1.35rem, 4vw, 3.75rem);
+  padding: 0 clamp(1.35rem, 3vw, 3rem) clamp(1.35rem, 3vw, 3rem);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
@@ -359,6 +359,19 @@ main { min-height: calc(100vh - 10rem); }
   height: 2px;
   background: var(--grad);
 }
+.hero-panel__top {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding-block: 0.8rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font: 0.66rem/1.4 var(--mono);
+  letter-spacing: 0.08em;
+}
+.hero-panel__top b { color: var(--accent); }
 .hero-panel__copy { position: relative; z-index: 1; min-width: 0; }
 .hero-stage { position: relative; isolation: isolate; }
 .hero-decode,
@@ -371,10 +384,14 @@ main { min-height: calc(100vh - 10rem); }
 }
 .hero-decode { z-index: -1; image-rendering: pixelated; }
 .hero-motion { opacity: 0.65; }
+.hero-panel__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.15rem; }
+.hero-panel__jump { display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2.75rem; font-size: 0.9rem; font-weight: 650; }
+.hero-panel__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 1.2rem 0 0; padding: 0; }
+.hero-panel__tags li { padding: 0.25rem 0.48rem; border: 1px solid var(--line); color: var(--muted); font: 0.68rem/1.35 var(--mono); letter-spacing: 0.04em; }
 .manual-hero h1 {
   margin-bottom: 1.25rem;
   color: var(--ink);
-  font-size: clamp(2.2rem, 4.2vw, 4rem);
+  font-size: clamp(2.15rem, 4vw, 3.85rem);
   line-height: 1.12;
   letter-spacing: -0.055em;
 }
@@ -482,6 +499,22 @@ main { min-height: calc(100vh - 10rem); }
 .profile-card li::marker { color: var(--accent); }
 .profile-card__wechat { font-family: var(--mono); color: var(--accent-strong); }
 
+.ai-loop {
+  margin-bottom: 1.15rem;
+  padding: clamp(1rem, 3vw, 1.55rem);
+  border: 1px solid var(--line);
+  border-inline-start: 2px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.ai-loop .eyebrow { margin-bottom: 0.45rem; }
+.ai-loop h3 { margin-bottom: 0.5rem; }
+.ai-loop__summary { margin-bottom: 1rem; color: var(--muted); font-size: 0.94rem; }
+.ai-loop__steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; padding: 1px; margin: 0; list-style: none; background: var(--line); }
+.ai-loop__steps li { position: relative; min-width: 0; padding: 0.65rem; background: var(--canvas); }
+.ai-loop__steps li + li::before { content: "›"; position: absolute; top: 50%; left: 0; transform: translate(-50%, -50%); padding-inline: 0.1rem; color: var(--accent); background: var(--canvas); }
+.ai-loop__steps span { display: block; margin-bottom: 0.2rem; color: var(--accent-strong); font: 0.64rem/1.4 var(--mono); overflow-wrap: anywhere; }
+.ai-loop__steps strong { font-size: 0.86rem; }
 .capability-list {
   counter-reset: capability;
   border: 1px solid var(--line);
@@ -616,6 +649,8 @@ main { min-height: calc(100vh - 10rem); }
   .manual-hero h1 { font-size: clamp(1.95rem, 7vw, 2.8rem); }
   .manual-hero__lead { margin-bottom: 1.25rem; }
   .signal-frame { width: min(100%, 31rem); }
+  .ai-loop__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ai-loop__steps li:nth-child(3)::before { content: none; }
   .anchor-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .experience-item { grid-template-columns: minmax(0, 1fr); gap: 0.45rem; }
   .site-footer__inner { align-items: flex-start; flex-wrap: wrap; }
@@ -623,7 +658,8 @@ main { min-height: calc(100vh - 10rem); }
 
 @media (max-width: 25rem) {
   .site-brand__label { display: none; }
-  .hero-panel { padding: 1rem; }
+  .hero-panel { padding: 0 1rem 1rem; }
+  .hero-panel__top { font-size: 0.58rem; }
   .signal-frame__bar { padding: 0.58rem 0.55rem; font-size: 0.59rem; }
 }
 

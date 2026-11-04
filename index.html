@@ -5,14 +5,24 @@ title: 首页
 <div class="shell manual-layout">
   <section class="manual-hero" aria-labelledby="intro-title">
     <div class="hero-panel">
+      <div class="hero-panel__top" aria-hidden="true">
+        <span><b>▰</b> DCH / ENGINEERING LAB</span>
+        <span>VIDEO CODEC × AI</span>
+      </div>
       <div class="hero-panel__copy">
-        <p class="eyebrow"><span>01 /</span> VIDEO CODEC × AI</p>
+        <p class="eyebrow"><span>01 /</span> ENGINEER PROFILE</p>
         <div class="hero-stage">
           <h1 id="intro-title">{{ site.author.role | escape | replace: "音视频算法工程师", '<span class="hero-title__role">音视频算法工程师</span>' }}</h1>
           <canvas class="hero-decode" aria-hidden="true" hidden></canvas>
         </div>
         <p class="manual-hero__lead">{{ site.author.intro | escape }}</p>
-        <a class="button button-primary" href="{{ '/resume/' | relative_url }}">查看在线简历 <span aria-hidden="true">↗</span></a>
+        <div class="hero-panel__actions">
+          <a class="button button-primary" href="{{ '/resume/' | relative_url }}">查看在线简历 <span aria-hidden="true">↗</span></a>
+          <a class="hero-panel__jump" href="#ai-loop">AI 算法迭代 <span aria-hidden="true">↓</span></a>
+        </div>
+        <ul class="hero-panel__tags" aria-label="技术方向">
+          <li>AV1 / VVC</li><li>AGENT LOOP</li><li>RTC / QoE</li>
+        </ul>
       </div>
       {% include signal-frame.html %}
     </div>
@@ -29,6 +39,17 @@ title: 首页
   <section id="capabilities" class="manual-section" aria-labelledby="capabilities-title">
     <p class="section-index">02 / CAPABILITIES</p>
     <h2 id="capabilities-title">核心能力</h2>
+    <section class="ai-loop" id="ai-loop" aria-labelledby="ai-loop-title">
+      <p class="eyebrow">AGENT LOOP / WORKFLOW</p>
+      <h3 id="ai-loop-title">AI 驱动的编码算法迭代</h3>
+      <p class="ai-loop__summary">用编码实验检验候选改动，把码率、画质和速度的对比结果反馈给下一轮。</p>
+      <ol class="ai-loop__steps">
+        <li><span aria-hidden="true">01 / PROPOSE</span><strong>生成候选</strong></li>
+        <li><span aria-hidden="true">02 / ENCODE</span><strong>运行编码</strong></li>
+        <li><span aria-hidden="true">03 / EVAL</span><strong>对比指标</strong></li>
+        <li><span aria-hidden="true">04 / ITERATE</span><strong>反馈迭代</strong></li>
+      </ol>
+    </section>
     <div class="capability-list">
       {% for skill in site.skills %}
         <article class="capability-item">
