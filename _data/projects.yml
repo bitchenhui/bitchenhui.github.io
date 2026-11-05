@@ -40,6 +40,6 @@
   stack:
     - Python/C++
     - CLI
-  cover: ""
+  cover: "/assets/img/works/bitstream-analyzer.webp"
   project_url: ""
   repository_url: ""
