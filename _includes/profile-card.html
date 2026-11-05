@@ -6,7 +6,12 @@
 <aside class="profile-card" aria-labelledby="profile-card-title">
   <p class="eyebrow profile-card__label">个人速览 <span aria-hidden="true">/ PROFILE</span></p>
   <div class="profile-card__identity">
-    <span class="profile-card__mark" aria-hidden="true">{{ site.author.name | slice: 0, 3 | upcase | escape }}</span>
+    {% assign avatar = site.author.avatar | default: "" | strip %}
+    {% if avatar != "" %}
+      <img class="profile-card__avatar" src="{{ avatar | relative_url }}" width="96" height="96" alt="{{ site.author.name | escape }}的头像">
+    {% else %}
+      <span class="profile-card__mark" aria-hidden="true">{{ site.author.name | slice: 0, 3 | upcase | escape }}</span>
+    {% endif %}
     <div>
       <h2 id="profile-card-title">{{ site.author.name | escape }}</h2>
       <p class="profile-card__role">{{ site.author.role | escape }}</p>

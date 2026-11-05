@@ -349,6 +349,15 @@ main { min-height: calc(100vh - 10rem); }
 }
 .profile-card__label { display: flex; justify-content: space-between; gap: 0.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line); }
 .profile-card__identity { display: flex; align-items: center; gap: 0.8rem; margin-block: 1.1rem; }
+.profile-card__avatar {
+  flex: none;
+  width: 3.4rem;
+  height: 3.4rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--accent-soft);
+}
 .profile-card__mark {
   display: grid;
   flex: none;

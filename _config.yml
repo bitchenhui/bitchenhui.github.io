@@ -17,6 +17,8 @@ author:
   # 可选: hero 区与简历页头部的个人简介行, 留空则不显示
   intro: ""
   email: "ppduan50@gmail.com"
+  # 可选: 个人速览卡头像, 留空则显示姓名首字徽标
+  avatar: "/assets/img/avatar.webp"
   # 展示在侧栏卡片「联系」中的微信号
   wechat: "ppneversleep"
   github: ""
