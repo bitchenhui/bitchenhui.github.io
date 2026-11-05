@@ -11,7 +11,8 @@ title: 首页
           <h1 id="intro-title">{{ site.author.role | escape | replace: "音视频算法工程师", '<span class="hero-title__role">音视频算法工程师</span>' }}</h1>
           <canvas class="hero-decode" aria-hidden="true" hidden></canvas>
         </div>
-        <p class="manual-hero__lead">{{ site.author.intro | escape }}</p>
+        {% assign hero_intro = site.author.intro | default: "" | strip %}
+        {% if hero_intro != "" %}<p class="manual-hero__lead">{{ hero_intro | escape }}</p>{% endif %}
         <div class="hero-panel__actions">
           <a class="button button-primary" href="{{ '/resume/' | relative_url }}">查看在线简历 <span aria-hidden="true">↗</span></a>
         </div>

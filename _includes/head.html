@@ -30,7 +30,7 @@
     "name": {{ site.author.name | jsonify }},
     "url": {{ '/' | absolute_url | jsonify }},
     "jobTitle": {{ site.author.role | jsonify }},
-    "description": {{ site.author.intro | jsonify }},
+    "description": {{ site.author.intro | default: site.description | jsonify }},
     {% if site.author.github and site.author.github != "" %}"sameAs": [{{ site.author.github | jsonify }}],{% endif %}
     {% if site.author.email and site.author.email != "" %}"email": {{ site.author.email | prepend: "mailto:" | jsonify }},{% endif %}
     "knowsAbout": {{ site.skills | map: "name" | jsonify }}

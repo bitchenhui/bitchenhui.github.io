@@ -18,7 +18,8 @@ description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 A
     <header class="resume__header">
       <h1 id="resume-title">{{ site.author.name | escape }} · 简历</h1>
       <p class="resume__role">{{ site.author.role | escape }}</p>
-      <p class="resume__intro">{{ site.author.intro | escape }}</p>
+      {% assign resume_intro = site.author.intro | default: "" | strip %}
+      {% if resume_intro != "" %}<p class="resume__intro">{{ resume_intro | escape }}</p>{% endif %}
       <ul class="tag-list" aria-label="联系方式">
         {% if email != "" %}<li class="tag"><a href="mailto:{{ email | escape }}">{{ email | escape }}</a></li>{% endif %}
         {% if github != "" %}<li class="tag"><a href="{{ github | escape }}">{{ github | remove: "https://" | remove: "http://" | escape }}</a></li>{% endif %}

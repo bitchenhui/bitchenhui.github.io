@@ -14,7 +14,8 @@ plugins:
 author:
   name: "段晨辉"
   role: "飞速RSI的音视频算法工程师"
-  intro: "用AI重塑所有流程中;ACL努力康复中的篮球爱好者;北京探店"
+  # 可选: hero 区与简历页头部的个人简介行, 留空则不显示
+  intro: ""
   email: "ppduan50@gmail.com"
   # 展示在侧栏卡片「联系」中的微信号
   wechat: "ppneversleep"
@@ -34,7 +35,7 @@ skills:
   - name: 视频图像编解码算法优化(H.265/H.266/AV1/NVC)
     description: 具备从0-1搭建视频编解码技术体系的经验和能力, 并能够根据业务需求进行优化和迭代. 拿到业务收益同时编码器性能达到行业top.
   - name: 直播/RTC/点播场景的体验和成本优化
-    description: 端侧和服务端均具备不同场景的体验和成本优化经验
+    description: 音视频链路优化前处理，内容自适应转码和编码策略等来提升不同场景的体验，降低音视频成本
 
 exclude:
   - README.md
