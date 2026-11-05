@@ -18,9 +18,6 @@
 <meta name="twitter:card" content="summary">
 <script>
   (function () {
-    var palette;
-    try { palette = window.localStorage.getItem("site-palette"); } catch (error) { palette = null; }
-    document.documentElement.dataset.palette = ["mist", "ice", "amber", "coral"].indexOf(palette) !== -1 ? palette : "electric";
     var quality;
     try { quality = window.localStorage.getItem("site-quality"); } catch (error) { quality = null; }
     document.documentElement.dataset.quality = quality === "low" ? "low" : "high";

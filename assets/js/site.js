@@ -2,7 +2,6 @@
   "use strict";
 
   var root = document.documentElement;
-  var paletteSelect = document.getElementById("palette-select");
   var printButton = document.querySelector("[data-print-button]");
 
   if (printButton) {
@@ -10,17 +9,6 @@
       window.print();
     });
     printButton.hidden = false;
-  }
-
-  if (paletteSelect) {
-    paletteSelect.value = root.dataset.palette || "electric";
-    paletteSelect.addEventListener("change", function () {
-      var palette = paletteSelect.value;
-      root.dataset.palette = palette;
-      try { window.localStorage.setItem("site-palette", palette); } catch (error) { /* Apply the palette for this page view. */ }
-      document.dispatchEvent(new CustomEvent("palettechange"));
-    });
-    paletteSelect.parentElement.hidden = false;
   }
 
   // 先绑定，再显示开关；在浏览器中保存画质偏好。

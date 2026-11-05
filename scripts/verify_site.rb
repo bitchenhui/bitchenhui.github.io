@@ -215,7 +215,7 @@ script_source = Pathname.new("assets/js/site.js").read
 style_source = Pathname.new("assets/css/main.scss").read
 robots_source = Pathname.new("robots.txt").read
 
-abort "FAIL: header lacks palette control." unless header_source.include?('id="palette-select"')
+abort "FAIL: header must not keep a palette selector." if header_source.include?("palette")
 abort "FAIL: header lacks quality control." unless header_source.include?('id="quality-toggle"')
 resume_source = Pathname.new("resume/index.html").read
 %w[site.data.experience site.data.projects site.skills data-print-button].each do |marker|
@@ -239,9 +239,10 @@ end
 
 initializer_end = head_source.index('rel="stylesheet"')
 initializer = initializer_end && head_source[0...initializer_end]
-initializer_markers = ["<script>", "localStorage", "site-palette", "dataset.palette"]
+initializer_markers = ["<script>", "localStorage", "site-quality", "dataset.quality"]
 missing_initializer_markers = initializer_markers.reject { |marker| initializer&.include?(marker) }
-abort "FAIL: pre-stylesheet palette initializer lacks #{missing_initializer_markers.join(', ')}." unless missing_initializer_markers.empty?
+abort "FAIL: pre-stylesheet quality initializer lacks #{missing_initializer_markers.join(', ')}." unless missing_initializer_markers.empty?
+abort "FAIL: styles must not keep palette theming hooks." if style_source.include?("data-palette")
 abort "FAIL: quality preference is not persisted." unless script_source.include?("site-quality")
 %w[
   rel="icon"
@@ -417,7 +418,6 @@ unless html_tags(home, "a").any? { |tag| attribute_value(tag, "href") == resume_
   abort "FAIL: the online resume is not reachable from the homepage."
 end
 required_home_markers = %w[
-  id="palette-select"
   id="capabilities"
   id="experience"
   id="projects"
