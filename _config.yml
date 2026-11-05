@@ -1,5 +1,5 @@
 title: "段晨辉个人空间"
-description: "段晨辉个人主页：音视频算法优化、AI 驱动研发与成本体验优化。"
+description: "段晨辉个人主页: 音视频算法优化, AI 驱动研发与成本体验优化."
 url: "https://bitchenhui.github.io"
 baseurl: ""
 lang: "zh-CN"
@@ -20,7 +20,7 @@ author:
   wechat: "ppneversleep"
   github: ""
   linkedin: ""
-  # 可选：上传 PDF 简历到 assets/ 后填 "/assets/resume.pdf"；留空则只显示在线简历 /resume/
+  # 可选: 上传 PDF 简历到 assets/ 后填 "/assets/resume.pdf"; 留空则只显示在线简历 /resume/
   resume_url: ""
 
 current_focus:
@@ -30,9 +30,9 @@ current_focus:
 
 skills:
   - name: LLM驱动的算法自进化agent设计优化
-    description: 利用agent+loop+RSI能力设计自动算法设计迭代系统。系统还在持续优化中，release的版本已投入自研265编码器的日常算法优化迭代中，大幅度提升效率。
+    description: 利用agent+loop+RSI能力设计自动算法设计迭代系统. 系统还在持续优化中, release的版本已投入自研265编码器的日常算法优化迭代中, 大幅度提升效率.
   - name: 视频图像编解码算法优化(H.265/H.266/AV1/NVC)
-    description: 具备从0-1搭建视频编解码技术体系的经验和能力，并能够根据业务需求进行优化和迭代。拿到业务收益同时编码器性能达到行业top。
+    description: 具备从0-1搭建视频编解码技术体系的经验和能力, 并能够根据业务需求进行优化和迭代. 拿到业务收益同时编码器性能达到行业top.
   - name: 直播/RTC/点播场景的体验和成本优化
     description: 端侧和服务端均具备不同场景的体验和成本优化经验
 

@@ -38,7 +38,7 @@ title: 首页
     <section class="ai-loop" id="ai-loop" aria-labelledby="ai-loop-title">
       <p class="eyebrow">AGENT LOOP / WORKFLOW</p>
       <h3 id="ai-loop-title">AI 驱动的编码算法迭代</h3>
-      <p class="ai-loop__summary">用编码实验检验候选改动，把码率、画质和速度的对比结果反馈给下一轮。</p>
+      <p class="ai-loop__summary">用编码实验检验候选改动, 把码率, 画质和速度的对比结果反馈给下一轮.</p>
       <ol class="ai-loop__steps">
         <li><span aria-hidden="true">01 / PROPOSE</span><strong>生成候选</strong></li>
         <li><span aria-hidden="true">02 / ENCODE</span><strong>运行编码</strong></li>
@@ -64,7 +64,7 @@ title: 首页
         {% for item in site.data.experience %}{% include experience-item.html item=item %}{% endfor %}
       </div>
     {% else %}
-      <p class="empty-state">经历内容待补充。</p>
+      <p class="empty-state">经历内容待补充.</p>
     {% endif %}
     {% if site.data.education and site.data.education != empty %}
       <div class="experience-list experience-list--education">
@@ -91,7 +91,7 @@ title: 首页
     {% else %}
       <div class="empty-state">
         <p class="empty-state__code" aria-hidden="true">/// WORKS.LOADING</p>
-        <p>作品截图整理中。工作项目成果见上方经历板块。</p>
+        <p>作品截图整理中. 工作项目成果见上方经历板块.</p>
       </div>
     {% endif %}
   </section>
@@ -105,14 +105,14 @@ title: 首页
     {% assign linkedin = site.author.linkedin | default: "" | strip %}
     {% assign resume_url = site.author.resume_url | default: "" | strip %}
     {% if email != "" or wechat != "" or github != "" or linkedin != "" or resume_url != "" %}
-      <p>正在寻找视频编解码算法、AI 驱动研发流程或音视频体验优化方向的合作？欢迎随时联系。</p>
+      <p>正在寻找视频编解码算法, AI 驱动研发流程或音视频体验优化方向的合作?欢迎随时联系.</p>
       <div class="contact-actions">
         {% if email != "" %}
           <a class="button contact-action" href="mailto:{{ email | escape }}">{{ email | escape }}</a>
         {% endif %}
         {% if wechat != "" %}
           <div class="contact-wechat">
-            <span>微信：<span class="profile-card__wechat">{{ wechat | escape }}</span></span>
+            <span>微信: <span class="profile-card__wechat">{{ wechat | escape }}</span></span>
             <button class="button" type="button" data-copy-wechat="{{ wechat | escape }}" hidden>复制微信号</button>
           </div>
         {% endif %}
@@ -122,7 +122,7 @@ title: 首页
       </div>
       {% if wechat != "" %}<p class="contact-status" role="status"></p>{% endif %}
     {% else %}
-      <p class="empty-state">公开联系方式待补充。</p>
+      <p class="empty-state">公开联系方式待补充.</p>
     {% endif %}
   </section>
 </div>

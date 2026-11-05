@@ -1,15 +1,15 @@
-# 个人作品，按展示顺序添加。发布后作品卡片会同时出现在首页和简历页。
-# 必填：title / description / stack。
-# 可选字段：
-#   period          —— 时间范围，如 "2024.03 – 至今"
-#   highlights      —— 量化成果列表
-#   cover           —— 作品截图（强烈建议放）：图片放入 assets/img/works/ 后填
-#                      "/assets/img/works/文件名.png"；也支持外部图片 URL。
-#                      没有链接时，一张真实截图就是作品最有说服力的展示。
-#   project_url     —— 在线演示 / 介绍页链接（可选，留空则不显示按钮）
-#   repository_url  —— 代码仓库链接（可选，留空则不显示按钮）
+# 个人作品, 按展示顺序添加. 发布后作品卡片会同时出现在首页和简历页.
+# 必填: title / description / stack.
+# 可选字段: 
+# period - 时间范围, 如 "2024.03 – 至今"
+# highlights - 量化成果列表
+# cover - 作品截图(强烈建议放): 图片放入 assets/img/works/ 后填
+# "/assets/img/works/文件名.png"; 也支持外部图片 URL.
+# 没有链接时, 一张真实截图就是作品最有说服力的展示.
+# project_url - 在线演示 / 介绍页链接(可选, 留空则不显示按钮)
+# repository_url - 代码仓库链接(可选, 留空则不显示按钮)
 - title: "agent-codec智能体系统"
-  description: "自研编码器 Agent：驱动LLM自动化设计与迭代编码算法，持续优化编码器性能。"
+  description: "自研编码器 Agent: 驱动LLM自动化设计与迭代编码算法, 持续优化编码器性能."
   stack:
     - Python
     - CLI
@@ -18,7 +18,7 @@
   repository_url: ""
 
 - title: "核心编码器性能"
-  description: "自研成熟265相比x265节省码率30%+；正在自研的266相比x265节省码率50%+"
+  description: "自研成熟265相比x265节省码率30%+; 正在自研的266相比x265节省码率50%+"
   stack:
     - C/C++
     - CLI
@@ -27,7 +27,7 @@
   repository_url: ""
 
 - title: "视频编解码CTC和质量评估工具"
-  description: "用于管理编码器实验配置、对比 BD-rate 结果并生成报告的自研命令行工具与集群。"
+  description: "用于管理编码器实验配置, 对比 BD-rate 结果并生成报告的自研命令行工具与集群."
   stack:
     - Python
     - CLI
@@ -36,7 +36,7 @@
   repository_url: ""
 
 - title: "视频码流分析软件"
-  description: "面向音视频技术同学的自研码流分析工具：线上高效定位算法问题、查看视频码流信息，支持多种视频格式。"
+  description: "面向音视频技术同学的自研码流分析工具: 线上高效定位算法问题, 查看视频码流信息, 支持多种视频格式."
   stack:
     - Python/C++
     - CLI

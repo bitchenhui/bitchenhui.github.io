@@ -290,9 +290,9 @@ end
 
 home_source = Pathname.new("index.html").read
 home_sections = {
-  "experience" => { condition: /\{%\s*if\s+site\.data\.experience\s+and\s+site\.data\.experience\s*!=\s*empty\s*%\}/, empty: "经历内容待补充。" },
-  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "作品截图整理中。" },
-  "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+wechat\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充。" }
+  "experience" => { condition: /\{%\s*if\s+site\.data\.experience\s+and\s+site\.data\.experience\s*!=\s*empty\s*%\}/, empty: "经历内容待补充." },
+  "projects" => { condition: /\{%\s*if\s+site\.data\.projects\s+and\s+site\.data\.projects\s*!=\s*empty\s*%\}/, empty: "作品截图整理中." },
+  "contact" => { condition: /\{%\s*if\s+email\s*!=\s*""\s+or\s+wechat\s*!=\s*""\s+or\s+github\s*!=\s*""\s+or\s+linkedin\s*!=\s*""\s+or\s+resume_url\s*!=\s*""\s*%\}/, empty: "公开联系方式待补充." }
 }.freeze
 home_sections.each do |id, contract|
   section = home_source[/<section id="#{Regexp.escape(id)}"(?=[\s>]).*?<\/section>/m]
