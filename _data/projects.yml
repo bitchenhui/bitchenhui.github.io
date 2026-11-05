@@ -31,7 +31,7 @@
   stack:
     - Python
     - CLI
-  cover: ""
+  cover: "/assets/img/works/ctc-dashboard.webp"
   project_url: ""
   repository_url: ""
 
