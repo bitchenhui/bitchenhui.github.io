@@ -1,4 +1,4 @@
-title: "段晨辉的空间"
+title: "段晨辉个人空间"
 description: "段晨辉个人主页：音视频算法优化、AI 驱动研发与成本体验优化。"
 url: "https://bitchenhui.github.io"
 baseurl: ""
@@ -14,7 +14,7 @@ plugins:
 author:
   name: "段晨辉"
   role: "飞速RSI的音视频算法工程师"
-  intro: "用AI重塑所有流程中；ACL努力康复中的篮球爱好者；北京探店"
+  intro: "用AI重塑所有流程中;ACL努力康复中的篮球爱好者;北京探店"
   email: "ppduan50@gmail.com"
   # 展示在侧栏卡片「联系」中的微信号
   wechat: "ppneversleep"
@@ -24,17 +24,17 @@ author:
   resume_url: ""
 
 current_focus:
-  - 用 AI 重塑算法研发日常工作流
-  - 视频图像编解码性能优化
-  - 直播 / RTC / 点播场景的成本体验优化
+  - 用AI重塑算法研发日常工作流
+  - 视频图像编解码算法优化
+  - 直播/RTC/点播场景体验优化
 
 skills:
-  - name: LLM 驱动的算法自进化agent设计优化
-    description: 探索 llm 驱动的视频编解码内核算法生成、评估与持续迭代优化loop流程。
-  - name: 视频图像编解码算法优化（H.265/H.266/AV1/NVC）
-    description: 聚焦 H.265、H.266、AV1 与 NVC 的编码效率和工程性能。
-  - name: 直播 / RTC / 点播 场景的 QoS/QoE 体验和成本优化
-    description: 面向 直播，RTC和点播 场景分析并改善端到端体验和成本。
+  - name: LLM驱动的算法自进化agent设计优化
+    description: 利用agent+loop+RSI能力设计自动算法设计迭代系统。系统还在持续优化中，release的版本已投入自研265编码器的日常算法优化迭代中，大幅度提升效率。
+  - name: 视频图像编解码算法优化(H.265/H.266/AV1/NVC)
+    description: 具备从0-1搭建视频编解码技术体系的经验和能力，并能够根据业务需求进行优化和迭代。拿到业务收益同时编码器性能达到行业top。
+  - name: 直播/RTC/点播场景的体验和成本优化
+    description: 端侧和服务端均具备不同场景的体验和成本优化经验
 
 exclude:
   - README.md

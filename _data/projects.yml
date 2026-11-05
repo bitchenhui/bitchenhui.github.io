@@ -8,26 +8,8 @@
 #                      没有链接时，一张真实截图就是作品最有说服力的展示。
 #   project_url     —— 在线演示 / 介绍页链接（可选，留空则不显示按钮）
 #   repository_url  —— 代码仓库链接（可选，留空则不显示按钮）
-- title: "编码端 CTC 工具和集群"
-  description: "用于管理编码器实验配置、对比 BD-rate 结果并生成报告的命令行工具与集群。"
-  stack:
-    - Python
-    - CLI
-  cover: ""
-  project_url: ""
-  repository_url: ""
-
-- title: "视频码流分析软件"
-  description: "面向编解码算法同学的码流分析工具：线上高效定位算法问题、查看视频码流信息，支持多种视频格式。"
-  stack:
-    - Python
-    - CLI
-  cover: ""
-  project_url: ""
-  repository_url: ""
-
-- title: "agent-codec autoloop 系统"
-  description: "编码器 Agent：驱动 LLM 自动化设计与迭代编码算法，持续优化编码器性能。"
+- title: "agent-codec智能体系统"
+  description: "自研编码器 Agent：驱动LLM自动化设计与迭代编码算法，持续优化编码器性能。"
   stack:
     - Python
     - CLI
@@ -36,9 +18,27 @@
   repository_url: ""
 
 - title: "核心编码器性能"
-  description: "自研 265/266 编解码器的性能跟踪与对齐。"
+  description: "自研成熟265相比x265节省码率30%+；正在自研的266相比x265节省码率50%+"
+  stack:
+    - C/C++
+    - CLI
+  cover: ""
+  project_url: ""
+  repository_url: ""
+
+- title: "视频编解码CTC和质量评估工具"
+  description: "用于管理编码器实验配置、对比 BD-rate 结果并生成报告的自研命令行工具与集群。"
   stack:
     - Python
+    - CLI
+  cover: ""
+  project_url: ""
+  repository_url: ""
+
+- title: "视频码流分析软件"
+  description: "面向音视频技术同学的自研码流分析工具：线上高效定位算法问题、查看视频码流信息，支持多种视频格式。"
+  stack:
+    - Python/C++
     - CLI
   cover: ""
   project_url: ""
