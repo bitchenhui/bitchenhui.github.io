@@ -43,3 +43,12 @@
   cover: "/assets/img/works/bitstream-analyzer.webp"
   project_url: ""
   repository_url: ""
+
+- title: "视频图像增强工具"
+  description: "用于端上/服务端的画质增强，大幅提升画质体验效果."
+  stack:
+    - Python
+    - CLI
+  cover: "/assets/img/works/video-enhancer.webp"
+  project_url: ""
+  repository_url: ""
