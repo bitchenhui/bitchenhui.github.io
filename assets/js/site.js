@@ -11,7 +11,7 @@
   }
 
   // Highlight plain text nodes without replacing links or other inline markup.
-  var metricPattern = /(\d[\d,.]*\s*(?:[%％]|ms|fps|万|亿|x)(?:\+)?|\d[\d,.]*\+)(?![\d%a-z])/gi;
+  var metricPattern = /(\d[\d,.]*\s*(?:[%％]|ms|fps|万|亿|w|x)(?:\+)?|\d[\d,.]*\+)(?![\d%a-z])/gi;
   document.querySelectorAll(
     ".experience-item__body li, .experience-item__body > p, .project-card__highlights li, " +
     ".resume__project p, .resume__project li, #resume-honors-title + ul li, .profile-card__list li"
