@@ -16,13 +16,6 @@
 <meta property="og:url" content="{{ canonical_path | absolute_url }}">
 <meta property="og:locale" content="{{ site.lang | default: 'zh-CN' }}">
 <meta name="twitter:card" content="summary">
-<script>
-  (function () {
-    var quality;
-    try { quality = window.localStorage.getItem("site-quality"); } catch (error) { quality = null; }
-    document.documentElement.dataset.quality = quality === "low" ? "low" : "high";
-  }());
-</script>
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
 {% if page.url == "/" %}

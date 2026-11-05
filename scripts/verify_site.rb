@@ -216,7 +216,7 @@ style_source = Pathname.new("assets/css/main.scss").read
 robots_source = Pathname.new("robots.txt").read
 
 abort "FAIL: header must not keep a palette selector." if header_source.include?("palette")
-abort "FAIL: header lacks quality control." unless header_source.include?('id="quality-toggle"')
+abort "FAIL: header must not keep display-setting controls." if header_source.include?("quality-toggle") || header_source.include?("palette")
 resume_source = Pathname.new("resume/index.html").read
 %w[site.data.experience site.data.projects site.skills data-print-button].each do |marker|
   abort "FAIL: resume page lacks #{marker}." unless resume_source.include?(marker)
@@ -237,13 +237,10 @@ abort "FAIL: footer external links lack safe rel attributes." unless footer_sour
   abort "FAIL: footer external link label lacks new-window disclosure: #{label}." unless footer_source.include?(label)
 end
 
-initializer_end = head_source.index('rel="stylesheet"')
-initializer = initializer_end && head_source[0...initializer_end]
-initializer_markers = ["<script>", "localStorage", "site-quality", "dataset.quality"]
-missing_initializer_markers = initializer_markers.reject { |marker| initializer&.include?(marker) }
-abort "FAIL: pre-stylesheet quality initializer lacks #{missing_initializer_markers.join(', ')}." unless missing_initializer_markers.empty?
+abort "FAIL: pre-stylesheet inline scripts must stay removed." if head_source.index("<script>") && head_source.index("<script>") < head_source.index('rel="stylesheet"')
 abort "FAIL: styles must not keep palette theming hooks." if style_source.include?("data-palette")
-abort "FAIL: quality preference is not persisted." unless script_source.include?("site-quality")
+abort "FAIL: styles must not keep quality theming hooks." if style_source.include?("data-quality")
+abort "FAIL: scripts must not keep the quality toggle." if script_source.include?("quality-toggle")
 %w[
   rel="icon"
   property="og:title"

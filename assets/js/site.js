@@ -1,7 +1,6 @@
 (function () {
   "use strict";
 
-  var root = document.documentElement;
   var printButton = document.querySelector("[data-print-button]");
 
   if (printButton) {
@@ -9,31 +8,6 @@
       window.print();
     });
     printButton.hidden = false;
-  }
-
-  // 先绑定，再显示开关；在浏览器中保存画质偏好。
-  var qualityToggle = document.getElementById("quality-toggle");
-  var isLowQuality = root.dataset.quality === "low";
-
-  function updateQualityControl() {
-    if (!qualityToggle) return;
-    qualityToggle.setAttribute("aria-pressed", String(isLowQuality));
-  }
-
-  function storeQuality() {
-    try { window.localStorage.setItem("site-quality", isLowQuality ? "low" : "high"); } catch (error) { /* 画质偏好仍对本次浏览生效。 */ }
-  }
-
-  if (qualityToggle) {
-    updateQualityControl();
-    qualityToggle.addEventListener("click", function () {
-      isLowQuality = !isLowQuality;
-      root.dataset.quality = isLowQuality ? "low" : "high";
-      storeQuality();
-      updateQualityControl();
-      document.dispatchEvent(new CustomEvent("qualitychange"));
-    });
-    qualityToggle.hidden = false;
   }
 
   // Highlight plain text nodes without replacing links or other inline markup.

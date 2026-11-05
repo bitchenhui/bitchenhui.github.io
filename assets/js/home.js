@@ -132,7 +132,6 @@
   }
 
   window.addEventListener("resize", resetEffects);
-  document.addEventListener("qualitychange", resetEffects);
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) resetEffects();
   });

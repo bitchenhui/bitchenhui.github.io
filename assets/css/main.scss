@@ -533,13 +533,6 @@ main { min-height: calc(100vh - 10rem); }
   .signal-frame__bar { padding: 0.58rem 0.55rem; font-size: 0.59rem; }
 }
 
-:root[data-quality="low"] {
-  .manual-hero { --hero-cell: 56px; }
-  .hero-panel, .signal-frame, .anchor-nav, .capability-list, .card, .profile-card,
-  .resume, .tag, .button, .icon-button, .project-card__cover { border-radius: 0; }
-  .project-card__cover { image-rendering: pixelated; }
-  .hero-panel { background-image: repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 4px); }
-}
 
 @media print {
   @page { margin: 13mm; }
