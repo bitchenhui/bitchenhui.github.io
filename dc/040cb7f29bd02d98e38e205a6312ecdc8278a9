@@ -1,0 +1,14 @@
+scripts/verify_site.rb
+  h_bc262c8ac47a2c 219,240,242-243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc040cb7f29bd02d98e38e205a6312ecdc8278a9",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
