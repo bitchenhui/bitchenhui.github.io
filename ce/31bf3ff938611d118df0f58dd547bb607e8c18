@@ -1,0 +1,30 @@
+_config.yml
+  h_bc262c8ac47a2c 2,23,33,35
+_data/education.yml
+  h_bc262c8ac47a2c 1,4
+_data/experience.yml
+  h_bc262c8ac47a2c 1-2,8,11,16,20,24,26
+_data/honors.yml
+  h_bc262c8ac47a2c 1
+_data/projects.yml
+  h_bc262c8ac47a2c 1-10,12,21,30,39
+_includes/profile-card.html
+  h_bc262c8ac47a2c 33,35-37
+index.html
+  h_bc262c8ac47a2c 41,67,94,108,115,125
+resume/index.html
+  h_bc262c8ac47a2c 5,100
+scripts/verify_site.rb
+  h_bc262c8ac47a2c 293-295
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ce31bf3ff938611d118df0f58dd547bb607e8c18",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
