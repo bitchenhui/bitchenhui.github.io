@@ -515,9 +515,10 @@ REDIRECT_ROUTES.each_key do |path|
   end
 end
 resume_output = generated_html.fetch("resume/index.html")
-%w[id="resume-title" 当前关注 核心能力 工作经历 教育背景 荣誉与专利].each do |marker|
+%w[id="resume-title" 当前关注 核心能力 工作经历 个人作品 教育背景 荣誉与专利].each do |marker|
   abort "FAIL: generated resume page lacks #{marker}." unless resume_output.include?(marker)
 end
+abort "FAIL: resume must label works as 个人作品, not 项目经历." if resume_output.include?("项目经历")
 resume_url_pattern = /<loc>\s*#{Regexp.escape("#{site_origin}#{relative_site_url('/resume/', baseurl)}")}\s*<\/loc>/
 unless sitemap.scan(resume_url_pattern).length == 1
   abort "FAIL: sitemap must contain the resume URL exactly once."

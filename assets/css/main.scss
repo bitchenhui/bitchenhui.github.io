@@ -472,8 +472,24 @@ main { min-height: calc(100vh - 10rem); }
 .resume__skills { display: grid; gap: 0.9rem; margin: 0; }
 .resume__skill dt { font-weight: 700; }
 .resume__skill dd { margin: 0.15rem 0 0; color: var(--muted); }
-.resume__project { margin-bottom: 1.25rem; }
-.resume__project > p { margin-bottom: 0.4rem; }
+.resume-works { margin: 0; padding: 0; list-style: none; counter-reset: work; }
+.resume-work { position: relative; counter-increment: work; padding: 0.85rem 0 0.85rem 2.6rem; }
+.resume-work + .resume-work { border-top: 1px solid var(--line); }
+.resume-work::before {
+  content: counter(work, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 1.1rem;
+  color: var(--accent-strong);
+  font: 0.72rem var(--mono);
+}
+.resume-work__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.3rem 0.9rem; }
+.resume-work__head h3 { margin: 0; font-size: 1.02rem; }
+.resume-work > p { margin: 0.4rem 0 0; color: var(--muted); }
+.resume-work__highlights { margin: 0.45rem 0 0; padding-left: 1.1rem; color: var(--muted); }
+.resume-work__highlights li::marker { color: var(--accent); }
+.resume-work__links { margin: 0.55rem 0 0; font-weight: 650; }
+.resume-work__links a + a { margin-left: 0.9rem; }
 .resume__footer { margin-top: 2.25rem; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
 
 .site-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 0.92rem; }
@@ -541,7 +557,8 @@ main { min-height: calc(100vh - 10rem); }
   .resume__section, .resume__footer { margin-top: 0.7rem; padding-top: 0.6rem; }
   .resume__section h2 { margin-bottom: 0.45rem; font-size: 13pt; }
   .resume__skills { gap: 0.35rem; }
-  .resume__project { margin-bottom: 0.45rem; }
+  .resume-work { padding-block: 0.45rem; }
+  .resume-work::before { top: 0.6rem; }
   .resume .experience-item { display: block; padding: 0.35rem 0 0; border: 0; break-inside: avoid; }
   .resume .experience-item h3 { margin-bottom: 0.35rem; font-size: 11pt; }
   .resume h2, .resume h3 { break-after: avoid; }
