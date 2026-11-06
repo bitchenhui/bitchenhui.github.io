@@ -1,0 +1,36 @@
+README.md
+  h_bc262c8ac47a2c 99-103
+_data/impact.yml
+  h_bc262c8ac47a2c 1-16
+_includes/experience-item.html
+  h_bc262c8ac47a2c 2-3,5
+_includes/header.html
+  h_bc262c8ac47a2c 7-10
+_includes/image-viewer.html
+  h_bc262c8ac47a2c 1-10
+_includes/impact-strip.html
+  h_bc262c8ac47a2c 1-13
+_includes/project-card.html
+  h_bc262c8ac47a2c 4,6-9,11-33
+_layouts/default.html
+  h_bc262c8ac47a2c 17
+assets/css/main.scss
+  h_bc262c8ac47a2c 11-12,135-138,192,275,283,337-356,378-379,428-430,445,458-470,474-509,512-516,521-547,564,587-593,605-617,625-627,644,647,653-666,677-682
+assets/js/site.js
+  h_bc262c8ac47a2c 16-17,39-63,67-68,71-76,78-87,89-91,93-118
+index.html
+  h_bc262c8ac47a2c 8,24,53,59
+resume/index.html
+  h_bc262c8ac47a2c 8,18-31,34-50,53,55-58,64,78,83,87,114,126,133-141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4a2b837c99f44c6a75bd5b84fa790e33b700192b",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
