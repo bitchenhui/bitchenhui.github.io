@@ -5,7 +5,7 @@ layout: default
   <section class="manual-hero" aria-labelledby="intro-title">
     <div class="hero-panel">
       <div class="hero-panel__copy">
-        <p class="eyebrow"><span>01 /</span> ENGINEER PROFILE</p>
+        <p class="eyebrow"><span>01 /</span> {{ site.author.name | escape }} <span class="hero-byline">VIDEO CODEC &amp; AI</span></p>
         <div class="hero-stage">
           <h1 id="intro-title">{{ site.author.role | escape | replace: "音视频算法工程师", '<span class="hero-title__role">音视频算法工程师</span>' }}</h1>
           <canvas class="hero-decode" aria-hidden="true" hidden></canvas>
@@ -21,6 +21,7 @@ layout: default
       </div>
       {% include signal-frame.html %}
     </div>
+    {% include impact-strip.html %}
     <nav class="anchor-nav" aria-label="本页内容">
       <a href="#capabilities"><span aria-hidden="true">02</span> 核心能力</a>
       <a href="#experience"><span aria-hidden="true">03</span> 工作与教育</a>
@@ -49,12 +50,13 @@ layout: default
     <h2 id="experience-title">工作与教育经历</h2>
     {% if site.data.experience and site.data.experience != empty %}
       <div class="experience-list">
-        {% for item in site.data.experience %}{% include experience-item.html item=item %}{% endfor %}
+        {% for item in site.data.experience %}{% include experience-item.html item=item anchor=forloop.index %}{% endfor %}
       </div>
     {% else %}
       <p class="empty-state">经历内容待补充.</p>
     {% endif %}
     {% if site.data.education and site.data.education != empty %}
+      <h3 class="education-label">教育背景 <span aria-hidden="true">/ EDUCATION</span></h3>
       <div class="experience-list experience-list--education">
         {% for school in site.data.education %}
           <article class="experience-item">

@@ -1,35 +1,34 @@
 {% assign project_url = include.project.project_url | default: "" | strip %}
 {% assign repository_url = include.project.repository_url | default: "" | strip %}
 {% assign cover = include.project.cover | default: "" | strip %}
-<article class="card project-card">
+<article class="card project-card{% if include.ordinal == 1 and cover != "" %} project-card--featured{% endif %}">
   {% if cover != "" %}
-    <img class="project-card__cover" src="{{ cover | relative_url }}" alt="{{ include.project.title | escape }} 作品截图" loading="lazy">
+    <a class="project-card__media" href="{{ cover | relative_url }}" data-image-open data-image-title="{{ include.project.title | escape }}" aria-label="查看{{ include.project.title | escape }}的大图">
+      <img class="project-card__cover" src="{{ cover | relative_url }}" alt="{{ include.project.title | escape }} 作品截图" loading="lazy" decoding="async">
+      <span class="project-card__zoom" aria-hidden="true">查看大图 ↗</span>
+    </a>
   {% endif %}
-  <p class="project-card__label" aria-hidden="true"><span>WORK / {% if include.ordinal < 10 %}0{% endif %}{{ include.ordinal }}</span><span>▦</span></p>
-  {% assign project_period = include.project.period | default: "" | strip %}
-  {% if project_period != "" %}<p class="card-meta">{{ project_period | escape }}</p>{% endif %}
-  <h3>{{ include.project.title | escape }}</h3>
-  <p>{{ include.project.description | escape }}</p>
-  {% if include.project.highlights and include.project.highlights != empty %}
-    <ul class="project-card__highlights">
-      {% for highlight in include.project.highlights %}<li>{{ highlight | escape }}</li>{% endfor %}
-    </ul>
-  {% endif %}
-  {% if include.project.stack and include.project.stack != empty %}
-    <ul class="tag-list" aria-label="技术栈">
-      {% for item in include.project.stack %}
-        <li class="tag">{{ item | escape }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-  {% if project_url != "" or repository_url != "" %}
-    <div class="button-row">
-      {% if project_url != "" %}
-        <a class="button button-secondary" href="{{ project_url | escape }}" target="_blank" rel="noopener noreferrer">查看项目（新窗口）</a>
-      {% endif %}
-      {% if repository_url != "" %}
-        <a class="button button-secondary" href="{{ repository_url | escape }}" target="_blank" rel="noopener noreferrer">查看代码（新窗口）</a>
-      {% endif %}
-    </div>
-  {% endif %}
+  <div class="project-card__content">
+    <p class="project-card__label" aria-hidden="true"><span>WORK / {% if include.ordinal < 10 %}0{% endif %}{{ include.ordinal }}</span><span>{% if include.ordinal == 1 %}FEATURED{% else %}▦{% endif %}</span></p>
+    {% assign project_period = include.project.period | default: "" | strip %}
+    {% if project_period != "" %}<p class="card-meta">{{ project_period | escape }}</p>{% endif %}
+    <h3>{{ include.project.title | escape }}</h3>
+    <p>{{ include.project.description | escape }}</p>
+    {% if include.project.highlights and include.project.highlights != empty %}
+      <ul class="project-card__highlights">
+        {% for highlight in include.project.highlights %}<li>{{ highlight | escape }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {% if include.project.stack and include.project.stack != empty %}
+      <ul class="tag-list" aria-label="技术栈">
+        {% for item in include.project.stack %}<li class="tag">{{ item | escape }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {% if project_url != "" or repository_url != "" %}
+      <div class="button-row">
+        {% if project_url != "" %}<a class="button button-secondary" href="{{ project_url | escape }}" target="_blank" rel="noopener noreferrer">查看项目（新窗口）</a>{% endif %}
+        {% if repository_url != "" %}<a class="button button-secondary" href="{{ repository_url | escape }}" target="_blank" rel="noopener noreferrer">查看代码（新窗口）</a>{% endif %}
+      </div>
+    {% endif %}
+  </div>
 </article>

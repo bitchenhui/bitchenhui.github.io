@@ -13,8 +13,8 @@
   // Highlight plain text nodes without replacing links or other inline markup.
   var metricPattern = /(\d[\d,.]*\s*(?:[%％]|ms|fps|万|亿|w|x)(?:\+)?|\d[\d,.]*\+)(?![\d%a-z])/gi;
   document.querySelectorAll(
-    ".experience-item__body li, .experience-item__body > p, .project-card__highlights li, " +
-    ".resume__project p, .resume__project li, #resume-honors-title + ul li, .profile-card__list li"
+    ".experience-item__body li, .experience-item__body > p, .project-card__highlights li, .project-card__content > p, " +
+    ".resume__project p, .resume__project li, .resume-work > p, .resume-work__highlights li, #resume-honors-title + ul li, .profile-card__list li"
   ).forEach(function (element) {
     Array.from(element.childNodes).forEach(function (node) {
       if (node.nodeType !== Node.TEXT_NODE) return;
@@ -36,138 +36,85 @@
     });
   });
 
-  // 滚动监听：视口所在板块的锚点导航项点亮（aria-current 由 CSS 呈现）。
-  var navLinks = Array.prototype.slice.call(document.querySelectorAll(".anchor-nav a[href^='#']"));
-  var watchedSections = navLinks
-    .map(function (link) { return document.querySelector(link.getAttribute("href")); })
-    .filter(Boolean);
+  // One scroll controller for the homepage and resume reading indexes.
+  var navigation = Array.from(document.querySelectorAll(".anchor-nav, .resume-index nav")).map(function (nav) {
+    var links = Array.from(nav.querySelectorAll('a[href^="#"]'));
+    return {
+      links: links,
+      sections: links.map(function (link) { return document.getElementById(link.hash.slice(1)); }),
+      current: -1
+    };
+  });
+  var header = document.querySelector(".site-header");
+  var scrollFrame = 0;
 
-  if (navLinks.length && watchedSections.length && "IntersectionObserver" in window) {
-    var visibility = {};
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        visibility[entry.target.id] = entry.isIntersecting ? entry.intersectionRatio : 0;
-      });
-      var currentId = null;
-      var bestRatio = 0;
-      Object.keys(visibility).forEach(function (id) {
-        if (visibility[id] > bestRatio) {
-          bestRatio = visibility[id];
-          currentId = id;
-        }
-      });
-      navLinks.forEach(function (link) {
-        var isActive = currentId !== null && link.getAttribute("href") === "#" + currentId;
-        link.classList.toggle("is-active", isActive);
-        if (isActive) {
-          link.setAttribute("aria-current", "true");
-        } else {
-          link.removeAttribute("aria-current");
-        }
-      });
-    }, { threshold: [0, 0.15, 0.4] });
-    watchedSections.forEach(function (section) { spy.observe(section); });
-  }
-
-  // 微信号一键复制：按钮由后端渲染、默认 hidden，绑定成功后再显示。
-  var wechatButton = document.querySelector("[data-copy-wechat]");
-  var wechatStatus = document.querySelector(".contact-status");
-
-  if (wechatButton) {
-    wechatButton.addEventListener("click", function () {
-      var value = wechatButton.getAttribute("data-copy-wechat");
-      if (!value || !navigator.clipboard || !navigator.clipboard.writeText) return;
-      navigator.clipboard.writeText(value).then(function () {
-        if (wechatStatus) wechatStatus.textContent = "微信号已复制：" + value;
-      }, function () { /* 复制失败时保持原样。 */ });
+  function updateNavigation() {
+    scrollFrame = 0;
+    var readingLine = (header ? header.offsetHeight : 0) + Math.min(window.innerHeight * 0.2, 128);
+    var atEnd = Math.ceil(window.scrollY + document.documentElement.clientHeight) >= document.documentElement.scrollHeight - 1;
+    navigation.forEach(function (group) {
+      var next = group.sections.reduce(function (index, section, i) {
+        return section && section.getBoundingClientRect().top <= readingLine ? i : index;
+      }, -1);
+      if (atEnd) next = group.links.length - 1;
+      if (next === group.current) return;
+      if (group.links[group.current]) group.links[group.current].removeAttribute("aria-current");
+      if (group.links[next]) group.links[next].setAttribute("aria-current", "location");
+      group.current = next;
     });
-    wechatButton.hidden = false;
   }
 
-  // 解码入场：标题以大块马赛克逐帧收敛为清晰文字，模拟逐块解码。
-  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var heroTitle = document.querySelector(".manual-hero h1");
-  var decodeCanvas = document.querySelector(".hero-decode");
-
-  function cssVariable(name) {
-    return getComputedStyle(root).getPropertyValue(name).trim();
+  function scheduleNavigation() {
+    if (!scrollFrame) scrollFrame = window.requestAnimationFrame(updateNavigation);
   }
 
-  if (!reduceMotion && heroTitle && decodeCanvas && decodeCanvas.getContext) {
-    (function () {
-      var context = decodeCanvas.getContext("2d");
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      var width = heroTitle.offsetWidth;
-      var height = heroTitle.offsetHeight;
-      if (!width || !height) return;
+  if (navigation.length) {
+    window.addEventListener("scroll", scheduleNavigation, { passive: true });
+    window.addEventListener("resize", scheduleNavigation);
+    window.addEventListener("pageshow", scheduleNavigation);
+    scheduleNavigation();
+  }
 
-      var style = window.getComputedStyle(heroTitle);
-      var font = style.fontStyle + " " + style.fontWeight + " " + style.fontSize + " " + style.fontFamily;
-      context.font = font;
-
-      var lines = [];
-      var current = "";
-      var text = heroTitle.textContent.trim();
-      for (var i = 0; i < text.length; i++) {
-        var candidate = current + text[i];
-        if (current && context.measureText(candidate).width > width) {
-          lines.push(current);
-          current = text[i];
-        } else {
-          current = candidate;
-        }
+  var copy = document.querySelector("[data-copy-wechat]");
+  var status = document.querySelector(".contact-status");
+  if (copy && status && navigator.clipboard && navigator.clipboard.writeText) {
+    copy.addEventListener("click", async function () {
+      status.textContent = "";
+      try {
+        await navigator.clipboard.writeText(copy.dataset.copyWechat);
+        status.textContent = "微信号已复制: " + copy.dataset.copyWechat;
+      } catch (error) {
+        status.textContent = "复制失败，请选中上方微信号手动复制。";
       }
-      if (current) lines.push(current);
-      if (!lines.length) return;
+    });
+    copy.hidden = false;
+  }
 
-      decodeCanvas.width = Math.round(width * dpr);
-      decodeCanvas.height = Math.round(height * dpr);
-      decodeCanvas.style.width = width + "px";
-      decodeCanvas.style.height = height + "px";
-
-      var lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.3;
-      var frameSizes = [24, 14, 8, 4, 2, 1];
-      var frameIndex = 0;
-
-      function drawFrame(blockSize) {
-        var full = document.createElement("canvas");
-        full.width = decodeCanvas.width;
-        full.height = decodeCanvas.height;
-        var fullContext = full.getContext("2d");
-        fullContext.scale(dpr, dpr);
-        fullContext.fillStyle = cssVariable("--canvas");
-        fullContext.fillRect(0, 0, width, height);
-        fullContext.fillStyle = cssVariable("--accent");
-        fullContext.font = font;
-        fullContext.textBaseline = "top";
-        for (var index = 0; index < lines.length; index++) {
-          fullContext.fillText(lines[index], 0, index * lineHeight);
-        }
-
-        var small = document.createElement("canvas");
-        small.width = Math.max(1, Math.round(width / blockSize));
-        small.height = Math.max(1, Math.round(height / blockSize));
-        var smallContext = small.getContext("2d");
-        smallContext.drawImage(full, 0, 0, small.width, small.height);
-
-        context.imageSmoothingEnabled = false;
-        context.clearRect(0, 0, decodeCanvas.width, decodeCanvas.height);
-        context.drawImage(small, 0, 0, small.width, small.height, 0, 0, decodeCanvas.width, decodeCanvas.height);
-      }
-
-      decodeCanvas.hidden = false;
-
-      function step() {
-        drawFrame(frameSizes[frameIndex]);
-        frameIndex += 1;
-        if (frameIndex < frameSizes.length) {
-          window.setTimeout(step, 100);
-        } else {
-          decodeCanvas.hidden = true;
-        }
-      }
-
-      step();
-    }());
+  // Native dialog supports Escape, keyboard focus containment, and a link fallback.
+  var viewer = document.getElementById("image-viewer");
+  if (viewer && typeof viewer.showModal === "function") {
+    var image = viewer.querySelector("[data-full-image]");
+    var caption = viewer.querySelector("#image-viewer-title");
+    var original = viewer.querySelector("[data-original-image]");
+    var trigger;
+    document.querySelectorAll("[data-image-open]").forEach(function (link) {
+      link.addEventListener("click", function (event) {
+        if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        trigger = link;
+        caption.textContent = link.dataset.imageTitle || "作品图示";
+        image.alt = caption.textContent;
+        image.src = link.href;
+        original.href = link.href;
+        viewer.showModal();
+        event.preventDefault();
+      });
+    });
+    viewer.querySelector("[data-close-image]").addEventListener("click", function () { viewer.close(); });
+    viewer.addEventListener("click", function (event) {
+      if (event.target === viewer) viewer.close();
+    });
+    viewer.addEventListener("close", function () {
+      if (trigger) trigger.focus({ preventScroll: true });
+    });
   }
 }());

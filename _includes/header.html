@@ -4,4 +4,8 @@
     <strong>{{ site.author.name | escape }}</strong>
     <span class="site-brand__label" aria-hidden="true">CODEC / PORTFOLIO</span>
   </a>
+  <nav class="site-header__nav" aria-label="站点页面">
+    <a href="{{ '/' | relative_url }}"{% if page.url == "/" %} aria-current="page"{% endif %}>个人空间</a>
+    <a href="{{ '/resume/' | relative_url }}"{% if page.url == "/resume/" %} aria-current="page"{% endif %}>在线简历<span aria-hidden="true"> ↗</span></a>
+  </nav>
 </div>

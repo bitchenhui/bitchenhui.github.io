@@ -1,0 +1,13 @@
+{% if site.data.impact and site.data.impact != empty and site.data.experience and site.data.experience != empty %}
+<ul class="impact-strip" aria-label="代表成果，点击查看相关经历">
+  {% for impact in site.data.impact %}
+    <li>
+      <a href="{{ impact.source | escape }}">
+        <span class="impact-strip__value">{{ impact.value | escape }}<small>{{ impact.unit | escape }}</small></span>
+        <span class="impact-strip__label">{{ impact.label | escape }} <span aria-hidden="true">↗</span></span>
+        <span class="impact-strip__context">{{ impact.context | escape }}</span>
+      </a>
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}

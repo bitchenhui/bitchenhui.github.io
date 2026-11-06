@@ -14,5 +14,6 @@
     <footer class="site-footer">
       {% include footer.html %}
     </footer>
+    {% if page.url == "/" or page.url == "/resume/" %}{% include image-viewer.html %}{% endif %}
   </body>
 </html>

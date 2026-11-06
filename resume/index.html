@@ -5,6 +5,7 @@ permalink: /resume/
 description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 AV1/VVC 编解码优化, 端上落地与 RTC QoS."
 ---
 {% assign email = site.author.email | default: "" | strip %}
+{% assign wechat = site.author.wechat | default: "" | strip %}
 {% assign github = site.author.github | default: "" | strip %}
 {% assign linkedin = site.author.linkedin | default: "" | strip %}
 {% assign resume_url = site.author.resume_url | default: "" | strip %}
@@ -14,32 +15,53 @@ description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 A
     <button class="button" type="button" data-print-button hidden>打印 / 导出 PDF</button>
   </div>
 
+  <aside class="resume-index no-print" aria-label="简历目录">
+    <p class="eyebrow">RESUME / INDEX</p>
+    <p class="resume-index__name">{{ site.author.name | escape }}</p>
+    <nav aria-label="简历章节">
+      {% if site.data.experience and site.data.experience != empty %}<a href="#resume-experience-title"><span aria-hidden="true">01</span> 工作经历</a>{% endif %}
+      {% if site.skills and site.skills != empty %}<a href="#resume-skills-title"><span aria-hidden="true">02</span> 核心能力</a>{% endif %}
+      {% if site.data.projects and site.data.projects != empty %}<a href="#resume-projects-title"><span aria-hidden="true">03</span> 个人作品</a>{% endif %}
+      {% if site.data.education and site.data.education != empty %}<a href="#resume-education-title"><span aria-hidden="true">04</span> 教育背景</a>{% endif %}
+      {% if site.data.honors and site.data.honors != empty %}<a href="#resume-honors-title"><span aria-hidden="true">05</span> 收获</a>{% endif %}
+      {% if site.current_focus and site.current_focus != empty %}<a href="#resume-focus-title"><span aria-hidden="true">06</span> 当前关注</a>{% endif %}
+    </nav>
+    <p class="resume-index__note">打印版会自动隐藏目录，使用白底排版。</p>
+  </aside>
+
   <article class="resume" aria-labelledby="resume-title">
     <header class="resume__header">
-      <h1 id="resume-title">{{ site.author.name | escape }} · 简历</h1>
-      <p class="resume__role">{{ site.author.role | escape }}</p>
-      {% assign resume_intro = site.author.intro | default: "" | strip %}
-      {% if resume_intro != "" %}<p class="resume__intro">{{ resume_intro | escape }}</p>{% endif %}
-      <ul class="tag-list" aria-label="联系方式">
-        {% if email != "" %}<li class="tag"><a href="mailto:{{ email | escape }}">{{ email | escape }}</a></li>{% endif %}
-        {% if github != "" %}<li class="tag"><a href="{{ github | escape }}">{{ github | remove: "https://" | remove: "http://" | escape }}</a></li>{% endif %}
-        {% if linkedin != "" %}<li class="tag"><a href="{{ linkedin | escape }}">LinkedIn</a></li>{% endif %}
-        {% if resume_url != "" %}<li class="tag"><a href="{{ resume_url | relative_url | escape }}">PDF 简历</a></li>{% endif %}
+      <div class="resume__identity">
+        <div>
+          <p class="eyebrow">VIDEO CODEC &amp; AI / RESUME</p>
+          <h1 id="resume-title">{{ site.author.name | escape }}<span> · 简历</span></h1>
+          <p class="resume__role">{{ site.author.role | escape }}</p>
+        </div>
+        {% assign avatar = site.author.avatar | default: "" | strip %}
+        {% if avatar != "" %}<img class="resume__avatar" src="{{ avatar | relative_url }}" width="80" height="80" alt="">{% endif %}
+      </div>
+      {% assign intro = site.author.intro | default: "" | strip %}
+      {% if intro != "" %}<p class="resume__intro">{{ intro | escape }}</p>{% endif %}
+      <ul class="resume__contacts" aria-label="联系方式">
+        {% if email != "" %}<li><span>EMAIL</span><a href="mailto:{{ email | escape }}">{{ email | escape }}</a></li>{% endif %}
+        {% if wechat != "" %}<li><span>WECHAT</span>{{ wechat | escape }}</li>{% endif %}
+        {% if github != "" %}<li><a href="{{ github | escape }}">GitHub</a></li>{% endif %}
+        {% if linkedin != "" %}<li><a href="{{ linkedin | escape }}">LinkedIn</a></li>{% endif %}
+        {% if resume_url != "" %}<li><a href="{{ resume_url | relative_url | escape }}">PDF 简历</a></li>{% endif %}
       </ul>
     </header>
+    {% include impact-strip.html %}
 
-    {% if site.current_focus and site.current_focus != empty %}
-      <section class="resume__section" aria-labelledby="resume-focus-title">
-        <h2 id="resume-focus-title">当前关注</h2>
-        <ul>
-          {% for focus in site.current_focus %}<li>{{ focus | escape }}</li>{% endfor %}
-        </ul>
+    {% if site.data.experience and site.data.experience != empty %}
+      <section class="resume__section" aria-labelledby="resume-experience-title">
+        <h2 id="resume-experience-title"><span class="resume__section-index" aria-hidden="true">01</span>工作经历</h2>
+        {% for item in site.data.experience %}{% include experience-item.html item=item anchor=forloop.index %}{% endfor %}
       </section>
     {% endif %}
 
     {% if site.skills and site.skills != empty %}
       <section class="resume__section" aria-labelledby="resume-skills-title">
-        <h2 id="resume-skills-title">核心能力</h2>
+        <h2 id="resume-skills-title"><span class="resume__section-index" aria-hidden="true">02</span>核心能力</h2>
         <dl class="resume__skills">
           {% for skill in site.skills %}
             <div class="resume__skill">
@@ -51,23 +73,18 @@ description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 A
       </section>
     {% endif %}
 
-    {% if site.data.experience and site.data.experience != empty %}
-      <section class="resume__section" aria-labelledby="resume-experience-title">
-        <h2 id="resume-experience-title">工作经历</h2>
-        {% for item in site.data.experience %}{% include experience-item.html item=item %}{% endfor %}
-      </section>
-    {% endif %}
-
     {% if site.data.projects and site.data.projects != empty %}
       <section class="resume__section" aria-labelledby="resume-projects-title">
-        <h2 id="resume-projects-title">个人作品</h2>
+        <h2 id="resume-projects-title"><span class="resume__section-index" aria-hidden="true">03</span>个人作品</h2>
         <ol class="resume-works">
           {% for project in site.data.projects %}
             {% assign project_url = project.project_url | default: "" | strip %}
             {% assign repository_url = project.repository_url | default: "" | strip %}
+            {% assign cover = project.cover | default: "" | strip %}
             <li class="resume-work">
               <div class="resume-work__head">
                 <h3>{{ project.title | escape }}</h3>
+                {% if cover != "" %}<a class="resume-work__diagram no-print" href="{{ cover | relative_url }}" data-image-open data-image-title="{{ project.title | escape }}">查看图示 <span aria-hidden="true">↗</span></a>{% endif %}
                 {% if project.stack and project.stack != empty %}
                   <ul class="tag-list" aria-label="技术栈">
                     {% for item in project.stack %}<li class="tag">{{ item | escape }}</li>{% endfor %}
@@ -94,7 +111,7 @@ description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 A
 
     {% if site.data.education and site.data.education != empty %}
       <section class="resume__section" aria-labelledby="resume-education-title">
-        <h2 id="resume-education-title">教育背景</h2>
+        <h2 id="resume-education-title"><span class="resume__section-index" aria-hidden="true">04</span>教育背景</h2>
         {% for school in site.data.education %}
           <div class="resume__project">
             <p class="experience-item__period">{% if school.period %}{{ school.period | escape }} · {% endif %}{{ school.school | escape }}</p>
@@ -106,9 +123,18 @@ description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 A
 
     {% if site.data.honors and site.data.honors != empty %}
       <section class="resume__section" aria-labelledby="resume-honors-title">
-        <h2 id="resume-honors-title">收获</h2>
+        <h2 id="resume-honors-title"><span class="resume__section-index" aria-hidden="true">05</span>收获</h2>
         <ul>
           {% for honor in site.data.honors %}<li>{{ honor | escape }}</li>{% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    {% if site.current_focus and site.current_focus != empty %}
+      <section class="resume__section" aria-labelledby="resume-focus-title">
+        <h2 id="resume-focus-title"><span class="resume__section-index" aria-hidden="true">06</span>当前关注</h2>
+        <ul class="resume__focus">
+          {% for focus in site.current_focus %}<li>{{ focus | escape }}</li>{% endfor %}
         </ul>
       </section>
     {% endif %}
