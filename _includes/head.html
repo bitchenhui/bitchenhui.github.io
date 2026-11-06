@@ -18,6 +18,9 @@
 <meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
+{% if jekyll.environment == "production" and site.visitor_counter.enabled and page.redirect_to == nil and page.noindex != true %}
+  <script src="{{ '/assets/js/visitor-count.js' | relative_url }}" defer></script>
+{% endif %}
 {% if page.url == "/" %}
   <script src="{{ '/assets/js/home.js' | relative_url }}" defer></script>
 {% endif %}

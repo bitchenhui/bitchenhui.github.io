@@ -102,6 +102,14 @@ skills:
 
 首页作品图与简历中的「查看图示」都可打开大图，支持 Escape 关闭、键盘操作和打开原图；JavaScript 不可用时会直接打开图片。打印版隐藏图示按钮和目录，保留完整正文与联系信息，使用白底排版。
 
+## 访问统计
+
+页尾使用[不蒜子](https://ibruce.info/2015/04/04/busuanzi/)显示累计访客数(UV)，每次访问异步更新，单位为人次；它与页面浏览次数(PV)、当前在线人数不同。统计从接入后开始，按服务自身的去重规则计算，不补填历史数据。
+
+`_config.yml` 中的 `visitor_counter.enabled` 控制是否启用。脚本仅在当前页面与 `site.url` 同源时加载统计服务，本地预览不发送统计请求；404 和兼容跳转页不计数。服务加载失败或超时时显示「统计暂不可用」，不影响正文。关闭 JavaScript 时仅显示占位符。
+
+请勿对统计脚本进行定时轮询：服务请求本身会记录访问。页面刷新会获取最新值，但打开中的页面不主动轮询。统计请求由第三方不蒜子处理。
+
 ## SEO 与分享
 
 站点在 `_includes/head.html` 中内置 Open Graph / Twitter Card 分享元信息、SVG favicon（`assets/img/favicon.svg`）与首页 Person 结构化数据（JSON-LD）。页面标题与描述分别来自各页 front matter 的 `title`、`description`，新增页面时建议填写 `description` 以获得更好的分享摘要。

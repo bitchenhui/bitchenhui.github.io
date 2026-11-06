@@ -48,6 +48,9 @@ skills:
       - value: "+19%"
         label: "通话次数"
 
+visitor_counter:
+  enabled: true
+
 exclude:
   - README.md
   - Gemfile

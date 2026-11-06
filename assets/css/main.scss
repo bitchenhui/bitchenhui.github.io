@@ -581,8 +581,10 @@ body:has(.image-viewer[open]) { overflow: hidden; }
 .resume__footer { margin-top: 2.25rem; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
 
 .site-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 0.92rem; }
-.site-footer__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; }
+.site-footer__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; }
 .site-footer__inner p { margin: 0; font-family: var(--mono); }
+.site-footer__visitors { font-size: 0.78rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.site-footer__visitors strong { color: var(--accent-strong); font-weight: 650; }
 .site-footer__links { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 .site-footer__signoff { color: var(--muted); font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.14em; }
 

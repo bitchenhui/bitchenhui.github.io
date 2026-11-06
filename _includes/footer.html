@@ -4,6 +4,12 @@
 {% assign resume_url = site.author.resume_url | default: "" | strip %}
 <div class="shell site-footer__inner">
   <p>© {{ 'now' | date: '%Y' }} {{ site.author.name | escape }}</p>
+  {% if site.visitor_counter.enabled and page.redirect_to == nil and page.noindex != true %}
+    <p class="site-footer__visitors" data-visitor-counter data-site-url="{{ '/' | absolute_url | escape }}" role="status" aria-live="polite" aria-atomic="true" title="累计访客数(UV)，按不蒜子统计口径，非当前在线人数">
+      <span id="busuanzi_container_site_uv" style="display: none">累计访客 <strong id="busuanzi_value_site_uv"></strong> 人次</span>
+      <span data-visitor-placeholder>累计访客 —</span>
+    </p>
+  {% endif %}
   <p class="site-footer__signoff" aria-hidden="true">/// EOF · FRAME END</p>
   {% if email != "" or github != "" or linkedin != "" or resume_url != "" %}
     <div class="site-footer__links" aria-label="联系与资料">
