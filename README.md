@@ -43,7 +43,7 @@ ruby scripts/verify_site.rb "$preview_dir" /preview
 - `author.name`、`author.role`、`author.intro`：姓名、角色和简介；
 - `author.email`、`author.github`、`author.linkedin`、`author.resume_url`、`author.wechat`：可公开的联系方式和资料链接，留空则不显示对应项。微信号支持手动复制，浏览器允许访问剪贴板时也提供复制按钮。要附上现成的 PDF，可把文件放入 `assets/` 后填写 `/assets/resume.pdf`；
 - `current_focus`：当前重点方向的字符串列表；
-- `skills`：核心能力对象列表，每项包含 `name` 和 `description`。
+- `skills`：核心能力对象列表，每项包含 `name` 和 `description`。 可选的 `evidence_context`、`evidence_source` 和 `evidence`（`value` / `label` 列表）用于展示有明确项目归属的量化结果，链接回对应经历。
 
 ```yaml
 current_focus:

@@ -1,0 +1,10 @@
+{% if include.skill.evidence and include.skill.evidence != empty %}
+<div class="skill-evidence">
+  <a class="skill-evidence__source" href="{{ include.skill.evidence_source | escape }}">{{ include.skill.evidence_context | escape }} <span aria-hidden="true">↗</span></a>
+  <ul aria-label="{{ include.skill.evidence_context | escape }}">
+    {% for evidence in include.skill.evidence %}
+      <li><strong>{{ evidence.value | escape }}</strong><span>{{ evidence.label | escape }}</span></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

@@ -16,7 +16,7 @@ layout: default
           <a class="button button-primary" href="{{ '/resume/' | relative_url }}">查看在线简历 <span aria-hidden="true">↗</span></a>
         </div>
         <ul class="hero-panel__tags" aria-label="技术方向">
-          <li>AV1 / VVC</li><li>AGENT LOOP</li><li>RTC / QoE</li>
+          <li>AV1 / VVC</li><li>AGENT LOOP</li><li>RTC / QoS / QoE</li>
         </ul>
       </div>
       {% include signal-frame.html %}
@@ -40,6 +40,7 @@ layout: default
         <article class="capability-item">
           <h3>{{ skill.name | escape }}</h3>
           <p>{{ skill.description | escape }}</p>
+          {% include skill-evidence.html skill=skill %}
         </article>
       {% endfor %}
     </div>

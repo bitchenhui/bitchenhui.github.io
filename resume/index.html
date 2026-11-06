@@ -2,7 +2,7 @@
 layout: default
 title: 简历
 permalink: /resume/
-description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 AV1/VVC 编解码优化, 端上落地与 RTC QoS."
+description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 AV1/VVC 编解码优化, 端上落地与端到端 RTC QoS/QoE."
 ---
 {% assign email = site.author.email | default: "" | strip %}
 {% assign wechat = site.author.wechat | default: "" | strip %}
@@ -67,6 +67,9 @@ description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 A
             <div class="resume__skill">
               <dt>{{ skill.name | escape }}</dt>
               <dd>{{ skill.description | escape }}</dd>
+              {% if skill.evidence and skill.evidence != empty %}
+                <dd>{% include skill-evidence.html skill=skill %}</dd>
+              {% endif %}
             </div>
           {% endfor %}
         </dl>

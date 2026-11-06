@@ -1,5 +1,5 @@
 title: "段晨辉个人空间"
-description: "段晨辉个人主页: 音视频算法优化, AI 驱动研发与成本体验优化."
+description: "段晨辉个人主页: 视频编解码算法, RTC端到端QoS/QoE优化与AI驱动研发."
 url: "https://bitchenhui.github.io"
 baseurl: ""
 lang: "zh-CN"
@@ -20,7 +20,7 @@ author:
   # 可选: 个人速览卡头像, 留空则显示姓名首字徽标
   avatar: "/assets/img/avatar.webp"
   # 展示在侧栏卡片「联系」中的微信号
-  wechat: "ppneversleep"
+  wechat: "DMorningSun"
   github: ""
   linkedin: ""
   # 可选: 上传 PDF 简历到 assets/ 后填 "/assets/resume.pdf"; 留空则只显示在线简历 /resume/
@@ -29,15 +29,24 @@ author:
 current_focus:
   - 用AI重塑算法研发日常工作流
   - 视频图像编解码算法优化
-  - 直播/RTC/点播场景体验优化
+  - RTC端到端QoS/QoE及直播/点播体验优化
 
 skills:
   - name: LLM驱动的算法自进化agent设计优化
     description: 利用agent+loop+RSI能力设计自动算法设计迭代系统. 系统还在持续优化中, release的版本已投入自研265编码器的日常算法优化迭代中, 大幅度提升效率.
   - name: 视频图像编解码算法优化(H.265/H.266/AV1/NVC)
     description: 具备从0-1搭建视频编解码技术体系的经验和能力, 并能够根据业务需求进行优化和迭代. 拿到业务收益同时编码器性能达到行业top.
-  - name: 直播/RTC/点播场景的体验和成本优化
-    description: 音视频链路优化前处理，内容自适应转码和编码策略等来提升不同场景的体验，降低音视频成本
+  - name: RTC端到端QoS/QoE与音视频体验优化
+    description: 覆盖端侧编码器与参数自适应、ARQ/FEC协同和服务端带宽预测; 结合前处理、内容自适应转码与编码策略, 改善RTC/直播/点播的卡顿、清晰度和成本.
+    evidence_context: "腾讯 QQ · 双人RTC流控上线结果"
+    evidence_source: "#work-3"
+    evidence:
+      - value: "−23%"
+        label: "卡顿率"
+      - value: "+9%"
+        label: "高分辨率占比"
+      - value: "+19%"
+        label: "通话次数"
 
 exclude:
   - README.md
