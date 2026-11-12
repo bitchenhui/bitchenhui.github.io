@@ -268,13 +268,13 @@ main { min-height: calc(100vh - 10rem); }
   grid-template-columns: minmax(0, 1fr) minmax(16.5rem, 22rem);
   align-items: start;
   column-gap: clamp(1.75rem, 5vw, 4.5rem);
-  padding-block: clamp(1.5rem, 4vw, 3rem) clamp(3rem, 7vw, 6rem);
+  padding-block: 1rem clamp(3rem, 7vw, 6rem);
 }
 .manual-layout > :not(.manual-sidebar) { min-width: 0; grid-column: 1; }
 .manual-layout > .manual-hero { grid-column: 1 / -1; }
 .manual-hero {
   --hero-cell: 28px;
-  margin-bottom: clamp(2.5rem, 5.5vw, 4.75rem);
+  margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
 }
 .hero-panel {
   display: grid;
@@ -340,7 +340,7 @@ main { min-height: calc(100vh - 10rem); }
 .signal-frame__bar b { color: var(--accent-strong); }
 .signal-frame__primary { stroke-width: 2.3; }
 .signal-frame__echo { color: var(--trace); }
-.signal-frame__plot { display: block; width: 100%; height: auto; padding-block: 0.4rem; }
+.signal-frame__plot { display: block; width: 100%; max-height: 17rem; height: auto; padding-block: 0.4rem; }
 
 .anchor-nav {
   display: flex;
