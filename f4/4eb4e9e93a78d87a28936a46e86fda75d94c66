@@ -1,0 +1,14 @@
+assets/css/main.scss
+  h_bc262c8ac47a2c 271,277,343
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f44eb4e9e93a78d87a28936a46e86fda75d94c66",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
