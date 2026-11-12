@@ -109,6 +109,23 @@ description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 A
             </li>
           {% endfor %}
         </ol>
+        {% if site.data.opensource and site.data.opensource != empty %}
+          <h3 class="resume-tools__title">AI 开源小工具</h3>
+          <ul class="resume-tools">
+            {% for tool in site.data.opensource %}
+              {% assign tool_url = tool.project_url | default: "" | strip %}
+              {% assign tool_repo = tool.repository_url | default: "" | strip %}
+              <li>
+                <span class="resume-tools__name">{{ tool.title | escape }}</span>
+                <span class="resume-tools__desc">{{ tool.description | escape }}</span>
+                <span class="resume-tools__links no-print">
+                  {% if tool_url != "" %}<a href="{{ tool_url | escape }}" target="_blank" rel="noopener noreferrer">在线体验</a>{% endif %}
+                  {% if tool_repo != "" %}<a href="{{ tool_repo | escape }}" target="_blank" rel="noopener noreferrer">源码</a>{% endif %}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
       </section>
     {% endif %}
 

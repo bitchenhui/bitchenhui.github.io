@@ -1,7 +1,8 @@
 {% assign project_url = include.project.project_url | default: "" | strip %}
 {% assign repository_url = include.project.repository_url | default: "" | strip %}
 {% assign cover = include.project.cover | default: "" | strip %}
-<article class="card project-card{% if include.ordinal == 1 and cover != "" %} project-card--featured{% endif %}">
+{% assign card_prefix = include.prefix | default: "WORK" | strip %}
+<article class="card project-card{% if include.ordinal == 1 and cover != "" and card_prefix == "WORK" %} project-card--featured{% endif %}">
   {% if cover != "" %}
     <a class="project-card__media" href="{{ cover | relative_url }}" data-image-open data-image-title="{{ include.project.title | escape }}" aria-label="查看{{ include.project.title | escape }}的大图">
       <img class="project-card__cover" src="{{ cover | relative_url }}" alt="{{ include.project.title | escape }} 作品截图" loading="lazy" decoding="async">
@@ -9,7 +10,7 @@
     </a>
   {% endif %}
   <div class="project-card__content">
-    <p class="project-card__label" aria-hidden="true"><span>WORK / {% if include.ordinal < 10 %}0{% endif %}{{ include.ordinal }}</span><span>{% if include.ordinal == 1 %}FEATURED{% else %}▦{% endif %}</span></p>
+    <p class="project-card__label" aria-hidden="true"><span>{{ card_prefix }} / {% if include.ordinal < 10 %}0{% endif %}{{ include.ordinal }}</span><span>{% if include.ordinal == 1 and card_prefix == "WORK" and cover != "" %}FEATURED{% else %}▦{% endif %}</span></p>
     {% assign project_period = include.project.period | default: "" | strip %}
     {% if project_period != "" %}<p class="card-meta">{{ project_period | escape }}</p>{% endif %}
     <h3>{{ include.project.title | escape }}</h3>

@@ -1,0 +1,47 @@
+# AI 开源小工具与创意, 展示在首页「个人作品」区下方的 OPEN TOOLS 子区, 简历页同步.
+# 字段同 _data/projects.yml; 强烈建议填 project_url(在线体验) 和 repository_url(源码).
+- title: "pickAHKstock"
+  description: "小资金研究台: 港股观察池信息流, 辅助小资金港股研究决策."
+  stack:
+    - Python
+    - 数据分析
+  project_url: "https://bitchenhui.github.io/pickAHKstock/"
+  repository_url: "https://github.com/bitchenhui/pickAHKstock"
+
+- title: "DailyWorkHorse"
+  description: "微信信息推送: 把定时提醒和消息定向推送到微信的轻量工具."
+  stack:
+    - Python
+  project_url: "https://bitchenhui.github.io/DailyWorkHorse/"
+  repository_url: "https://github.com/bitchenhui/DailyWorkHorse"
+
+- title: "edu-agent"
+  description: "初中数学教育 Agent: 用 LLM 辅导初中数学解题与讲解."
+  stack:
+    - LLM
+    - Agent
+  project_url: ""
+  repository_url: "https://github.com/bitchenhui/edu-agent"
+
+- title: "server-monitor"
+  description: "算法服务器状态监测 mac 端小工具."
+  stack:
+    - Swift
+    - macOS
+  project_url: ""
+  repository_url: "https://github.com/bitchenhui/server-monitor"
+
+- title: "LLM-Reading"
+  description: "用 LLM 精读 eess/iv 方向论文, 辅助筛选和消化新论文."
+  stack:
+    - LLM
+  project_url: ""
+  repository_url: "https://github.com/bitchenhui/LLM-Reading"
+
+- title: "AVllm"
+  description: "音视频垂类大模型从零开始训练的全过程记录."
+  stack:
+    - Python
+    - LLM
+  project_url: ""
+  repository_url: "https://github.com/bitchenhui/AVllm"

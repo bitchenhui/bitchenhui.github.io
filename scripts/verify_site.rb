@@ -17,6 +17,8 @@ REDIRECT_ROUTES = {
   "blog/index.html" => { source: "blog/index.html", target: "/" },
   "about/index.html" => { source: "about.md", target: "/#experience" }
 }.freeze
+# 同域名下由独立仓库发布、不属于本站构建产物的项目站点路径.
+EXTERNAL_SITE_PATHS = %w[/pickAHKstock /DailyWorkHorse].freeze
 CORE_REQUIRED_FILES = (%w[
   index.html
   404.html
@@ -158,6 +160,21 @@ projects.each_with_index do |project, index|
          project["stack"].is_a?(Array) && project["stack"].all? { |item| item.is_a?(String) && !item.strip.empty? } &&
          PROJECT_URL_FIELDS.all? { |field| !project.key?(field) || project[field].is_a?(String) }
     abort "FAIL: project #{index + 1} has invalid field types or empty required content."
+  end
+end
+
+# 开源小工具: 同 project 字段契约, 必须提供至少一个可达链接.
+opensource_data = Pathname.new("_data/opensource.yml")
+abort "FAIL: opensource data file is missing." unless opensource_data.file?
+opensource = load_yaml(opensource_data)
+unless opensource.is_a?(Array) && !opensource.empty?
+  abort "FAIL: opensource data must be a non-empty list."
+end
+opensource.each_with_index do |tool, index|
+  missing_fields = PROJECT_FIELDS.reject { |field| tool.is_a?(Hash) && tool.key?(field) }
+  abort "FAIL: opensource tool #{index + 1} lacks fields: #{missing_fields.join(', ')}" unless missing_fields.empty?
+  unless PROJECT_URL_FIELDS.any? { |field| tool[field].is_a?(String) && !tool[field].strip.empty? }
+    abort "FAIL: opensource tool #{index + 1} must provide project_url or repository_url."
   end
 end
 
@@ -381,6 +398,8 @@ generated_html.each do |path, body|
       abort "FAIL: #{path} contains an empty #{attribute}." if url.empty?
       url = url.delete_prefix(site_origin) if url.start_with?("#{site_origin}/")
       next if url.start_with?("//") || !url.start_with?("/", "#")
+      # 同域名但由其他仓库发布的项目页(如 GitHub 项目 Pages), 不在本仓构建产物内.
+      next if EXTERNAL_SITE_PATHS.any? { |prefix| url.start_with?(prefix) }
 
       target, fragment = url.split("#", 2)
       target = target.split("?", 2).first.to_s
@@ -429,7 +448,7 @@ end
 
 project_cards = html_blocks(home, "project-card")
 project_link_labels = { "project_url" => "查看项目（新窗口）", "repository_url" => "查看代码（新窗口）" }.freeze
-missing_projects = projects.filter_map do |project|
+missing_projects = (projects + opensource).filter_map do |project|
   title = project["title"]
   escaped_title = CGI.escapeHTML(title)
   escaped_description = CGI.escapeHTML(project["description"])

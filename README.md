@@ -94,6 +94,10 @@ skills:
 
 当前版本为线上简历定位，文章板块已移除，本章节仅保留未来恢复时的约定：文章存放于 `_posts/`，文件名必须采用 `YYYY-MM-DD-article-slug.md` 格式，使用 Markdown 和 YAML front matter（`layout: post`、`title`、`date`、`description`、`tags`），永久链接规则为 `/blog/:title/`。恢复前需重建 `_layouts/post.html` 与 `_includes/post-card.html`，并同步更新 `scripts/verify_site.rb`。
 
+## AI 开源小工具
+
+`_data/opensource.yml` 维护开源工具与创意项目, 展示在首页「个人作品」区下方的 OPEN TOOLS 子区, 简历页同步一份紧凑列表. 字段与 `_data/projects.yml` 相同, 每个条目必须提供 `project_url`(在线体验) 或 `repository_url`(源码) 至少其一. 注意: 托管在同域名下的项目 Pages(如 `/pickAHKstock/`)由独立仓库发布, 若新增类似条目需把路径加入 `scripts/verify_site.rb` 的 `EXTERNAL_SITE_PATHS` 白名单.
+
 ## 简历页
 
 `/resume/` 复用首页的数据源。简历按工作经历、核心能力、个人作品、教育背景、收获和当前关注组织；桌面端提供随滚动高亮的章节目录，窄屏下目录转为页头链接。头像、邮箱和微信号来自 `_config.yml`。
