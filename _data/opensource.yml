@@ -32,10 +32,10 @@
   repository_url: "https://github.com/bitchenhui/server-monitor"
 
 - title: "LLM-Reading"
-  description: "用 LLM 精读 eess/iv 方向论文, 辅助筛选和消化新论文."
+  description: "音视频编码信息引擎: 用 LLM 精读 eess/iv 方向论文, 辅助筛选和消化新论文."
   stack:
     - LLM
-  project_url: ""
+  project_url: "https://bitchenhui.github.io/LLM-Reading/"
   repository_url: "https://github.com/bitchenhui/LLM-Reading"
 
 - title: "AVllm"

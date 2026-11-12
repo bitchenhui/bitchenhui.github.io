@@ -18,7 +18,7 @@ REDIRECT_ROUTES = {
   "about/index.html" => { source: "about.md", target: "/#experience" }
 }.freeze
 # 同域名下由独立仓库发布、不属于本站构建产物的项目站点路径.
-EXTERNAL_SITE_PATHS = %w[/pickAHKstock /DailyWorkHorse].freeze
+EXTERNAL_SITE_PATHS = %w[/pickAHKstock /DailyWorkHorse /LLM-Reading].freeze
 CORE_REQUIRED_FILES = (%w[
   index.html
   404.html
