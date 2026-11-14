@@ -429,7 +429,18 @@ main { min-height: calc(100vh - 10rem); }
 .profile-card__role { margin: 0; color: var(--muted); font-size: 0.84rem; line-height: 1.55; }
 .profile-card__list, .profile-card__links { margin-bottom: 0; padding-left: 1.05rem; }
 .profile-card li::marker { color: var(--accent); }
-.profile-card__wechat { font-family: var(--mono); color: var(--accent-strong); }
+.profile-card__wechat {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--mono);
+  color: var(--accent-strong);
+}
+.profile-card__wechat:hover { text-decoration: underline; }
+.profile-card__wechat.is-copied::after,
+.contact-action.is-copied::after { content: " 已复制 ✓"; color: var(--accent); font-family: var(--mono); }
 
 .capability-list {
   counter-reset: capability;

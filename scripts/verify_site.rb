@@ -22,9 +22,9 @@ EXTERNAL_SITE_PATHS = %w[/pickAHKstock /DailyWorkHorse /LLM-Reading].freeze
 CORE_REQUIRED_FILES = (%w[
   index.html
   404.html
-  feed.xml
   sitemap.xml
   robots.txt
+  assets/img/og.png
   resume/index.html
 ] + REDIRECT_ROUTES.keys).freeze
 RUNTIME_SCAN_GLOBS = %w[
@@ -256,10 +256,12 @@ end
 
 abort "FAIL: pre-stylesheet inline scripts must stay removed." if head_source.index("<script>") && head_source.index("<script>") < head_source.index('rel="stylesheet"')
 abort "FAIL: styles must not keep palette theming hooks." if style_source.include?("data-palette")
+abort "FAIL: head must not link the retired feed." if head_source.include?("feed.xml")
 abort "FAIL: styles must not keep quality theming hooks." if style_source.include?("data-quality")
 abort "FAIL: scripts must not keep the quality toggle." if script_source.include?("quality-toggle")
 %w[
   rel="icon"
+  property="og:image"
   property="og:title"
   property="og:description"
   name="twitter:card"
@@ -447,7 +449,7 @@ abort "FAIL: generated homepage lacks #{missing_markers.join(', ')}." unless mis
 end
 
 project_cards = html_blocks(home, "project-card")
-project_link_labels = { "project_url" => "查看项目（新窗口）", "repository_url" => "查看代码（新窗口）" }.freeze
+project_link_labels = { "project_url" => "在线体验 ↗", "repository_url" => "源码 ↗" }.freeze
 missing_projects = (projects + opensource).filter_map do |project|
   title = project["title"]
   escaped_title = CGI.escapeHTML(title)
@@ -510,9 +512,6 @@ not_found_home_link = not_found.scan(/<a\b[^>]*>.*?<\/a\s*>/im).find do |tag|
   attribute_value(tag, "href") == expected_home_path && tag.match?(/>\s*返回首页\s*<\/a\s*>/m)
 end
 abort "FAIL: 404 page lacks a home link to #{expected_home_path}." unless not_found_home_link
-feed = (SITE / "feed.xml").read
-abort "FAIL: feed output has no feed element." unless feed.include?("<feed")
-abort "FAIL: feed output has no Atom media type." unless feed.include?("application/atom+xml")
 expected_sitemap_url = "#{site_origin}#{relative_site_url('/sitemap.xml', baseurl)}"
 robots = (SITE / "robots.txt").read
 abort "FAIL: robots output lacks sitemap URL #{expected_sitemap_url}." unless robots.lines.any? { |line| line.strip == "Sitemap: #{expected_sitemap_url}" }

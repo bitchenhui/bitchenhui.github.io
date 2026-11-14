@@ -8,12 +8,11 @@ permalink: /blog/:title/
 markdown: kramdown
 highlighter: rouge
 plugins:
-  - jekyll-feed
   - jekyll-sitemap
 
 author:
   name: "段晨辉"
-  role: "飞速RSI的音视频算法工程师"
+  role: "像AI一样飞速迭代进化的音视频算法工程师"
   # 可选: hero 区与简历页头部的个人简介行, 留空则不显示
   intro: ""
   email: "ppduan50@gmail.com"

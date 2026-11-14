@@ -40,8 +40,6 @@ description: "段晨辉的个人简历: 视频编解码算法工程师, 聚焦 A
         {% assign avatar = site.author.avatar | default: "" | strip %}
         {% if avatar != "" %}<img class="resume__avatar" src="{{ avatar | relative_url }}" width="80" height="80" alt="">{% endif %}
       </div>
-      {% assign intro = site.author.intro | default: "" | strip %}
-      {% if intro != "" %}<p class="resume__intro">{{ intro | escape }}</p>{% endif %}
       <ul class="resume__contacts" aria-label="联系方式">
         {% if email != "" %}<li><span>EMAIL</span><a href="mailto:{{ email | escape }}">{{ email | escape }}</a></li>{% endif %}
         {% if wechat != "" %}<li><span>WECHAT</span>{{ wechat | escape }}</li>{% endif %}

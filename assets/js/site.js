@@ -75,20 +75,23 @@
     scheduleNavigation();
   }
 
-  var copy = document.querySelector("[data-copy-wechat]");
-  var status = document.querySelector(".contact-status");
-  if (copy && status && navigator.clipboard && navigator.clipboard.writeText) {
+  // 微信号一键复制: 页面内所有 data-copy-wechat 元素统一绑定.
+  document.querySelectorAll("[data-copy-wechat]").forEach(function (copy) {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) return;
     copy.addEventListener("click", async function () {
-      status.textContent = "";
+      var status = document.querySelector(".contact-status");
+      if (status) status.textContent = "";
       try {
         await navigator.clipboard.writeText(copy.dataset.copyWechat);
-        status.textContent = "微信号已复制: " + copy.dataset.copyWechat;
+        copy.classList.add("is-copied");
+        window.setTimeout(function () { copy.classList.remove("is-copied"); }, 1600);
+        if (status) status.textContent = "微信号已复制: " + copy.dataset.copyWechat;
       } catch (error) {
-        status.textContent = "复制失败，请选中上方微信号手动复制。";
+        if (status) status.textContent = "复制失败, 请选中微信号手动复制.";
       }
     });
     copy.hidden = false;
-  }
+  });
 
   // Native dialog supports Escape, keyboard focus containment, and a link fallback.
   var viewer = document.getElementById("image-viewer");
