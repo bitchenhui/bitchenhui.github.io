@@ -37,15 +37,6 @@ skills:
     description: 具备从0-1搭建视频编解码技术体系的经验和能力, 并能够根据业务需求进行优化和迭代. 拿到业务收益同时编码器性能达到行业top.
   - name: RTC端到端QoS/QoE与音视频体验优化
     description: 覆盖端侧编码器与参数自适应、ARQ/FEC协同和服务端带宽预测; 结合前处理、内容自适应转码与编码策略, 改善RTC/直播/点播的卡顿、清晰度和成本.
-    evidence_context: "腾讯 QQ · 双人RTC流控上线结果"
-    evidence_source: "#work-3"
-    evidence:
-      - value: "−23%"
-        label: "卡顿率"
-      - value: "+9%"
-        label: "高分辨率占比"
-      - value: "+19%"
-        label: "通话次数"
 
 visitor_counter:
   enabled: true
