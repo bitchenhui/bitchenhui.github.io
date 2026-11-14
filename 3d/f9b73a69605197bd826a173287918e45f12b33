@@ -1,0 +1,26 @@
+_config.yml
+  h_bc262c8ac47a2c 15
+_includes/head.html
+  h_bc262c8ac47a2c 17-22,39-42
+_includes/profile-card.html
+  h_bc262c8ac47a2c 38
+_includes/project-card.html
+  h_bc262c8ac47a2c 30-31
+assets/css/main.scss
+  h_bc262c8ac47a2c 432-443
+assets/js/site.js
+  h_bc262c8ac47a2c 78-80,82-83,86-88,90,94
+scripts/verify_site.rb
+  h_bc262c8ac47a2c 27,259,264,452
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3df9b73a69605197bd826a173287918e45f12b33",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
