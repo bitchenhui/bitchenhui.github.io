@@ -1,0 +1,20 @@
+README.md
+  h_bc262c8ac47a2c 97
+_data/opensource.yml
+  h_bc262c8ac47a2c 1-3,19-25
+index.html
+  h_bc262c8ac47a2c 89
+resume/index.html
+  h_bc262c8ac47a2c 111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f526824887f238959182f80470df4629c89f394a",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
