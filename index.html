@@ -86,7 +86,7 @@ layout: default
     {% if site.data.opensource and site.data.opensource != empty %}
       <div class="works-subsection">
         <p class="section-index">OPEN TOOLS / AI 创意</p>
-        <h3 class="works-subsection__title">AI 开源小工具</h3>
+        <h3 class="works-subsection__title">AI 开源工具</h3>
         <div class="card-grid card-grid--tools">
           {% for tool in site.data.opensource %}{% include project-card.html project=tool ordinal=forloop.index prefix="OSS" %}{% endfor %}
         </div>
