@@ -1,0 +1,62 @@
+LLM-Reading/details/9.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/7.html
+  h_bc262c8ac47a2c 1-5
+_data/experience.yml
+  h_bc262c8ac47a2c 11
+LLM-Reading/details/a.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/index.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/1.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/3.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/0.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/e.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/b.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/2.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/6.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/d.html
+  h_bc262c8ac47a2c 1-5
+index.html
+  h_bc262c8ac47a2c 10,88
+LLM-Reading/details/f.html
+  h_bc262c8ac47a2c 1-5
+_includes/head.html
+  h_bc262c8ac47a2c 20
+LLM-Reading/details/4.html
+  h_bc262c8ac47a2c 1-5
+LLM-Reading/details/5.html
+  h_bc262c8ac47a2c 1-5
+README.md
+  h_bc262c8ac47a2c 125-126
+LLM-Reading/details/8.html
+  h_bc262c8ac47a2c 1-5
+scripts/verify_site.rb
+  h_bc262c8ac47a2c 21-24,538-576
+LLM-Reading/details/c.html
+  h_bc262c8ac47a2c 1-5
+_data/opensource.yml
+  h_bc262c8ac47a2c 19-20,23-24
+LLM-Reading/retest-inter-4k.html
+  h_bc262c8ac47a2c 1-5
+assets/css/main.scss
+  h_bc262c8ac47a2c 310-311
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0695790b1d919d519ab8e9f55c8d6cf5fc01afc0",
+  "prompts": {},
+  "humans": {
+    "h_bc262c8ac47a2c": {
+      "author": "bitchenhui <13261281092@163.com>"
+    }
+  }
+}
