@@ -16,12 +16,12 @@
   project_url: "https://bitchenhui.github.io/DailyWorkHorse/"
   repository_url: "https://github.com/bitchenhui/DailyWorkHorse"
 
-- title: "LLM-Reading"
-  description: "音视频编码信息引擎: 用 LLM 精读 eess/iv 方向论文, 辅助筛选和消化新论文."
+- title: "av-knowledge"
+  description: "音视频知识库: 用 LLM 精读 eess/iv 论文构建, 支持按问题查找证据."
   stack:
     - LLM
-  project_url: "https://bitchenhui.github.io/LLM-Reading/"
-  repository_url: "https://github.com/bitchenhui/LLM-Reading"
+  project_url: "https://bitchenhui.github.io/av-knowledge/"
+  repository_url: "https://github.com/bitchenhui/av-knowledge"
 
 - title: "edu-agent"
   description: "初中数学教育 Agent: 用 LLM 辅导初中数学解题与讲解."

@@ -122,6 +122,8 @@ skills:
 
 `/projects/`、`/blog/` 和 `/about/` 是最小兼容跳转页，不维护重复内容。项目内容直接维护在首页的数据源中；`/blog/` 因文章板块下线而跳转回首页。
 
+仓库改名后遗留的旧项目链接由 `LLM-Reading/` 下的跳转页承接（`LLM-Reading` 已改名为 `av-knowledge`）。目录内每个页面的 front matter 必须声明 `sitemap: false`，canonical、`meta refresh` 和兜底链接都要指向 `/av-knowledge/` 下的同一相对路径。`scripts/verify_site.rb` 会逐个核对这三处目标，并禁止这些跳转页进入 sitemap；以后再遇到仓库改名，照此格式添加即可。
+
 ## 发布到 GitHub Pages
 
 1. 完成内容替换及本地检查后，检查改动：`git status`。

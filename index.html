@@ -7,7 +7,7 @@ layout: default
       <div class="hero-panel__copy">
         <p class="eyebrow"><span>01 /</span> {{ site.author.name | escape }} <span class="hero-byline">VIDEO CODEC &amp; AI</span></p>
         <div class="hero-stage">
-          <h1 id="intro-title">{{ site.author.role | escape | replace: "音视频算法工程师", '<span class="hero-title__role">音视频算法工程师</span>' }}</h1>
+          <h1 id="intro-title">{{ site.author.role | escape | replace: "音视频算法工程师", '<span class="hero-title__role">音视频算法工程师</span>' | replace: "飞速迭代进化", '<span class="hero-title__hook">飞速迭代进化</span>' }}</h1>
           <canvas class="hero-decode" aria-hidden="true" hidden></canvas>
         </div>
         <div class="hero-panel__actions">
@@ -85,7 +85,7 @@ layout: default
     {% endif %}
     {% if site.data.opensource and site.data.opensource != empty %}
       <div class="works-subsection">
-        <p class="section-index">OPEN TOOLS / AI 创意</p>
+        <p class="section-index">OPEN TOOLS / OPEN SOURCE</p>
         <h3 class="works-subsection__title">AI 开源工具</h3>
         <div class="card-grid card-grid--tools">
           {% for tool in site.data.opensource %}{% include project-card.html project=tool ordinal=forloop.index prefix="OSS" %}{% endfor %}

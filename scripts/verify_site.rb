@@ -18,7 +18,10 @@ REDIRECT_ROUTES = {
   "about/index.html" => { source: "about.md", target: "/#experience" }
 }.freeze
 # 同域名下由独立仓库发布、不属于本站构建产物的项目站点路径.
-EXTERNAL_SITE_PATHS = %w[/pickAHKstock /DailyWorkHorse /LLM-Reading].freeze
+EXTERNAL_SITE_PATHS = %w[/pickAHKstock /DailyWorkHorse /av-knowledge].freeze
+# 仓库改名后留在本站的旧链接跳转页: 目录下每个页面都必须 sitemap: false,
+# 且 canonical / refresh / 兜底链接都指向新站点下的同一相对路径.
+MOVED_SITE_STUBS = { dir: "LLM-Reading", target: "/av-knowledge/" }.freeze
 CORE_REQUIRED_FILES = (%w[
   index.html
   404.html
@@ -532,6 +535,45 @@ REDIRECT_ROUTES.each_key do |path|
     abort "FAIL: sitemap advertises compatibility route #{compatibility_url}." if sitemap.match?(compatibility_loc)
   end
 end
+stub_dir = MOVED_SITE_STUBS.fetch(:dir)
+stub_target = MOVED_SITE_STUBS.fetch(:target)
+stub_sources = Pathname.glob("#{stub_dir}/**/*.html").sort
+abort "FAIL: no redirect stubs found under #{stub_dir}/." if stub_sources.empty?
+stub_built = SITE.glob("#{stub_dir}/**/*.html").sort.map { |file| file.relative_path_from(SITE).each_filename.to_a.join("/") }
+unless stub_built == stub_sources.map(&:to_s)
+  abort "FAIL: built redirect stubs under #{stub_dir}/ differ from their sources."
+end
+stub_sources.each do |source|
+  abort "FAIL: #{source} must declare front matter." unless source.read.start_with?("---")
+  route_data = front_matter(source)
+  abort "FAIL: #{source} must be excluded from the sitemap." unless route_data["sitemap"] == false
+  relative = source.to_s.delete_prefix("#{stub_dir}/")
+  relative = "" if relative == "index.html"
+  target = "#{stub_target}#{relative}"
+  relative_target = relative_site_url(target, baseurl)
+  body = generated_html.fetch(source.to_s)
+  canonical = html_tags(body, "link").find do |tag|
+    attribute_value(tag, "rel")&.split&.any? { |rel| rel.casecmp?("canonical") }
+  end
+  unless attribute_value(canonical, "href") == "#{site_origin}#{relative_target}"
+    abort "FAIL: #{source} canonical must point to #{site_origin}#{relative_target}."
+  end
+  refresh = html_tags(body, "meta").find do |tag|
+    attribute_value(tag, "http-equiv")&.casecmp?("refresh")
+  end
+  unless attribute_value(refresh, "content")&.match?(%r{\A\s*0\s*;\s*url\s*=\s*#{Regexp.escape(relative_target)}\s*\z}i)
+    abort "FAIL: #{source} lacks refresh target #{relative_target}."
+  end
+  unless body.include?("location.replace(\"#{relative_target}\"")
+    abort "FAIL: #{source} script redirect does not target #{relative_target}."
+  end
+  fallback = body.scan(/<a\b[^>]*>.*?<\/a\s*>/im).find { |tag| tag.include?("前往") }
+  unless attribute_value(fallback, "href") == relative_target
+    abort "FAIL: #{source} lacks clickable fallback to #{relative_target}."
+  end
+end
+stub_locs = sitemap.scan(%r{<loc>\s*#{Regexp.escape(site_origin)}#{Regexp.escape(relative_site_url("/#{stub_dir}/", baseurl))}[^<]*</loc>})
+abort "FAIL: sitemap must not advertise redirect stubs under /#{stub_dir}/." unless stub_locs.empty?
 resume_output = generated_html.fetch("resume/index.html")
 %w[id="resume-title" 当前关注 核心能力 工作经历 个人作品 教育背景 收获].each do |marker|
   abort "FAIL: generated resume page lacks #{marker}." unless resume_output.include?(marker)

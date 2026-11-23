@@ -307,6 +307,8 @@ main { min-height: calc(100vh - 10rem); }
   letter-spacing: -0.05em;
 }
 .hero-title__role { display: block; }
+/* 口号里的「飞速迭代进化」不允许被断行切开, 只能在短语边界换行. */
+.hero-title__hook { white-space: nowrap; }
 .manual-hero__lead { max-width: 48ch; text-wrap: pretty; margin-bottom: 1.7rem; color: var(--muted); font-size: clamp(0.96rem, 1.35vw, 1.12rem); }
 .eyebrow, .section-index, .card-meta { color: var(--accent-strong); font-family: var(--mono); font-size: 0.75rem; font-weight: 650; letter-spacing: 0.10em; text-transform: uppercase; }
 .hero-panel .eyebrow { margin-bottom: 1.2rem; }
