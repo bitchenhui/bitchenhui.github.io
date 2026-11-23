@@ -1,0 +1,16 @@
+resume/index.html
+  h_a20573be2f4a7b 22-27,53-61,64,71,88,141,153
+scripts/verify_site.rb
+  h_a20573be2f4a7b 582-591
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "18cd15ea8bd2dc2b6114e8f61bf0b2bdc5dde75b",
+  "prompts": {},
+  "humans": {
+    "h_a20573be2f4a7b": {
+      "author": "bitchenhui <34788934+bitchenhui@users.noreply.github.com>"
+    }
+  }
+}
