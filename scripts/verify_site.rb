@@ -579,6 +579,16 @@ resume_output = generated_html.fetch("resume/index.html")
   abort "FAIL: generated resume page lacks #{marker}." unless resume_output.include?(marker)
 end
 abort "FAIL: resume must label works as 个人作品, not 项目经历." if resume_output.include?("项目经历")
+# 简历目录与正文标题是两处硬编码: 编号, 名称, 顺序必须逐项一致, 且以「当前关注」开头.
+resume_nav = resume_output[%r{<nav aria-label="简历章节">(.*?)</nav>}m, 1].to_s
+resume_nav_items = resume_nav.scan(/<span aria-hidden="true">(\d+)<\/span> ([^<]+)<\/a>/)
+resume_heading_items = resume_output.scan(/<span class="resume__section-index" aria-hidden="true">(\d+)<\/span>([^<]+)<\/h2>/)
+unless resume_nav_items == resume_heading_items
+  abort "FAIL: resume index must match section headings in number, label and order."
+end
+unless resume_nav_items.first == ["01", "当前关注"]
+  abort "FAIL: resume must open with 当前关注."
+end
 resume_url_pattern = /<loc>\s*#{Regexp.escape("#{site_origin}#{relative_site_url('/resume/', baseurl)}")}\s*<\/loc>/
 unless sitemap.scan(resume_url_pattern).length == 1
   abort "FAIL: sitemap must contain the resume URL exactly once."
